@@ -1,11 +1,10 @@
 package com.fatec.muttley.professor;
 
-import com.fatec.muttley.aluno.Aluno;
-import com.fatec.muttley.aluno.AtualizacaoAluno;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -18,14 +17,14 @@ public class ProfessorController {
     @Autowired
     private ProfessorMapper professorMapper;
 
-    @RequestMapping("/listagem")
+    @GetMapping("/listagem")
     public String carregaPaginaFormulario (Model model){
         //devolverDTO
         model.addAttribute("listaProfessores", professorService.procurarTodos());
         return "professor/listagem";
     }
 
-    @RequestMapping("/formulario")
+    @GetMapping("/formulario")
     public String mostrarFormulario (@RequestParam(required = false) Long id, Model model) {
         AtualizacaoProfessor dto;
         if (id != null){
