@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public record AtualizacaoProfessor (
         Long id,
+
         @NotBlank(message = "Nome é obrigatório")
         String nome,
 
