@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record AtualizacaoMedalha (
         Long id,
+
         @NotBlank(message = "Nome é obrigatório")
         String nome,
 
