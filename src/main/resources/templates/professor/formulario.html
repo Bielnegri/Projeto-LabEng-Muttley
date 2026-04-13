@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Manter Professor')}"></head>
+<body>
+<header
+        th:replace="~{fragmentos/header :: header(activePage='Professor')}"></header>
+<div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
+    <h2 class="text-center"
+        th:text="(${professor != null} ? 'Editar Professor' : 'Novo Professor')"></h2>
+    <div th:if="${message != null}"
+         class="alert alert-success alert-dismissible fade show text-center"
+         role="alert">
+        [[${message}]]
+        <button type="button" class="close btn-sm" data-dismiss="alert"
+                aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <form th:action="@{/professor/salvar}" th:object="${professor}" method="post" >
+        <input type="hidden" th:field="*{id}" />
+        <div class="form-group">
+            <label for="nome"> Nome: </label>
+            <input class="form-control" type="text" th:field="*{nome}"
+                   th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid'">
+            <div th:errors="*{nome}" class="invalid-feedback"></div>
+        </div>
+        <div class="form-group">
+            <label for="email"> Email: </label>
+            <input class="form-control" type="text" th:field="*{email}"
+                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'">
+            <div th:errors="*{email}" class="invalid-feedback"></div>
+        </div>
+        <div class="form-group">
+            <label for="formacao"> Formação: </label>
+            <input class="form-control" type="text" th:field="*{formacao}"
+                   th:classappend="${#fields.hasErrors('formacao')} ? 'is-invalid'">
+            <div th:errors="*{formacao}" class="invalid-feedback"></div>
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <span th:text="${professor.id != null} ? 'Atualizar' : 'Cadastrar'"></span>
+        </button>
+        <a th:href="@{/professor/listagem}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+<div th:replace="~{fragmentos/footer :: footer}"></div>
+</body>
+</html>
