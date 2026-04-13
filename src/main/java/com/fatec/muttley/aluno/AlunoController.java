@@ -24,7 +24,6 @@ public class AlunoController {
         return "aluno/listagem";
     }
 
-    //Novo GetMapping com DTO e Mapper
     @GetMapping("/formulario")
     public String mostrarFormulario (@RequestParam(required = false) Long id, Model model) {
         AtualizacaoAluno dto;
