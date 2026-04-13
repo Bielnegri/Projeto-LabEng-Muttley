@@ -34,6 +34,7 @@ public class AlunoService {
     public List<Aluno> procurarTodos(){
         return alunoRepository.findAll(Sort.by("nome").ascending());
     }
+
     public void apagarPorId (Long id) {
         alunoRepository.deleteById(id);
     }
