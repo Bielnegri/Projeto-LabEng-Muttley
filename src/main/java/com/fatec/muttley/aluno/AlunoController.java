@@ -26,7 +26,7 @@ public class AlunoController {
 
     //Novo GetMapping com DTO e Mapper
     @GetMapping("/formulario")
-    public String mostrarFormulario(@RequestParam(required = false) Long id, Model model) {
+    public String mostrarFormulario (@RequestParam(required = false) Long id, Model model) {
         AtualizacaoAluno dto;
         if (id != null) {
             //edição: Carrega dados existentes
