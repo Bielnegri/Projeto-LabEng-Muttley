@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragmentos/head :: head('Listagem Aluno')}"></head>
+<head th:replace="~{fragmentos/head :: head('Listagem Professor')}"></head>
 <body>
-<header th:replace="~{fragmentos/header :: header(activePage='Aluno')}"></header>
+<header th:replace="~{fragmentos/header :: header(activePage='Professor')}"></header>
 <div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
     <h2 class="text-center"
-        th:text="${aluno!= null} ? 'Editar Aluno' : 'Lista Aluno'"></h2>
+        th:text="${professor!= null} ? 'Editar Professor' : 'Lista Professor'"></h2>
     <div th:if="${message != null}"
          class="alert alert-success alert-dismissible fade show text-center"
          role="alert">
@@ -16,33 +16,29 @@
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
-    <a href="/aluno/formulario">Novo</a>
-    <div th:if="${listaAlunos.size() > 0}">
+    <a href="/professor/formulario">Novo</a>
+    <div th:if="${listaProfessores.size() > 0}">
         <table class="table table-hover table-responsive-xl">
             <thead class="thead-light">
             <tr>
                 <th scope="col">Nome</th>
                 <th scope="col">Email</th>
-                <th scope="col">Telefone</th>
-                <th scope="col">Instituição</th>
-                <th scope="col">Matrícula</th>
+                <th scope="col">Formação</th>
                 <th scope="col">Ações</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="aluno : ${listaAlunos}">
-                <td th:text="${aluno.nome}"></td>
-                <td th:text="${aluno.email}"></td>
-                <td th:text="${aluno.telefone}"></td>
-                <td th:text="${aluno.instituicao}"></td>
-                <td th:text="${aluno.matricula}"></td>
-                <td><a th:href="@{'/aluno/formulario/' + ${aluno.id}}"
-                       title="Editar o Aluno"
+            <tr th:each="professor : ${listaProfessores}">
+                <td th:text="${professor.nome}"></td>
+                <td th:text="${professor.email}"></td>
+                <td th:text="${professor.formacao}"></td>
+                <td><a th:href="@{'/professor/formulario/' + ${professor.id}}"
+                       title="Editar o Professor"
                        class="fa-regular fa-pen-to-square icon-dark"></a> &nbsp;
                     <a
-                        th:href="@{'/aluno/delete/' + ${aluno.id}}"
-                        th:alunoTitle="${aluno.nome}" id="btnDelete"
-                        title="Apague este aluno"
+                        th:href="@{'/professor/delete/' + ${professor.id}}"
+                        th:professorTitle="${professor.nome}" id="btnDelete"
+                        title="Apague este professor"
                         class="fa-regular fa-trash-can icon-dark btn-delete">
                     </a>
                 </td>

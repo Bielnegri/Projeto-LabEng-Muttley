@@ -4,10 +4,12 @@ import com.fatec.muttley.aluno.Aluno;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class ProfessorService {
     @Autowired
     private ProfessorRepository professorRepository;
@@ -32,6 +34,7 @@ public class ProfessorService {
     public List<Professor> procurarTodos(){
         return professorRepository.findAll(Sort.by("nome").ascending());
     }
+
     public void apagarPorId (Long id) {
         professorRepository.deleteById(id);
     }
