@@ -61,13 +61,19 @@ public class CertificadoController {
                          BindingResult result,
                          RedirectAttributes redirectAttributes,
                          Model model) {
-        if (){
-
+        if (result.hasErrors()){
+            return "certificado/formulario";
         }
         try {
-
-        } catch (){
-
+            Certificado certificadoSalvo = certificadoService.salvarOuAtualizar(dto);
+            String mensagem = dto.id() != null
+                    ? "Certificado '" + certificadoSalvo.getAssinatura() + "' atualizado com sucesso!"
+                    : "Certificado '" + certificadoSalvo.getAssinatura() + "' criado com sucesso!";
+            redirectAttributes.addFlashAttribute("message", mensagem);
+            return "redirect:/certificado/listagem";
+        } catch (EntityNotFoundException exception){
+            redirectAttributes.addFlashAttribute("Erro", exception.getMessage());
+            return "redirect:/certificado/formulario" + (dto.id() != null ? "?id=" + dto.id() : "");
         }
     }
 
@@ -75,9 +81,11 @@ public class CertificadoController {
     @Transactional
     public String deletarCertificado(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes){
         try {
-
-        }catch (){
-
+            certificadoService.apagarPorId(id);
+            redirectAttributes.addFlashAttribute("message", "O certificado " + id + " foi deletado.");
+      }catch (Exception exception){
+            redirectAttributes.addFlashAttribute("message", exception.getMessage());
         }
+        return "redirect:/certificado/listagem";
     }
 }
