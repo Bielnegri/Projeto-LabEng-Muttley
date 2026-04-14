@@ -1,5 +1,5 @@
 package com.fatec.muttley.participante;
 
-public class ParticipanteRepository {
+public interface ParticipanteRepository {
     
 }

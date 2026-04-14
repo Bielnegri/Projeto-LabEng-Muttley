@@ -1,5 +1,5 @@
 package com.fatec.muttley.evento;
 
-public class EventoRepository {
+public interface EventoRepository {
     
 }
