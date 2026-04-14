@@ -34,7 +34,7 @@ public class MedalhaController {
         if (id != null) {
             //edição: Carrega dados existentes
             Medalha medalha = medalhaService.procurarPorId(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Medalha não encontrado"));
+                    .orElseThrow(() -> new EntityNotFoundException("Medalha não encontrada"));
             dto = medalhaMapper.toAtualizacaoDto(medalha);
         } else {
             // criação: DTO vazio
