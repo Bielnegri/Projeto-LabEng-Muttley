@@ -19,25 +19,47 @@
                             Início
                     </a></li>
 
-                    <!-- Dropdown de Marcas -->
+                    <!-- Dropdown de Alunos -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" id="filmesDropdown"
+                        <a class="nav-link dropdown-toggle" id="alunosDropdown"
                            role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                           th:classappend="${activePage == '' || activePage == 'caminhao'} ? 'active' : ''"
+                           th:classappend="${activePage == '' || activePage == 'aluno'} ? 'active' : ''"
                            style="cursor: pointer;"> <i class="fas fa-film me-1"></i>
-                            caminhao
+                            Aluno
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="filmesDropdown">
+                        <ul class="dropdown-menu" aria-labelledby="alunosDropdown">
                             <li><a class="dropdown-item"
-                                   th:classappend="${activePage == 'caminhao'} ? 'active' : ''"
-                                   th:href="@{/caminhao}"> <i class="fas fa-list me-1"></i> Listagem Caminhao</a>
+                                   th:classappend="${activePage == 'aluno'} ? 'active' : ''"
+                                   th:href="@{/aluno/listagem}"> <i class="fas fa-list me-1"></i>Listar Alunos</a>
                             </li>
                             <li><a class="dropdown-item"
-                               th:classappend="${activePage == 'caminhao'} ? 'active' : ''"
-                               th:href="@{/caminhao/formulario}"> <i class="fas fa-star me-1"></i> Cadastrar Caminhao
+                               th:classappend="${activePage == 'aluno'} ? 'active' : ''"
+                               th:href="@{/aluno/formulario}"> <i class="fas fa-star me-1"></i> Cadastrar Aluno
                             </a></li>
                         </ul>
                     </li>
+
+                    <!-- Dropdown de Professores -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="professorDropdown"
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                           th:classappend="${activePage == '' || activePage == 'aluno'} ? 'active' : ''"
+                           style="cursor: pointer;"> <i class="fas fa-film me-1"></i>
+                            Professor
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="professorDropdown">
+                            <li><a class="dropdown-item"
+                                   th:classappend="${activePage == 'professor'} ? 'active' : ''"
+                                   th:href="@{/professor/listagem}"> <i class="fas fa-list me-1"></i>Listar Professores</a>
+                            </li>
+                            <li><a class="dropdown-item"
+                                   th:classappend="${activePage == 'professor'} ? 'active' : ''"
+                                   th:href="@{/professor/formulario}"> <i class="fas fa-star me-1"></i> Cadastrar Professor
+                            </a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Dropdown de -->
                 </ul>
 
                 <div class="d-flex align-items-center">
