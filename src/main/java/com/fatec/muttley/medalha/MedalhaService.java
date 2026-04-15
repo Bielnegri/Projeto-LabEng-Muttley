@@ -47,6 +47,10 @@ public class MedalhaService {
         return medalhaRepository.findAll(Sort.by("nome").ascending());
     }
 
+    public void apagarPorId (Long id) {
+        medalhaRepository.deleteById(id);
+    }
+
     public Optional<Medalha> procurarPorId(Long id) {
         return medalhaRepository.findById(id);
     }
