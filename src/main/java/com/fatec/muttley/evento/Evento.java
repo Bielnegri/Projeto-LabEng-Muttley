@@ -2,10 +2,14 @@ package com.fatec.muttley.evento;
 
 import java.sql.Date;
 
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "evento")
 public class Evento {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_evento")
     private long id;
     private String tema;
     private String local;

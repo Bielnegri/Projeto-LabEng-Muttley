@@ -22,7 +22,7 @@ import lombok.Setter;
 public class Aluno {
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name = "aluno_id")
+	@Column(name = "id_aluno")
 	private Long id;
 	private String nome;
 	private String email;

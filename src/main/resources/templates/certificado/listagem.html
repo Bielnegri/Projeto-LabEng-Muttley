@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Listagem Certificado')}"></head>
+<body>
+<header th:replace="~{fragmentos/header :: header(activePage='Certificado')}"></header>
+<div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
+    <h2 class="text-center">Lista de Certificados</h2>
+
+    <div th:if="${message != null}"
+         class="alert alert-success alert-dismissible fade show text-center"
+         role="alert">
+        [[${message}]]
+        <button type="button" class="close btn-sm" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="mb-3">
+        <a href="/certificado/formulario" class="btn btn-primary">Novo Certificado</a>
+    </div>
+
+    <div th:if="${listaCertificado != null and listaCertificado.size() > 0}">
+        <table class="table table-hover table-responsive-xl">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Data de Emissão</th>
+                <th scope="col">Assinatura</th>
+                <th scope="col">Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="certificado : ${listaCertificado}">
+                <td th:text="${certificado.id}"></td>
+                <td th:text="${certificado.dataEmissao}"></td>
+                <td th:text="${certificado.assinatura}"></td>
+                <td>
+                    <a th:href="@{'/certificado/formulario/' + ${certificado.id}}"
+                       title="Editar o Certificado"
+                       class="fa-regular fa-pen-to-square icon-dark"></a> &nbsp;
+                    <a th:href="@{'/certificado/delete/' + ${certificado.id}}"
+                       th:certificadoTitle="${certificado.id}" id="btnDelete"
+                       title="Apagar este certificado"
+                       class="fa-regular fa-trash-can icon-dark btn-delete">
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:if="${listaCertificado == null or listaCertificado.size() == 0}">
+        <p class="text-center">Nenhum certificado cadastrado.</p>
+    </div>
+</div>
+<div th:replace="~{fragmentos/footer :: footer}"></div>
+</body>
+</html>

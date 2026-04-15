@@ -27,12 +27,12 @@ import jakarta.persistence.Table;
 public class Medalha {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name = "medalha_id")
+    @Column(name = "id_medalha")
     private Long id;
     private String nome;
     private String descricao;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "aluno_id", referencedColumnName = "aluno_id")
+    @JoinColumn(name = "id_aluno", referencedColumnName = "id_aluno")
     private Aluno aluno;
 
     public Medalha(AtualizacaoMedalha dados, Aluno aluno) {
