@@ -40,7 +40,7 @@ public class Certificado {
     private String assinatura;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_aluno", referencedColumnName = "aluno_id")
+    @JoinColumn(name = "id_aluno", referencedColumnName = "id_aluno")
     private Aluno aluno;
 
     @ManyToOne(fetch = FetchType.LAZY)
