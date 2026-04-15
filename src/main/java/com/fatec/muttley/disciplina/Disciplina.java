@@ -36,7 +36,7 @@ public class Disciplina {
     private String turno;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_professor", referencedColumnName = "professor_id")
+    @JoinColumn(name = "id_professor", referencedColumnName = "id_professor")
     private Professor professor;
 
     public Disciplina(AtualizacaoDisciplina dados, Professor professor) {

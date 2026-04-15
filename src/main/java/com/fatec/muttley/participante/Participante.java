@@ -3,10 +3,11 @@ package com.fatec.muttley.participante;
 import jakarta.persistence.*;
 
 @Entity
-@Table
+@Table(name = "participante")
 public class Participante {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_participante")
     private long id;
     private int inscricao;
 
