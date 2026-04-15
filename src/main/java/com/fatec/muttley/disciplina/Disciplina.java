@@ -1,51 +1,59 @@
 package com.fatec.muttley.disciplina;
 
-import jakarta.persistence.Id;
+import com.fatec.muttley.professor.Professor;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = "disciplina")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(of ="id")
 public class Disciplina {
+
     @Id
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_disciplina")
+    private Long id;
+
     private String nome;
     private String descricao;
     private String turno;
 
-    public Disciplina() {
-        super();
-    }
-    public Disciplina(String nome, String descricao, String turno) {
-        this.nome = nome;
-        this.descricao = descricao;
-        this.turno = turno;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_professor", referencedColumnName = "professor_id")
+    private Professor professor;
+
+    public Disciplina(AtualizacaoDisciplina dados, Professor professor) {
+        this.nome = dados.nome();
+        this.descricao = dados.descricao();
+        this.turno = dados.turno();
+        this.professor = professor;
     }
 
-    public long getId() {
-        return id;
-    }
-    public String getNome() {
-        return nome;
-    }
-    public String getDescricao() {
-        return descricao;
-    }
-    public String getTurno() {
-        return turno;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-    public void setTurno(String turno) {
-        this.turno = turno;
-    }
-
-    @Override
-    public String toString() {
-        return nome + "\n" + descricao + "\n" + turno;
+    public void atualizarInformacoes(AtualizacaoDisciplina dados, Professor professor) {
+        if (dados.nome() != null)
+            this.nome = dados.nome();
+        if (dados.descricao() != null)
+            this.descricao = dados.descricao();
+        if (dados.turno() != null)
+            this.turno = dados.turno();
+        if (professor != null)
+            this.professor = professor;
     }
 }
