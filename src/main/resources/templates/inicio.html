@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Inicio | Muttley')}"></head>
+<body>
+    <header th:replace="~{fragmentos/header :: header(activePage='inicio')}"></header>
+
+    <main class="container py-5">
+        <section class="text-center mb-5">
+            <h1 class="display-5 fw-bold">Bem-vindo ao Muttley</h1>
+<!--            <p class="lead text-muted">Sistema academico para gerenciamento de alunos, professores e eventos.</p>-->
+        </section>
+
+        <section class="row g-4">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h5 card-title">Alunos</h2>
+                        <p class="card-text">Cadastre e acompanhe os alunos da instituicao.</p>
+                        <a th:href="@{/aluno/listagem}" class="btn btn-primary">Ver alunos</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h5 card-title">Professores</h2>
+                        <p class="card-text">Gerencie o cadastro e as informacoes dos professores.</p>
+                        <a th:href="@{/professor/listagem}" class="btn btn-primary">Ver professores</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h5 card-title">Disciplinas</h2>
+                        <p class="card-text">Consulte e mantenha atualizadas as disciplinas cadastradas.</p>
+                        <a th:href="@{/disciplina/listagem}" class="btn btn-primary">Ver disciplinas</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h5 card-title">Eventos</h2>
+                        <p class="card-text">Visualize e organize os eventos academicos.</p>
+                        <a th:href="@{/evento/listagem}" class="btn btn-primary">Ver eventos</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h5 card-title">Participantes</h2>
+                        <p class="card-text">Gerencie os participantes vinculados aos eventos e atividades.</p>
+                        <a th:href="@{/participante/listagem}" class="btn btn-primary">Ver participantes</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h5 card-title">Certificados</h2>
+                        <p class="card-text">Acompanhe a emissao e a listagem dos certificados gerados.</p>
+                        <a th:href="@{/certificado/listagem}" class="btn btn-primary">Ver certificados</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h5 card-title">Medalhas</h2>
+                        <p class="card-text">Visualize e administre as medalhas disponiveis no sistema.</p>
+                        <a th:href="@{/medalha/listagem}" class="btn btn-primary">Ver medalhas</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="mt-5" th:replace="~{fragmentos/footer :: footer}"></div>
+</body>
+</html>
