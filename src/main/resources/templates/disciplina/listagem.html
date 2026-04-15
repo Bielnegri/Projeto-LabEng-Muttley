@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Listagem Disciplina')}"></head>
+<body>
+<header th:replace="~{fragmentos/header :: header(activePage='Disciplina')}"></header>
+<div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
+  <h2 class="text-center">Lista de Disciplinas</h2>
+
+  <div th:if="${message != null}"
+       class="alert alert-success alert-dismissible fade show text-center"
+       role="alert">
+    [[${message}]]
+    <button type="button" class="close btn-sm" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="mb-3">
+    <a href="/disciplina/formulario" class="btn btn-primary">Nova Disciplina</a>
+  </div>
+
+  <div th:if="${listaDisciplina != null and listaDisciplina.size() > 0}">
+    <table class="table table-hover table-responsive-xl">
+      <thead class="thead-light">
+      <tr>
+        <th scope="col">Nome</th>
+        <th scope="col">Descrição</th>
+        <th scope="col">Turno</th>
+        <th scope="col">Ações</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="disciplina : ${listaDisciplina}">
+        <td th:text="${disciplina.nome}"></td>
+        <td th:text="${disciplina.descricao}"></td>
+        <td th:text="${disciplina.turno}"></td>
+        <td>
+          <a th:href="@{'/disciplina/formulario/' + ${disciplina.id}}"
+             title="Editar a Disciplina"
+             class="fa-regular fa-pen-to-square icon-dark"></a> &nbsp;
+          <a th:href="@{'/disciplina/delete/' + ${disciplina.id}}"
+             th:disciplinaTitle="${disciplina.nome}" id="btnDelete"
+             title="Apagar esta disciplina"
+             class="fa-regular fa-trash-can icon-dark btn-delete">
+          </a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div th:if="${listaDisciplina == null or listaDisciplina.size() == 0}">
+    <p class="text-center">Nenhuma disciplina cadastrada.</p>
+  </div>
+</div>
+<div th:replace="~{fragmentos/footer :: footer}"></div>
+</body>
+</html>

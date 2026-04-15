@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Manter Certificado')}"></head>
+<body>
+<header th:replace="~{fragmentos/header :: header(activePage='Certificado')}"></header>
+<div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
+    <h2 class="text-center" th:text="(${certificado != null} ? 'Editar Certificado' : 'Novo Certificado')"></h2>
+
+    <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center" role="alert">
+        [[${message}]]
+        <button type="button" class="close btn-sm" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <form th:action="@{/certificado/salvar}" th:object="${certificado}" method="post">
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="form-group">
+            <label for="dataEmissao"> Data de Emissão: </label>
+            <input class="form-control" type="date" th:field="*{dataEmissao}"
+                   th:classappend="${#fields.hasErrors('dataEmissao')} ? 'is-invalid'">
+            <div th:errors="*{dataEmissao}" class="invalid-feedback"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="assinatura"> Assinatura: </label>
+            <input class="form-control" type="text" th:field="*{assinatura}"
+                   th:classappend="${#fields.hasErrors('assinatura')} ? 'is-invalid'">
+            <div th:errors="*{assinatura}" class="invalid-feedback"></div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <span th:text="${certificado.id != null} ? 'Atualizar' : 'Cadastrar'"></span>
+        </button>
+        <a th:href="@{/certificado/listagem}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+<div th:replace="~{fragmentos/footer :: footer}"></div>
+</body>
+</html>
