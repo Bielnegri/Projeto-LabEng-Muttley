@@ -1,5 +1,10 @@
 package com.fatec.muttley.participante;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
+@Entity
+@Table
 public class Participante {
     private long id;
     private int inscricao;

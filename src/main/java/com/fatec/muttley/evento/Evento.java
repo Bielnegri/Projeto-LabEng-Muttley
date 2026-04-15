@@ -2,8 +2,12 @@ package com.fatec.muttley.evento;
 
 import java.sql.Date;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
+@Entity
+@Table
 public class Evento {
     @Id
     private long id;
