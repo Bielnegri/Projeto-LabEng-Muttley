@@ -60,13 +60,19 @@ public class DisciplinaController {
 
     @PostMapping("/salvar")
     public String salvar(@ModelAttribute("disciplina")@Valid AtualizacaoDisciplina dto, BindingResult result, RedirectAttributes redirectAttributes, Model model){
-        if (){
-
+        if (result.hasErrors()){
+            return "disciplina/formulario";
         }
         try{
-
-        }catch (){
-
+            Disciplina disciplinaSalva = disciplinaService.salvarOuAtualizar(dto);
+            String mensagem = dto.id() != null
+                ? "Disciplina '"+disciplinaSalva.getNome() +"' atualizada com êxito"
+                : "Disicplina '"+disciplinaSalva.getNome()+"' criada com êxito";
+            redirectAttributes.addFlashAttribute("message", mensagem);
+            return "redirect:/certificado/listagem";
+        }catch (EntityNotFoundException exception){
+            redirectAttributes.addFlashAttribute("erro", exception.getMessage());
+            return "redirect:/certificado/formulario" + (dto.id() != null ? "?id= " + dto.id() : "");
         }
     }
 
@@ -74,9 +80,11 @@ public class DisciplinaController {
     @Transactional
     public String deletarDisciplina(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes){
         try{
-
-        }catch (){
-
+            disciplinaService.apagarPorId(id);
+            redirectAttributes.addFlashAttribute("message", "O aluno " + id + " foi deletado.");
+        }catch (Exception exception){
+            redirectAttributes.addFlashAttribute("message", exception.getMessage());
         }
+        return  "redirect:/disciplina/listagem";
     }
 }
