@@ -54,6 +54,7 @@ public class MedalhaController {
             if(id != null) {
                 Medalha medalha = medalhaService.procurarPorId(id).orElseThrow(() ->
                         new EntityNotFoundException("Medalha não encontrada"));
+                model.addAttribute("alunos", alunoService.procurarTodos());
                 //mapear medalha para AtualizacaoMedalha
                 dto = medalhaMapper.toAtualizacaoDto(medalha);
                 model.addAttribute("medalha", dto);
@@ -73,6 +74,7 @@ public class MedalhaController {
                          Model model) {
         if (result.hasErrors()) {
             // Recarrega dados necessários para mostrar erros
+            model.addAttribute("alunos", alunoService.procurarTodos());
             return "medalha/formulario";
         }
         try {
