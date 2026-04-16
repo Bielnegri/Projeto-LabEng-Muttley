@@ -2,7 +2,7 @@
 <header th:fragment="header(activePage)">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#"> <i class="fas fa-truck me-2"></i>FrotaLux </a>
+            <a class="navbar-brand" href="#"> Muttley </a>
 
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -24,7 +24,7 @@
                         <a class="nav-link dropdown-toggle" id="alunosDropdown"
                            role="button" data-bs-toggle="dropdown" aria-expanded="false"
                            th:classappend="${activePage == '' || activePage == 'aluno'} ? 'active' : ''"
-                           style="cursor: pointer;"> <i class="fas fa-film me-1"></i>
+                           style="cursor: pointer;"> <i class="fas fa-user-graduate me-1"></i>
                             Aluno
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="alunosDropdown">
@@ -34,7 +34,7 @@
                             </li>
                             <li><a class="dropdown-item"
                                th:classappend="${activePage == 'aluno'} ? 'active' : ''"
-                               th:href="@{/aluno/formulario}"> <i class="fas fa-star me-1"></i> Cadastrar Aluno
+                               th:href="@{/aluno/formulario}"> <i class="fas fa-plus-circle me-1"></i> Cadastrar Aluno
                             </a></li>
                         </ul>
                     </li>
@@ -43,8 +43,8 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="professorDropdown"
                            role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                           th:classappend="${activePage == '' || activePage == 'aluno'} ? 'active' : ''"
-                           style="cursor: pointer;"> <i class="fas fa-film me-1"></i>
+                           th:classappend="${activePage == '' || activePage == 'professor'} ? 'active' : ''"
+                           style="cursor: pointer;"> <i class="fas fa-chalkboard-teacher me-1"></i>
                             Professor
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="professorDropdown">
@@ -54,7 +54,7 @@
                             </li>
                             <li><a class="dropdown-item"
                                    th:classappend="${activePage == 'professor'} ? 'active' : ''"
-                                   th:href="@{/professor/formulario}"> <i class="fas fa-star me-1"></i> Cadastrar Professor
+                                   th:href="@{/professor/formulario}"> <i class="fas fa-plus-circle me-1"></i> Cadastrar Professor
                             </a></li>
                         </ul>
                     </li>
@@ -64,7 +64,7 @@
                         <a class="nav-link dropdown-toggle" id="disciplinaDropdown"
                            role="button" data-bs-toggle="dropdown" aria-expanded="false"
                            th:classappend="${activePage == '' || activePage == 'disciplina'} ? 'active' : ''"
-                           style="cursor: pointer;"> <i class="fas fa-film me-1"></i>
+                           style="cursor: pointer;"> <i class="fas fa-book me-1"></i>
                             Disciplina
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="disciplinaDropdown">
@@ -74,7 +74,7 @@
                             </li>
                             <li><a class="dropdown-item"
                                    th:classappend="${activePage == 'disciplina'} ? 'active' : ''"
-                                   th:href="@{/disciplina/formulario}"> <i class="fas fa-star me-1"></i> Cadastrar Disciplina
+                                   th:href="@{/disciplina/formulario}"> <i class="fas fa-plus-circle me-1"></i> Cadastrar Disciplina
                             </a></li>
                         </ul>
                     </li>
@@ -83,8 +83,8 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="eventoDropdown"
                            role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                           th:classappend="${activePage == '' || activePage == 'disciplina'} ? 'active' : ''"
-                           style="cursor: pointer;"> <i class="fas fa-film me-1"></i>
+                           th:classappend="${activePage == '' || activePage == 'evento'} ? 'active' : ''"
+                           style="cursor: pointer;"> <i class="fas fa-calendar-alt me-1"></i>
                             Evento
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="eventoDropdown">
@@ -94,7 +94,7 @@
                             </li>
                             <li><a class="dropdown-item"
                                    th:classappend="${activePage == 'evento'} ? 'active' : ''"
-                                   th:href="@{/evento/formulario}"> <i class="fas fa-star me-1"></i> Cadastrar Evento
+                                   th:href="@{/evento/formulario}"> <i class="fas fa-plus-circle me-1"></i> Cadastrar Evento
                             </a></li>
                         </ul>
                     </li>
@@ -103,8 +103,8 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="medalhaDropdown"
                            role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                           th:classappend="${activePage == '' || activePage == 'disciplina'} ? 'active' : ''"
-                           style="cursor: pointer;"> <i class="fas fa-film me-1"></i>
+                           th:classappend="${activePage == '' || activePage == 'medalha'} ? 'active' : ''"
+                           style="cursor: pointer;"> <i class="fas fa-medal me-1"></i>
                             Medalha
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="medalhaDropdown">
@@ -114,27 +114,7 @@
                             </li>
                             <li><a class="dropdown-item"
                                    th:classappend="${activePage == 'medalha'} ? 'active' : ''"
-                                   th:href="@{/medalha/formulario}"> <i class="fas fa-star me-1"></i> Cadastrar Medalha
-                            </a></li>
-                        </ul>
-                    </li>
-
-                    <!-- Dropdown de Participantes -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" id="participanteDropdown"
-                           role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                           th:classappend="${activePage == '' || activePage == 'participante'} ? 'active' : ''"
-                           style="cursor: pointer;"> <i class="fas fa-film me-1"></i>
-                            Participante
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="participanteDropdown">
-                            <li><a class="dropdown-item"
-                                   th:classappend="${activePage == 'participante'} ? 'active' : ''"
-                                   th:href="@{/participante/listagem}"> <i class="fas fa-list me-1"></i>Listar Participantes</a>
-                            </li>
-                            <li><a class="dropdown-item"
-                                   th:classappend="${activePage == 'participante'} ? 'active' : ''"
-                                   th:href="@{/participante/formulario}"> <i class="fas fa-star me-1"></i> Cadastrar Participante
+                                   th:href="@{/medalha/formulario}"> <i class="fas fa-plus-circle me-1"></i> Cadastrar Medalha
                             </a></li>
                         </ul>
                     </li>
