@@ -35,7 +35,7 @@ public class CertificadoController {
         } else {
             dto = new AtualizacaoCertificado(null, null, "");
         }
-        model.addAttribute("aluno", dto);
+        model.addAttribute("certificado", dto);
         return "certificado/formulario";
     }
 
