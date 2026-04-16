@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Listagem Medalha')}"></head>
+<body>
+<header th:replace="~{fragmentos/header :: header(activePage='Medalha')}"></header>
+<div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
+    <h2 class="text-center"
+        th:text="${medalha!= null} ? 'Editar Medalha' : 'Lista Medalha'"></h2>
+    <div th:if="${message != null}"
+         class="alert alert-success alert-dismissible fade show text-center"
+         role="alert">
+        [[${message}]]
+        <button type="button" class="close btn-sm" data-dismiss="alert"
+                aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <a href="/medalha/formulario">Novo</a>
+    <div th:if="${listaMedalhas.size() > 0}">
+        <table class="table table-hover table-responsive-xl">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Aluno</th>
+                <th scope="col">Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="medalha : ${listaMedalhas}">
+                <td th:text="${medalha.nome}"></td>
+                <td th:text="${medalha.descricao}"></td>
+                <td th:text="${medalha.aluno.nome}"></td>
+                <td><a th:href="@{'/medalha/formulario/' + ${medalha.id}}"
+                       title="Editar a Medalha"
+                       class="fa-regular fa-pen-to-square icon-dark"></a> &nbsp;
+                    <a
+                        th:href="@{'/medalha/delete/' + ${medalha.id}}"
+                        th:medalhaTitle="${medalha.nome}" id="btnDelete"
+                        title="Apague esta medalha"
+                        class="fa-regular fa-trash-can icon-dark btn-delete">
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div th:replace="fragmentos/footer :: footer"></div>
+</body>
+</html>
