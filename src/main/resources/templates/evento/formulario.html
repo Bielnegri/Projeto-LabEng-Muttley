@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Manter Evento')}"></head>
+<body>
+
+<header th:replace="~{fragmentos/header :: header(activePage='Evento')}"></header>
+
+<div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
+
+    <h2 class="text-center"
+        th:text="(${evento.id != null} ? 'Editar Evento' : 'Novo Evento')"></h2>
+
+    <div th:if="${message != null}"
+         class="alert alert-success alert-dismissible fade show text-center"
+         role="alert">
+        [[${message}]]
+        <button type="button" class="close btn-sm" data-dismiss="alert"
+                aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div th:if="${erro != null}"
+         class="alert alert-danger text-center"
+         role="alert">
+        [[${erro}]]
+    </div>
+
+    <form th:action="@{/evento/salvar}" th:object="${evento}" method="post">
+
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="form-group">
+            <label for="tema">Tema:</label>
+            <input class="form-control" type="text" th:field="*{tema}"
+                   th:classappend="${#fields.hasErrors('tema')} ? 'is-invalid'">
+            <div th:errors="*{tema}" class="invalid-feedback"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="local">Local:</label>
+            <input class="form-control" type="text" th:field="*{local}"
+                   th:classappend="${#fields.hasErrors('local')} ? 'is-invalid'">
+            <div th:errors="*{local}" class="invalid-feedback"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="data">Data:</label>
+            <input class="form-control" type="date" th:field="*{data}"
+                   th:classappend="${#fields.hasErrors('data')} ? 'is-invalid'">
+            <div th:errors="*{data}" class="invalid-feedback"></div>
+        </div>
+        <br><br>
+        <button type="submit" class="btn btn-primary">
+            <span th:text="${evento.id != null} ? 'Atualizar' : 'Cadastrar'"></span>
+        </button>
+
+        <a th:href="@{/evento/listagem}" class="btn btn-secondary">Cancelar</a>
+
+    </form>
+</div>
+
+<div th:replace="~{fragmentos/footer :: footer}"></div>
+
+</body>
+</html>
