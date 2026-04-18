@@ -19,7 +19,7 @@
     <a href="/disciplina/formulario" class="btn btn-primary">Nova Disciplina</a>
   </div>
 
-  <div th:if="${listaDisciplina != null and listaDisciplina.size() > 0}">
+  <div th:if="${listaDisciplinas != null and listaDisciplinas.size() > 0}">
     <table class="table table-hover table-responsive-xl">
       <thead class="thead-light">
       <tr>
@@ -30,7 +30,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr th:each="disciplina : ${listaDisciplina}">
+      <tr th:each="disciplina : ${listaDisciplinas}">
         <td th:text="${disciplina.nome}"></td>
         <td th:text="${disciplina.descricao}"></td>
         <td th:text="${disciplina.turno}"></td>
@@ -48,7 +48,7 @@
       </tbody>
     </table>
   </div>
-  <div th:if="${listaDisciplina == null or listaDisciplina.size() == 0}">
+  <div th:if="${listaDisciplinas == null or listaDisciplinas.size() == 0}">
     <p class="text-center">Nenhuma disciplina cadastrada.</p>
   </div>
 </div>

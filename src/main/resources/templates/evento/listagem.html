@@ -9,7 +9,6 @@
 
     <h2 class="text-center">Listagem de Eventos</h2>
 
-    <!-- Mensagem de sucesso -->
     <div th:if="${message != null}"
          class="alert alert-success alert-dismissible fade show text-center"
          role="alert">
@@ -19,29 +18,28 @@
         </button>
     </div>
 
-    <!-- Mensagem de erro -->
     <div th:if="${erro != null}"
          class="alert alert-danger text-center"
          role="alert">
         [[${erro}]]
     </div>
 
-    <!-- Botão novo -->
     <div class="mb-3 text-right">
         <a th:href="@{/evento/formulario}" class="btn btn-primary">
             Novo Evento
         </a>
     </div>
 
-    <!-- Tabela -->
     <table class="table table-striped table-bordered">
         <thead class="thead-dark">
         <tr>
             <th>ID</th>
             <th>Tema</th>
+            <th>Disciplina</th>
             <th>Local</th>
             <th>Data</th>
-            <th style="width: 180px;">Ações</th>
+            <th>Horario</th>
+            <th style="width: 180px;">Acoes</th>
         </tr>
         </thead>
 
@@ -49,8 +47,10 @@
         <tr th:each="evento : ${listaEventos}">
             <td th:text="${evento.id}"></td>
             <td th:text="${evento.tema}"></td>
+            <td th:text="${evento.disciplina != null ? evento.disciplina.nome : '-'}"></td>
             <td th:text="${evento.local}"></td>
             <td th:text="${#dates.format(evento.data, 'dd/MM/yyyy')}"></td>
+            <td th:text="${evento.horario}"></td>
 
             <td class="text-center">
                 <a th:href="@{/evento/formulario/{id}(id=${evento.id})}"
@@ -67,7 +67,7 @@
         </tr>
 
         <tr th:if="${#lists.isEmpty(listaEventos)}">
-            <td colspan="6" class="text-center">
+            <td colspan="7" class="text-center">
                 Nenhum evento cadastrado.
             </td>
         </tr>
