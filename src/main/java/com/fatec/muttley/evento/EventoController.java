@@ -1,5 +1,6 @@
 package com.fatec.muttley.evento;
 
+import com.fatec.muttley.disciplina.DisciplinaService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -20,6 +21,9 @@ public class EventoController {
     @Autowired
     private EventoMapper eventoMapper;
 
+    @Autowired
+    private DisciplinaService disciplinaService;
+
     @GetMapping("/listagem")
     public String carregaPaginaListagem(Model model) {
         model.addAttribute("listaEventos", eventoService.procurarTodos());
@@ -31,12 +35,13 @@ public class EventoController {
         AtualizacaoEvento dto;
         if (id != null) {
             Evento evento = eventoService.procurarPorId(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+                    .orElseThrow(() -> new EntityNotFoundException("Evento nao encontrado."));
             dto = eventoMapper.toAtualizacaoDto(evento);
         } else {
-            dto = new AtualizacaoEvento(null, "", "", null, "");
+            dto = new AtualizacaoEvento(null, "", "", null, "", null);
         }
         model.addAttribute("evento", dto);
+        model.addAttribute("disciplinas", disciplinaService.procurarTodas());
         return "evento/formulario";
     }
 
@@ -44,9 +49,10 @@ public class EventoController {
     public String carregaFormularioPorId(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             Evento evento = eventoService.procurarPorId(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+                    .orElseThrow(() -> new EntityNotFoundException("Evento nao encontrado."));
             AtualizacaoEvento dto = eventoMapper.toAtualizacaoDto(evento);
             model.addAttribute("evento", dto);
+            model.addAttribute("disciplinas", disciplinaService.procurarTodas());
             return "evento/formulario";
         } catch (EntityNotFoundException exception) {
             redirectAttributes.addFlashAttribute("erro", exception.getMessage());
@@ -57,8 +63,10 @@ public class EventoController {
     @PostMapping("/salvar")
     public String salvar(@ModelAttribute("evento") @Valid AtualizacaoEvento dto,
                          BindingResult result,
-                         RedirectAttributes redirectAttributes) {
+                         RedirectAttributes redirectAttributes,
+                         Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("disciplinas", disciplinaService.procurarTodas());
             return "evento/formulario";
         }
         try {
