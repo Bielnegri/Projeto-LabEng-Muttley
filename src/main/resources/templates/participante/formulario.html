@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Manter Participante')}"></head>
+<body>
+<header th:replace="~{fragmentos/header :: header(activePage='Participante')}"></header>
+
+<div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
+    <h2 class="text-center"
+        th:text="(${participante != null} ? 'Editar Participante' : 'Novo Participante')"></h2>
+
+    <div th:if="${message != null}"
+         class="alert alert-success alert-dismissible fade show text-center"
+         role="alert">
+        [[${message}]]
+        <button type="button" class="close btn-sm" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div th:if="${erro != null}"
+         class="alert alert-danger text-center"
+         role="alert">
+        [[${erro}]]
+    </div>
+
+    <form th:action="@{/participante/salvar}" th:object="${participante}" method="post">
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="form-group">
+            <label for="inscricao">Numero de inscricao:</label>
+            <input class="form-control" type="number" min="1" th:field="*{inscricao}"
+                   th:classappend="${#fields.hasErrors('inscricao')} ? 'is-invalid'">
+            <div th:errors="*{inscricao}" class="invalid-feedback"></div>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+            <label>Escolha um evento:</label>
+            <select th:field="*{eventoId}"
+                    class="form-control"
+                    th:classappend="${#fields.hasErrors('eventoId')} ? 'is-invalid'">
+                <option value="">-Selecione um evento-</option>
+                <option th:each="evento : ${eventos}"
+                        th:value="${evento.id}"
+                        th:text="${evento.tema}"></option>
+            </select>
+            <div th:errors="*{eventoId}" class="invalid-feedback"></div>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+            <label>Escolha um aluno:</label>
+            <select th:field="*{alunoId}"
+                    class="form-control"
+                    th:classappend="${#fields.hasErrors('alunoId')} ? 'is-invalid'">
+                <option value="">-Selecione um aluno-</option>
+                <option th:each="aluno : ${alunos}"
+                        th:value="${aluno.id}"
+                        th:text="${aluno.nome}"></option>
+            </select>
+            <div th:errors="*{alunoId}" class="invalid-feedback"></div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <span th:text="${participante.id != null} ? 'Atualizar' : 'Cadastrar'"></span>
+        </button>
+        <a th:href="@{/participante/listagem}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+<div th:replace="~{fragmentos/footer :: footer}"></div>
+</body>
+</html>

@@ -1,9 +1,17 @@
 package com.fatec.muttley.participante;
 
+import com.fatec.muttley.aluno.Aluno;
+import com.fatec.muttley.evento.Evento;
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "participante")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class Participante {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -11,29 +19,15 @@ public class Participante {
     private long id;
     private int inscricao;
 
-    public Participante() {
-        super();
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_evento", nullable = false)
+    private Evento evento;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_aluno", nullable = false)
+    private Aluno aluno;
+
     public Participante(int inscricao) {
         this.inscricao = inscricao;
-    }
-    
-    public long getId() {
-        return id;
-    }
-    public int getInscricao() {
-        return inscricao;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-    public void setInscricao(int inscricao) {
-        this.inscricao = inscricao;
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(inscricao);
     }
 }
