@@ -30,7 +30,7 @@ public class CertificadoService {
     }
 
     public List<Certificado> procurarTodos(){
-        return certificadoRepository.findAll(Sort.by("id").ascending());
+        return certificadoRepository.findAll(Sort.by("assinatura").ascending());
     }
 
     public void apagarPorId(Long id){
