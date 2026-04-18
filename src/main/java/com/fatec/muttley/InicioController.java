@@ -12,4 +12,9 @@ public class InicioController {
     public String carregarPaginaInicial() {
         return "inicio";
     }
+
+    @GetMapping
+    public String carregarIndex() {
+        return "inicio";
+    }
 }

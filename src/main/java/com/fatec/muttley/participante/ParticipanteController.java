@@ -1,5 +1,7 @@
 package com.fatec.muttley.participante;
 
+import com.fatec.muttley.aluno.AlunoService;
+import com.fatec.muttley.evento.EventoService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -20,6 +22,12 @@ public class ParticipanteController {
     @Autowired
     private ParticipanteMapper participanteMapper;
 
+    @Autowired
+    private AlunoService alunoService;
+
+    @Autowired
+    private EventoService eventoService;
+
     @GetMapping("/listagem")
     public String carregaPaginaListagem(Model model) {
         model.addAttribute("listaParticipantes", participanteService.procurarTodos());
@@ -31,12 +39,14 @@ public class ParticipanteController {
         AtualizacaoParticipante dto;
         if (id != null) {
             Participante participante = participanteService.procurarPorId(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Participante não encontrado."));
+                    .orElseThrow(() -> new EntityNotFoundException("Participante nao encontrado."));
             dto = participanteMapper.toAtualizacaoDto(participante);
         } else {
-            dto = new AtualizacaoParticipante(null, 0);
+            dto = new AtualizacaoParticipante(null, 0, null, null);
         }
         model.addAttribute("participante", dto);
+        model.addAttribute("alunos", alunoService.procurarTodos());
+        model.addAttribute("eventos", eventoService.procurarTodos());
         return "participante/formulario";
     }
 
@@ -44,9 +54,11 @@ public class ParticipanteController {
     public String carregaFormularioPorId(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             Participante participante = participanteService.procurarPorId(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Participante não encontrado."));
+                    .orElseThrow(() -> new EntityNotFoundException("Participante nao encontrado."));
             AtualizacaoParticipante dto = participanteMapper.toAtualizacaoDto(participante);
             model.addAttribute("participante", dto);
+            model.addAttribute("alunos", alunoService.procurarTodos());
+            model.addAttribute("eventos", eventoService.procurarTodos());
             return "participante/formulario";
         } catch (EntityNotFoundException exception) {
             redirectAttributes.addFlashAttribute("erro", exception.getMessage());
@@ -57,8 +69,11 @@ public class ParticipanteController {
     @PostMapping("/salvar")
     public String salvar(@ModelAttribute("participante") @Valid AtualizacaoParticipante dto,
                          BindingResult result,
-                         RedirectAttributes redirectAttributes) {
+                         RedirectAttributes redirectAttributes,
+                         Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("alunos", alunoService.procurarTodos());
+            model.addAttribute("eventos", eventoService.procurarTodos());
             return "participante/formulario";
         }
         try {
