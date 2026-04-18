@@ -4,7 +4,7 @@
 <body>
 <header th:replace="~{fragmentos/header :: header(activePage='Certificado')}"></header>
 <div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
-    <h2 class="text-center" th:text="(${certificado != null} ? 'Editar Certificado' : 'Novo Certificado')"></h2>
+    <h2 class="text-center" th:text="(${certificado.id != null} ? 'Editar Certificado' : 'Novo Certificado')"></h2>
 
     <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center" role="alert">
         [[${message}]]

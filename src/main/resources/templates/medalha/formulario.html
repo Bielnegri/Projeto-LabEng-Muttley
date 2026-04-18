@@ -6,7 +6,7 @@
         th:replace="~{fragmentos/header :: header(activePage='Medalha')}"></header>
 <div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
     <h2 class="text-center"
-        th:text="(${medalha != null} ? 'Editar Medalha' : 'Novo Medalha')"></h2>
+        th:text="(${medalha.id != null} ? 'Editar Medalha' : 'Novo Medalha')"></h2>
     <div th:if="${message != null}"
          class="alert alert-success alert-dismissible fade show text-center"
          role="alert">

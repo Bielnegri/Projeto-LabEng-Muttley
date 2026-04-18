@@ -6,7 +6,7 @@
 
 <div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
     <h2 class="text-center"
-        th:text="(${participante != null} ? 'Editar Participante' : 'Novo Participante')"></h2>
+        th:text="(${participante.id != null} ? 'Editar Participante' : 'Novo Participante')"></h2>
 
     <div th:if="${message != null}"
          class="alert alert-success alert-dismissible fade show text-center"

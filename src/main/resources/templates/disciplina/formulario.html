@@ -4,7 +4,7 @@
 <body>
 <header th:replace="~{fragmentos/header :: header(activePage='Disciplina')}"></header>
 <div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
-    <h2 class="text-center" th:text="(${disciplina != null} ? 'Editar Disciplina' : 'Nova Disciplina')"></h2>
+    <h2 class="text-center" th:text="(${disciplina.id != null} ? 'Editar Disciplina' : 'Nova Disciplina')"></h2>
 
     <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center" role="alert">
         [[${message}]]
