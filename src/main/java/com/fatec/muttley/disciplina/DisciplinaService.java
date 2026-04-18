@@ -15,8 +15,6 @@ public class DisciplinaService {
     private DisciplinaRepository disciplinaRepository;
     @Autowired
     private DisciplinaMapper disciplinaMapper;
-    @Autowired
-    private CertificadoRepository certificadoRepository;
 
     public Disciplina salvarOuAtualizar(AtualizacaoDisciplina dto){
         if (dto.id() != null){
@@ -35,7 +33,7 @@ public class DisciplinaService {
     }
 
     public void apagarPorId(Long id){
-        certificadoRepository.deleteById(id);
+        disciplinaRepository.deleteById(id);
     }
 
     public Optional<Disciplina> procurarPorId(Long id){
