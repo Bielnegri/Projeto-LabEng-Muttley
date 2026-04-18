@@ -118,6 +118,26 @@
                             </a></li>
                         </ul>
                     </li>
+
+                    <!-- Dropdown de Participantes -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="participanteDropdown"
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                           th:classappend="${activePage == '' || activePage == 'participante' || activePage == 'Participante'} ? 'active' : ''"
+                           style="cursor: pointer;"> <i class="fas fa-users me-1"></i>
+                            Participante
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="participanteDropdown">
+                            <li><a class="dropdown-item"
+                                   th:classappend="${activePage == 'participante' || activePage == 'Participante'} ? 'active' : ''"
+                                   th:href="@{/participante/listagem}"> <i class="fas fa-list me-1"></i>Listar Participantes</a>
+                            </li>
+                            <li><a class="dropdown-item"
+                                   th:classappend="${activePage == 'participante' || activePage == 'Participante'} ? 'active' : ''"
+                                   th:href="@{/participante/formulario}"> <i class="fas fa-plus-circle me-1"></i> Cadastrar Participante
+                            </a></li>
+                        </ul>
+                    </li>
                 </ul>
 
                 <div class="d-flex align-items-center">
