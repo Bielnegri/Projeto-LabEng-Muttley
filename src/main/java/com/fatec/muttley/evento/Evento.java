@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fatec.muttley.disciplina.Disciplina;
 import com.fatec.muttley.participante.Participante;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,6 +25,10 @@ public class Evento {
     private String local;
     private Date data;
     private String horario;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_disciplina")
+    private Disciplina disciplina;
 
     @OneToMany(mappedBy = "evento")
     private List<Participante> participantes = new ArrayList<>();
