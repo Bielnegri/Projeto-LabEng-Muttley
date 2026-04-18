@@ -1,5 +1,7 @@
 package com.fatec.muttley.evento;
 
+import com.fatec.muttley.disciplina.Disciplina;
+import com.fatec.muttley.disciplina.DisciplinaService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +30,9 @@ class EventoServiceTest {
     @Mock
     private EventoMapper eventoMapper;
 
+    @Mock
+    private DisciplinaService disciplinaService;
+
     @InjectMocks
     private EventoService eventoService;
 
@@ -38,14 +43,18 @@ class EventoServiceTest {
                 "Semana de Tecnologia",
                 "Auditorio",
                 Date.valueOf("2026-06-20"),
-                "19:00"
+                "19:00",
+                1L
         );
         Evento novo = new Evento();
         novo.setTema("Semana de Tecnologia");
         Evento salvo = new Evento();
         salvo.setId(1L);
         salvo.setTema("Semana de Tecnologia");
+        Disciplina disciplina = new Disciplina();
+        disciplina.setId(1L);
 
+        when(disciplinaService.procurarPorId(1L)).thenReturn(Optional.of(disciplina));
         when(eventoMapper.toEntityFromAtualizacao(dto)).thenReturn(novo);
         when(eventoRepository.save(novo)).thenReturn(salvo);
 
@@ -56,6 +65,7 @@ class EventoServiceTest {
         verify(eventoMapper).toEntityFromAtualizacao(dto);
         verify(eventoMapper, never()).updateEntityFromDto(any(), any());
         verify(eventoRepository).save(novo);
+        assertThat(novo.getDisciplina()).isEqualTo(disciplina);
     }
 
     @Test
@@ -65,12 +75,16 @@ class EventoServiceTest {
                 "Semana de Inovacao",
                 "Laboratorio",
                 Date.valueOf("2026-06-21"),
-                "20:00"
+                "20:00",
+                2L
         );
         Evento existente = new Evento();
         existente.setId(10L);
         existente.setTema("Evento Antigo");
+        Disciplina disciplina = new Disciplina();
+        disciplina.setId(2L);
 
+        when(disciplinaService.procurarPorId(2L)).thenReturn(Optional.of(disciplina));
         when(eventoRepository.findById(10L)).thenReturn(Optional.of(existente));
         when(eventoRepository.save(existente)).thenReturn(existente);
 
@@ -81,6 +95,7 @@ class EventoServiceTest {
         verify(eventoMapper).updateEntityFromDto(dto, existente);
         verify(eventoRepository).save(existente);
         verify(eventoMapper, never()).toEntityFromAtualizacao(any());
+        assertThat(existente.getDisciplina()).isEqualTo(disciplina);
     }
 
     @Test
@@ -90,7 +105,8 @@ class EventoServiceTest {
                 "Hackathon",
                 "Bloco B",
                 Date.valueOf("2026-07-01"),
-                "18:30"
+                "18:30",
+                null
         );
 
         when(eventoRepository.findById(99L)).thenReturn(Optional.empty());
@@ -100,6 +116,26 @@ class EventoServiceTest {
                 .hasMessageContaining("99");
 
         verify(eventoRepository).findById(99L);
+        verify(eventoRepository, never()).save(any());
+    }
+
+    @Test
+    void deveLancarExcecaoQuandoDisciplinaNaoExiste() {
+        AtualizacaoEvento dto = new AtualizacaoEvento(
+                null,
+                "Evento sem disciplina valida",
+                "Bloco C",
+                Date.valueOf("2026-08-02"),
+                "08:00",
+                999L
+        );
+
+        when(disciplinaService.procurarPorId(999L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> eventoService.salvarOuAtualizar(dto))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("Disciplina");
+
         verify(eventoRepository, never()).save(any());
     }
 
