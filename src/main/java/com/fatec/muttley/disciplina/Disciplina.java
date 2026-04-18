@@ -1,5 +1,6 @@
 package com.fatec.muttley.disciplina;
 
+import com.fatec.muttley.evento.Evento;
 import com.fatec.muttley.professor.Professor;
 
 import jakarta.persistence.Column;
@@ -10,12 +11,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "disciplina")
@@ -38,6 +43,9 @@ public class Disciplina {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_professor", referencedColumnName = "id_professor")
     private Professor professor;
+
+    @OneToMany(mappedBy = "disciplina")
+    private List<Evento> eventos = new ArrayList<>();
 
     public Disciplina(AtualizacaoDisciplina dados, Professor professor) {
         this.nome = dados.nome();

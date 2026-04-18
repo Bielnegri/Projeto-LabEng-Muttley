@@ -1,6 +1,5 @@
 package com.fatec.muttley.disciplina;
 
-import com.fatec.muttley.certificado.CertificadoService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -18,12 +17,10 @@ public class DisciplinaController {
         private DisciplinaService disciplinaService;
     @Autowired
         private DisciplinaMapper disciplinaMapper;
-    @Autowired
-    private CertificadoService certificadoService;
 
     @GetMapping("/listagem")
     public String carregaPaginaFormulario(Model model){
-        model.addAttribute("listaDisciplinas", certificadoService.procurarTodos());
+        model.addAttribute("listaDisciplinas", disciplinaService.procurarTodas());
         return "disciplina/listagem";
     }
 
@@ -51,7 +48,7 @@ public class DisciplinaController {
                 dto = disciplinaMapper.toAtualizacaoDto(disciplina);
                 model.addAttribute("disciplina", dto);
             }
-            return "aluno/formulario";
+            return "disciplina/formulario";
         } catch (EntityNotFoundException exception){
             redirectAttributes.addFlashAttribute("Erro", exception.getMessage());
             return "redirect:/disciplina/formulario";
@@ -69,10 +66,10 @@ public class DisciplinaController {
                 ? "Disciplina '"+disciplinaSalva.getNome() +"' atualizada com êxito"
                 : "Disicplina '"+disciplinaSalva.getNome()+"' criada com êxito";
             redirectAttributes.addFlashAttribute("message", mensagem);
-            return "redirect:/certificado/listagem";
+            return "redirect:/disciplina/listagem";
         }catch (EntityNotFoundException exception){
             redirectAttributes.addFlashAttribute("erro", exception.getMessage());
-            return "redirect:/certificado/formulario" + (dto.id() != null ? "?id= " + dto.id() : "");
+            return "redirect:/disciplina/formulario" + (dto.id() != null ? "?id= " + dto.id() : "");
         }
     }
 
