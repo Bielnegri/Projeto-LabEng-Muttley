@@ -1,5 +1,7 @@
 package com.fatec.muttley.participante;
 
+import com.fatec.muttley.aluno.Aluno;
+import com.fatec.muttley.evento.Evento;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,6 +18,14 @@ public class Participante {
     @Column(name = "id_participante")
     private long id;
     private int inscricao;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_evento", nullable = false)
+    private Evento evento;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_aluno", nullable = false)
+    private Aluno aluno;
 
     public Participante(int inscricao) {
         this.inscricao = inscricao;

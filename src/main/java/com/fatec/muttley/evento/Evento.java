@@ -1,7 +1,10 @@
 package com.fatec.muttley.evento;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.fatec.muttley.participante.Participante;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +24,9 @@ public class Evento {
     private String local;
     private Date data;
     private String horario;
+
+    @OneToMany(mappedBy = "evento")
+    private List<Participante> participantes = new ArrayList<>();
 
     public Evento(String tema, String local, Date data, String horario) {
         this.tema = tema;
