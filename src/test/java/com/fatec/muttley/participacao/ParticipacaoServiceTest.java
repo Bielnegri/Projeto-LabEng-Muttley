@@ -1,7 +1,6 @@
-package com.fatec.muttley.participante;
+package com.fatec.muttley.participacao;
 
 import com.fatec.muttley.aluno.Aluno;
-import com.fatec.muttley.aluno.AlunoService;
 import com.fatec.muttley.evento.Evento;
 import com.fatec.muttley.evento.EventoService;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,13 +19,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ParticipanteServiceTest {
+class ParticipacaoServiceTest {
 
     @Mock
-    private ParticipanteRepository participanteRepository;
+    private ParticipacaoRepository participacaoRepository;
 
     @Mock
-    private ParticipanteMapper participanteMapper;
+    private ParticipacaoMapper participacaoMapper;
 
     @Mock
     private AlunoService alunoService;
@@ -35,12 +34,12 @@ class ParticipanteServiceTest {
     private EventoService eventoService;
 
     @InjectMocks
-    private ParticipanteService participanteService;
+    private ParticipacaoService participacaoService;
 
     @Test
     void deveCriarParticipanteComAlunoEEvento() {
-        AtualizacaoParticipante dto = new AtualizacaoParticipante(null, 101, 1L, 2L);
-        Participante novo = new Participante();
+        AtualizacaoParticipacao dto = new AtualizacaoParticipacao(null, 101, 1L, 2L);
+        Participacao novo = new Participacao();
         novo.setInscricao(101);
 
         Aluno aluno = new Aluno();
@@ -50,20 +49,20 @@ class ParticipanteServiceTest {
 
         when(alunoService.procurarPorId(1L)).thenReturn(Optional.of(aluno));
         when(eventoService.procurarPorId(2L)).thenReturn(Optional.of(evento));
-        when(participanteMapper.toEntityFromAtualizacao(dto)).thenReturn(novo);
-        when(participanteRepository.save(novo)).thenReturn(novo);
+        when(participacaoMapper.toEntityFromAtualizacao(dto)).thenReturn(novo);
+        when(participacaoRepository.save(novo)).thenReturn(novo);
 
-        Participante resultado = participanteService.salvarOuAtualizar(dto);
+        Participacao resultado = participacaoService.salvarOuAtualizar(dto);
 
         assertThat(resultado.getAluno()).isEqualTo(aluno);
         assertThat(resultado.getEvento()).isEqualTo(evento);
-        verify(participanteRepository).save(novo);
+        verify(participacaoRepository).save(novo);
     }
 
     @Test
     void deveAtualizarParticipanteComAlunoEEvento() {
-        AtualizacaoParticipante dto = new AtualizacaoParticipante(10L, 202, 3L, 4L);
-        Participante existente = new Participante();
+        AtualizacaoParticipacao dto = new AtualizacaoParticipacao(10L, 202, 3L, 4L);
+        Participacao existente = new Participacao();
         existente.setId(10L);
         existente.setInscricao(200);
 
@@ -74,43 +73,43 @@ class ParticipanteServiceTest {
 
         when(alunoService.procurarPorId(3L)).thenReturn(Optional.of(aluno));
         when(eventoService.procurarPorId(4L)).thenReturn(Optional.of(evento));
-        when(participanteRepository.findById(10L)).thenReturn(Optional.of(existente));
-        when(participanteRepository.save(existente)).thenReturn(existente);
+        when(participacaoRepository.findById(10L)).thenReturn(Optional.of(existente));
+        when(participacaoRepository.save(existente)).thenReturn(existente);
 
-        Participante resultado = participanteService.salvarOuAtualizar(dto);
+        Participacao resultado = participacaoService.salvarOuAtualizar(dto);
 
         assertThat(resultado.getAluno()).isEqualTo(aluno);
         assertThat(resultado.getEvento()).isEqualTo(evento);
-        verify(participanteMapper).updateEntityFromDto(dto, existente);
-        verify(participanteRepository).save(existente);
+        verify(participacaoMapper).updateEntityFromDto(dto, existente);
+        verify(participacaoRepository).save(existente);
     }
 
     @Test
     void deveLancarExcecaoQuandoAlunoNaoEncontrado() {
-        AtualizacaoParticipante dto = new AtualizacaoParticipante(null, 101, 99L, 2L);
+        AtualizacaoParticipacao dto = new AtualizacaoParticipacao(null, 101, 99L, 2L);
         when(alunoService.procurarPorId(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> participanteService.salvarOuAtualizar(dto))
+        assertThatThrownBy(() -> participacaoService.salvarOuAtualizar(dto))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Aluno");
 
         verify(eventoService, never()).procurarPorId(2L);
-        verify(participanteRepository, never()).save(org.mockito.ArgumentMatchers.any());
+        verify(participacaoRepository, never()).save(org.mockito.ArgumentMatchers.any());
     }
 
     @Test
     void deveLancarExcecaoQuandoEventoNaoEncontrado() {
-        AtualizacaoParticipante dto = new AtualizacaoParticipante(null, 101, 1L, 98L);
+        AtualizacaoParticipacao dto = new AtualizacaoParticipacao(null, 101, 1L, 98L);
         Aluno aluno = new Aluno();
         aluno.setId(1L);
 
         when(alunoService.procurarPorId(1L)).thenReturn(Optional.of(aluno));
         when(eventoService.procurarPorId(98L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> participanteService.salvarOuAtualizar(dto))
+        assertThatThrownBy(() -> participacaoService.salvarOuAtualizar(dto))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Evento");
 
-        verify(participanteRepository, never()).save(org.mockito.ArgumentMatchers.any());
+        verify(participacaoRepository, never()).save(org.mockito.ArgumentMatchers.any());
     }
 }
