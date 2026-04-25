@@ -1,6 +1,6 @@
 package com.fatec.muttley.pessoa;
 
-import com.fatec.muttley.participante.Participante;
+import com.fatec.muttley.participacao.Participacao;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,7 +27,7 @@ public class Pessoa {
     private String cpf;
 
     @OneToMany(mappedBy = "pessoa")
-    private List<Participante> participantes = new ArrayList<>();
+    private List<Participacao> participacoes = new ArrayList<>();
 
     public Pessoa(AtualizacaoPessoa dados){
         this.nome = dados.nome();
