@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fatec.muttley.disciplina.Disciplina;
-import com.fatec.muttley.participante.Participante;
+import com.fatec.muttley.participacao.Participacao;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,7 +31,7 @@ public class Evento {
     private Disciplina disciplina;
 
     @OneToMany(mappedBy = "evento")
-    private List<Participante> participantes = new ArrayList<>();
+    private List<Participacao> participacaos = new ArrayList<>();
 
     public Evento(String tema, String local, Date data, String horario) {
         this.tema = tema;
