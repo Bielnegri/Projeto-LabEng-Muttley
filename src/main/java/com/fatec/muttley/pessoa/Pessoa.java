@@ -1,6 +1,7 @@
 package com.fatec.muttley.pessoa;
 
 import com.fatec.muttley.aluno.Aluno;
+import com.fatec.muttley.organizador.Organizador;
 import com.fatec.muttley.palestrante.Palestrante;
 import com.fatec.muttley.participacao.Participacao;
 import com.fatec.muttley.professor.Professor;
@@ -38,6 +39,9 @@ public class Pessoa {
     @OneToOne(mappedBy = "pessoa", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Palestrante palestrante;
 
+    @OneToOne(mappedBy = "pessoa", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Organizador organizador;
+
     @OneToMany(mappedBy = "pessoa")
     private List<Participacao> participacoes = new ArrayList<>();
 
@@ -69,5 +73,9 @@ public class Pessoa {
 
     public boolean isPalestrante(){
         return this.palestrante != null;
+    }
+
+    public boolean isOrganizador(){
+        return this.organizador != null;
     }
 }
