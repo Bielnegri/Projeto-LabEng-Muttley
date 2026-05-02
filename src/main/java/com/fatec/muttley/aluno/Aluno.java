@@ -1,6 +1,7 @@
 package com.fatec.muttley.aluno;
 
-import com.fatec.muttley.participante.Participante;
+import com.fatec.muttley.participacao.Participacao;
+import com.fatec.muttley.pessoa.Pessoa;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -23,30 +24,20 @@ public class Aluno {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_aluno")
 	private Long id;
-	private String nome;
-	private String email;
-	private String telefone;
 	private String instituicao;
 	private String matricula;
 
-	@OneToMany(mappedBy = "aluno")
-	private List<Participante> participantes = new ArrayList<>();
+	@OneToOne
+	@MapsId
+	@JoinColumn(name = "pessoa_id")
+	private Pessoa pessoa;
 
 	public Aluno(AtualizacaoAluno dados){
-        this.nome = dados.nome();
-        this.email = dados.email();
-		this.telefone = dados.telefone();
 		this.instituicao = dados.instituicao();
 		this.matricula = dados.matricula();
     }
 
 	public void atualizarInformacoes(AtualizacaoAluno dados) {
-		if (dados.nome() != null )
-			this.nome = dados.nome();
-		if (dados.email() != null)
-			this.email =dados.email();
-		if (dados.telefone() != null)
-			this.telefone =dados.telefone();
 		if (dados.instituicao() != null)
 			this.instituicao =dados.instituicao();
 		if (dados.matricula() != null)

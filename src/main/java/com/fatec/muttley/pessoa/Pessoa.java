@@ -1,5 +1,6 @@
 package com.fatec.muttley.pessoa;
 
+import com.fatec.muttley.aluno.Aluno;
 import com.fatec.muttley.participacao.Participacao;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,6 +27,9 @@ public class Pessoa {
     private String telefone;
     private String cpf;
 
+    @OneToOne(mappedBy = "pessoa", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Aluno aluno;
+
     @OneToMany(mappedBy = "pessoa")
     private List<Participacao> participacoes = new ArrayList<>();
 
@@ -45,5 +49,9 @@ public class Pessoa {
             this.telefone = dados.telefone();
         if (dados.cpf() != null)
             this.cpf = dados.cpf();
+    }
+
+    public boolean isAluno(){
+        return this.aluno != null;
     }
 }
