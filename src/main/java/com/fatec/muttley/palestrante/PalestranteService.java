@@ -30,7 +30,7 @@ public class PalestranteService {
     }
 
     public List<Palestrante> procurarTodos(){
-        return palestranteRepository.findAll(Sort.by("matricula").ascending());
+        return palestranteRepository.findAll(Sort.by("cargo").ascending());
     }
 
     public void apagarPorId(Long id){
