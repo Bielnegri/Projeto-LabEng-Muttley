@@ -1,4 +1,4 @@
-package com.fatec.muttley.participacao;
+package com.fatec.muttley.patrocinador;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -6,4 +6,5 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional
-public interface ParticipacaoRepository extends JpaRepository<Participacao, Long> {}
+public interface PatrocinadorRepository extends JpaRepository<Patrocinador, Long> {
+}
