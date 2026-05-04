@@ -12,7 +12,7 @@ public record AtualizacaoMedalha (
         @NotBlank(message = "Descrição é obrigatória")
         String descricao,
 
-        @NotNull(message = "Marca é obrigatória")
+        @NotNull(message = "Aluno é obrigatório")
         Long alunoId
 ) {}
 
