@@ -1,11 +1,10 @@
 package com.fatec.muttley.evento;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.fatec.muttley.disciplina.Disciplina;
-import com.fatec.muttley.participacao.Participacao;
+import com.fatec.muttley.local.Local;
+import com.fatec.muttley.patrocinador.Patrocinador;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,21 +21,41 @@ public class Evento {
     @Column(name = "id_evento")
     private long id;
     private String tema;
-    private String local;
     private Date data;
-    private String horario;
+    private String horarioInicio;
+    private String horarioFim;
+    private String modalidade;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_disciplina")
     private Disciplina disciplina;
 
-    @OneToMany(mappedBy = "evento")
-    private List<Participacao> participacaos = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_patrocinador")
+    private Patrocinador patrocinador;
 
-    public Evento(String tema, String local, Date data, String horario) {
-        this.tema = tema;
-        this.local = local;
-        this.data = data;
-        this.horario = horario;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_local")
+    private Local local;
+
+    public Evento(AtualizacaoEvento dados, Disciplina disciplina, Patrocinador patrocinador, Local local) {
+        this.tema = dados.tema();
+        this.data = dados.data();
+        this.horarioInicio = dados.horarioInicio();
+        this.horarioFim = dados.horarioFim();
+        this.modalidade = dados.modalidade();
+    }
+
+    public void atualizarInformacoes(AtualizacaoEvento dados, Disciplina disciplina, Patrocinador patrocinador, Local local) {
+        if (dados.tema() != null)
+            this.tema = dados.tema();
+        if (dados.data() != null)
+            this.data = dados.data();
+        if (dados.horarioInicio() != null)
+            this.horarioInicio = dados.horarioInicio();
+        if (dados.horarioFim() != null)
+            this.horarioFim = dados.horarioFim();
+        if (dados.modalidade() != null)
+            this.modalidade = dados.modalidade();
     }
 }

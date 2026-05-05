@@ -1,6 +1,8 @@
 package com.fatec.muttley.evento;
 
 import com.fatec.muttley.disciplina.DisciplinaService;
+import com.fatec.muttley.local.LocalService;
+import com.fatec.muttley.patrocinador.PatrocinadorService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -24,6 +26,12 @@ public class EventoController {
     @Autowired
     private DisciplinaService disciplinaService;
 
+    @Autowired
+    private PatrocinadorService patrocinadorService;
+
+    @Autowired
+    private LocalService localService;
+
     @GetMapping("/listagem")
     public String carregaPaginaListagem(Model model) {
         model.addAttribute("listaEventos", eventoService.procurarTodos());
@@ -35,13 +43,15 @@ public class EventoController {
         AtualizacaoEvento dto;
         if (id != null) {
             Evento evento = eventoService.procurarPorId(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Evento nao encontrado."));
+                    .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
             dto = eventoMapper.toAtualizacaoDto(evento);
         } else {
-            dto = new AtualizacaoEvento(null, "", "", null, "", null);
+            dto = new AtualizacaoEvento(null, "", null, "", "", "", null, null, null);
         }
         model.addAttribute("evento", dto);
         model.addAttribute("disciplinas", disciplinaService.procurarTodas());
+        model.addAttribute("patrocinador", patrocinadorService.procurarTodos());
+        model.addAttribute("local", localService.procurarTodos());
         return "evento/formulario";
     }
 
@@ -53,6 +63,8 @@ public class EventoController {
             AtualizacaoEvento dto = eventoMapper.toAtualizacaoDto(evento);
             model.addAttribute("evento", dto);
             model.addAttribute("disciplinas", disciplinaService.procurarTodas());
+            model.addAttribute("patrocinador", patrocinadorService.procurarTodos());
+            model.addAttribute("local", localService.procurarTodos());
             return "evento/formulario";
         } catch (EntityNotFoundException exception) {
             redirectAttributes.addFlashAttribute("erro", exception.getMessage());
@@ -67,6 +79,8 @@ public class EventoController {
                          Model model) {
         if (result.hasErrors()) {
             model.addAttribute("disciplinas", disciplinaService.procurarTodas());
+            model.addAttribute("patrocinador", patrocinadorService.procurarTodos());
+            model.addAttribute("local", localService.procurarTodos());
             return "evento/formulario";
         }
         try {
