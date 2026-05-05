@@ -1,9 +1,12 @@
 package com.fatec.muttley.evento;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fatec.muttley.disciplina.Disciplina;
 import com.fatec.muttley.local.Local;
+import com.fatec.muttley.participacao.Participacao;
 import com.fatec.muttley.patrocinador.Patrocinador;
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,12 +41,18 @@ public class Evento {
     @JoinColumn(name = "id_local")
     private Local local;
 
+    @OneToMany(mappedBy = "evento")
+    private List<Participacao> participacoes = new ArrayList<>();
+
     public Evento(AtualizacaoEvento dados, Disciplina disciplina, Patrocinador patrocinador, Local local) {
         this.tema = dados.tema();
         this.data = dados.data();
         this.horarioInicio = dados.horarioInicio();
         this.horarioFim = dados.horarioFim();
         this.modalidade = dados.modalidade();
+        this.disciplina = disciplina;
+        this.patrocinador = patrocinador;
+        this.local = local;
     }
 
     public void atualizarInformacoes(AtualizacaoEvento dados, Disciplina disciplina, Patrocinador patrocinador, Local local) {
@@ -57,5 +66,16 @@ public class Evento {
             this.horarioFim = dados.horarioFim();
         if (dados.modalidade() != null)
             this.modalidade = dados.modalidade();
+        if (disciplina != null)
+            this.disciplina = disciplina;
+        if (patrocinador != null)
+            this.patrocinador = patrocinador;
+        if (local != null)
+            this.local = local;
+    }
+
+    public void adicionarParticipacao(Participacao participacao) {
+        this.participacoes.add(participacao);
+        participacao.setEvento(this);
     }
 }
