@@ -13,7 +13,10 @@ public record AtualizacaoCertificado(
         Date dataEmissao,
 
         @NotBlank(message = "Assinatura é obrigatória")
-        String assinatura
+        String assinatura,
+
+        @NotNull(message = "Participação é obrigatória")
+        Long participacaoId
 ) {
 
 }
