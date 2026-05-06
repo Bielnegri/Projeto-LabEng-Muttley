@@ -1,5 +1,7 @@
 package com.fatec.muttley.disciplina;
 
+import com.fatec.muttley.professor.Professor;
+import com.fatec.muttley.professor.ProfessorRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -13,18 +15,26 @@ public class DisciplinaService {
     @Autowired
     private DisciplinaRepository disciplinaRepository;
     @Autowired
+    private ProfessorRepository professorRepository;
+    @Autowired
     private DisciplinaMapper disciplinaMapper;
 
     public Disciplina salvarOuAtualizar(AtualizacaoDisciplina dto){
+        Disciplina disciplina;
         if (dto.id() != null){
-            Disciplina existente = disciplinaRepository.findById(dto.id())
+            disciplina  = disciplinaRepository.findById(dto.id())
                     .orElseThrow(() -> new EntityNotFoundException("Disciplina não encontrada com id: " + dto.id()));
-            disciplinaMapper.updateEntityFromDto(dto, existente);
-            return disciplinaRepository.save(existente);
+            disciplinaMapper.updateEntityFromDto(dto, disciplina);
+            return disciplinaRepository.save(disciplina);
         } else {
-            Disciplina novaDisciplina = disciplinaMapper.toEntityFromAtualizacao(dto);
-            return disciplinaRepository.save(novaDisciplina);
+            disciplina = disciplinaMapper.toEntityFromAtualizacao(dto);
         }
+        if (dto.id_professor() != null) {
+            Professor professor = professorRepository.findById(dto.id_professor())
+                    .orElseThrow(() -> new EntityNotFoundException("Professor não encontrado com id: " + dto.id_professor()));
+            disciplina.setProfessor(professor);
+        }
+        return disciplinaRepository.save(disciplina);
     }
 
     public List<Disciplina> procurarTodas(){

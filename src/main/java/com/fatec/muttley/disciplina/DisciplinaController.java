@@ -1,5 +1,6 @@
 package com.fatec.muttley.disciplina;
 
+import com.fatec.muttley.professor.ProfessorService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -15,6 +16,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class DisciplinaController {
     @Autowired
         private DisciplinaService disciplinaService;
+    @Autowired
+    private ProfessorService professorService;
     @Autowired
         private DisciplinaMapper disciplinaMapper;
 
@@ -32,9 +35,10 @@ public class DisciplinaController {
                     .orElseThrow(() -> new EntityNotFoundException("Disciplina não encontrada."));
             dto = disciplinaMapper.toAtualizacaoDto(disciplina);
         } else {
-            dto = new AtualizacaoDisciplina(null, "", "", "");
+            dto = new AtualizacaoDisciplina(null, "", "", "", null);
         }
         model.addAttribute("disciplina", dto);
+        model.addAttribute("professores", professorService.procurarTodos());
         return "disciplina/formulario";
     }
 

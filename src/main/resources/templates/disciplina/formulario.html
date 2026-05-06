@@ -18,23 +18,36 @@
 
         <div class="form-group">
             <label for="nome"> Nome: </label>
-            <input class="form-control" type="text" th:field="*{nome}"
+            <input class="form-control" type="text" th:field="*{nome}" id="nome"
                    th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid'">
             <div th:errors="*{nome}" class="invalid-feedback"></div>
         </div>
 
         <div class="form-group">
             <label for="descricao"> Descrição: </label>
-            <input class="form-control" type="text" th:field="*{descricao}"
+            <input class="form-control" type="text" th:field="*{descricao}" id="descricao"
                    th:classappend="${#fields.hasErrors('descricao')} ? 'is-invalid'">
             <div th:errors="*{descricao}" class="invalid-feedback"></div>
         </div>
 
         <div class="form-group">
             <label for="turno"> Turno: </label>
-            <input class="form-control" type="text" th:field="*{turno}"
+            <input class="form-control" type="text" th:field="*{turno}" id="turno"
                    th:classappend="${#fields.hasErrors('turno')} ? 'is-invalid'">
             <div th:errors="*{turno}" class="invalid-feedback"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="id_professor"> Professor Responsável: </label>
+            <select class="form-control" th:field="*{id_professor}" id="id_professor"
+                    th:classappend="${#fields.hasErrors('id_professor')} ? 'is-invalid'">
+                <option value="">-- Selecione um Professor --</option>
+                <option th:each="p : ${professores}"
+                        th:value="${p.id}"
+                        th:text="${p.pessoa.nome}">
+                </option>
+            </select>
+            <div th:errors="*{id_professor}" class="invalid-feedback"></div>
         </div>
 
         <button type="submit" class="btn btn-primary">
