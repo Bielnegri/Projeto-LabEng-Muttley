@@ -1,6 +1,6 @@
 package com.fatec.muttley.local;
 
-import com.fatec.muttley.professor.Professor;
+import com.fatec.muttley.endereco.Endereco;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;

@@ -86,4 +86,9 @@ public class Pessoa {
     public boolean isColaborador(){
         return this.colaborador != null;
     }
+
+    public void adicionarParticipacao(Participacao participacao) {
+        this.participacoes.add(participacao);
+        participacao.setPessoa(this);
+    }
 }
