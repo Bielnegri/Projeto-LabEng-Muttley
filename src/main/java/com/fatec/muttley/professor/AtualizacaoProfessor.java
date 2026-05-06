@@ -2,14 +2,15 @@ package com.fatec.muttley.professor;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record AtualizacaoProfessor(
+public record AtualizacaoProfessor (
         Long id,
 
-        @NotBlank(message = "Área de formação é obrigatória")
-        String areaFormacao,
+        @NotBlank(message = "Nome é obrigatório")
+        String nome,
 
-        @NotBlank(message = "Titulação é obrigatória")
-        String titulacao
-) {
+        @NotBlank(message = "Email é obrigatório")
+        String email,
 
-}
+        @NotBlank(message = "Formação é obrigatório")
+        String formacao
+) {}

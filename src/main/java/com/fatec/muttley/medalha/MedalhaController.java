@@ -1,6 +1,6 @@
 package com.fatec.muttley.medalha;
 
-import com.fatec.muttley.participacao.ParticipacaoService;
+import com.fatec.muttley.aluno.AlunoService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +18,14 @@ public class MedalhaController {
     private MedalhaService medalhaService;
 
     @Autowired
-    private ParticipacaoService participacaoService;
+    private AlunoService alunoService;
 
     @Autowired
     private MedalhaMapper medalhaMapper;
 
     @GetMapping("/listagem")
     public String carregaPaginaFormulario (Model model){
+        //devolver DTO
         model.addAttribute("listaMedalhas", medalhaService.procurarTodos());
         return "medalha/listagem";
     }
@@ -33,17 +34,18 @@ public class MedalhaController {
     public String mostrarFormulario(@RequestParam(required = false) Long id, Model model) {
         AtualizacaoMedalha dto;
         if (id != null) {
+            //edição: Carrega dados existentes
             Medalha medalha = medalhaService.procurarPorId(id)
                     .orElseThrow(() -> new EntityNotFoundException("Medalha não encontrada"));
             dto = medalhaMapper.toAtualizacaoDto(medalha);
         } else {
+            // criação: DTO vazio
             dto = new AtualizacaoMedalha(null, "", "", null);
         }
         model.addAttribute("medalha", dto);
-        model.addAttribute("participacoes", participacaoService.procurarTodos());
+        model.addAttribute("alunos", alunoService.procurarTodos());
         return "medalha/formulario";
     }
-
     @GetMapping ("/formulario/{id}")
     public String carregaPaginaFormulario (@PathVariable("id") Long id, Model model,
                                            RedirectAttributes redirectAttributes) {
@@ -52,12 +54,14 @@ public class MedalhaController {
             if(id != null) {
                 Medalha medalha = medalhaService.procurarPorId(id).orElseThrow(() ->
                         new EntityNotFoundException("Medalha não encontrada"));
-                model.addAttribute("participacoes", participacaoService.procurarTodos());
+                model.addAttribute("alunos", alunoService.procurarTodos());
+                //mapear medalha para AtualizacaoMedalha
                 dto = medalhaMapper.toAtualizacaoDto(medalha);
                 model.addAttribute("medalha", dto);
             }
             return "medalha/formulario";
         } catch (EntityNotFoundException e) {
+            //resolver erros
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/medalha/formulario";
         }
@@ -69,7 +73,8 @@ public class MedalhaController {
                          RedirectAttributes redirectAttributes,
                          Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("participacoes", participacaoService.procurarTodos());
+            // Recarrega dados necessários para mostrar erros
+            model.addAttribute("alunos", alunoService.procurarTodos());
             return "medalha/formulario";
         }
         try {

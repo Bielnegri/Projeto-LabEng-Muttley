@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fatec.muttley.disciplina.Disciplina;
-import com.fatec.muttley.local.Local;
-import com.fatec.muttley.participacao.Participacao;
-import com.fatec.muttley.patrocinador.Patrocinador;
+import com.fatec.muttley.participante.Participante;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,58 +22,21 @@ public class Evento {
     @Column(name = "id_evento")
     private long id;
     private String tema;
+    private String local;
     private Date data;
-    private String horarioInicio;
-    private String horarioFim;
-    private String modalidade;
+    private String horario;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_disciplina")
     private Disciplina disciplina;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_patrocinador")
-    private Patrocinador patrocinador;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_local")
-    private Local local;
-
     @OneToMany(mappedBy = "evento")
-    private List<Participacao> participacoes = new ArrayList<>();
+    private List<Participante> participantes = new ArrayList<>();
 
-    public Evento(AtualizacaoEvento dados, Disciplina disciplina, Patrocinador patrocinador, Local local) {
-        this.tema = dados.tema();
-        this.data = dados.data();
-        this.horarioInicio = dados.horarioInicio();
-        this.horarioFim = dados.horarioFim();
-        this.modalidade = dados.modalidade();
-        this.disciplina = disciplina;
-        this.patrocinador = patrocinador;
+    public Evento(String tema, String local, Date data, String horario) {
+        this.tema = tema;
         this.local = local;
-    }
-
-    public void atualizarInformacoes(AtualizacaoEvento dados, Disciplina disciplina, Patrocinador patrocinador, Local local) {
-        if (dados.tema() != null)
-            this.tema = dados.tema();
-        if (dados.data() != null)
-            this.data = dados.data();
-        if (dados.horarioInicio() != null)
-            this.horarioInicio = dados.horarioInicio();
-        if (dados.horarioFim() != null)
-            this.horarioFim = dados.horarioFim();
-        if (dados.modalidade() != null)
-            this.modalidade = dados.modalidade();
-        if (disciplina != null)
-            this.disciplina = disciplina;
-        if (patrocinador != null)
-            this.patrocinador = patrocinador;
-        if (local != null)
-            this.local = local;
-    }
-
-    public void adicionarParticipacao(Participacao participacao) {
-        this.participacoes.add(participacao);
-        participacao.setEvento(this);
+        this.data = data;
+        this.horario = horario;
     }
 }

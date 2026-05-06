@@ -1,5 +1,6 @@
 package com.fatec.muttley.disciplina;
 
+import com.fatec.muttley.certificado.CertificadoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;

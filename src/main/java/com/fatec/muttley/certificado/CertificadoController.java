@@ -1,6 +1,6 @@
 package com.fatec.muttley.certificado;
 
-import com.fatec.muttley.participacao.ParticipacaoService;
+import com.fatec.muttley.aluno.AtualizacaoAluno;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +16,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CertificadoController {
     @Autowired
     private CertificadoService certificadoService;
-
-    @Autowired
-    private ParticipacaoService participacaoService;
-
     @Autowired
     private CertificadoMapper certificadoMapper;
 
@@ -37,28 +33,25 @@ public class CertificadoController {
                     .orElseThrow(() -> new EntityNotFoundException("Certificado não encontrado"));
             dto = certificadoMapper.toAtualizacaoDto(certificado);
         } else {
-            dto = new AtualizacaoCertificado(null, null, "", null);
+            dto = new AtualizacaoCertificado(null, null, "");
         }
         model.addAttribute("certificado", dto);
-        model.addAttribute("participacoes", participacaoService.procurarTodos());
         return "certificado/formulario";
     }
 
-    @GetMapping("/formulario/{id}")
-    public String carregaPaginaFormulario (@PathVariable("id") Long id, Model model,
-                                           RedirectAttributes redirectAttributes){
+    @GetMapping("/formulario/{îd}")
+    public String carregaPaginaFormulario (@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes){
         AtualizacaoCertificado dto;
         try {
             if(id != null){
                 Certificado certificado = certificadoService.procurarPorId(id).orElseThrow(() ->
                         new EntityNotFoundException("Certificado não encontrado."));
-                model.addAttribute("participacoes", participacaoService.procurarTodos());
                 dto = certificadoMapper.toAtualizacaoDto(certificado);
                 model.addAttribute("certificado", dto);
             }
             return "certificado/formulario";
-        } catch (EntityNotFoundException e){
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (EntityNotFoundException exception){
+            redirectAttributes.addFlashAttribute("Erro", exception.getMessage());
             return "redirect:/certificado/formulario";
         }
     }
@@ -69,7 +62,6 @@ public class CertificadoController {
                          RedirectAttributes redirectAttributes,
                          Model model) {
         if (result.hasErrors()){
-            model.addAttribute("participacoes", participacaoService.procurarTodos());
             return "certificado/formulario";
         }
         try {

@@ -3,13 +3,19 @@ package com.fatec.muttley.aluno;
 import jakarta.validation.constraints.NotBlank;
 
 public record AtualizacaoAluno(
-     Long id,
+        Long id,
+        @NotBlank(message = "Nome é obrigatório")
+        String nome,
 
-     @NotBlank(message = "Instituição é obrigatória")
-     String instituicao,
+        @NotBlank(message = "Email é obrigatório")
+        String email,
 
-     @NotBlank(message = "Matrícula é obrigatória")
-     String matricula
-) {
+        @NotBlank(message = "Telefone é obrigatório")
+        String telefone,
 
-}
+        @NotBlank(message = "Instituição é obrigatório")
+        String instituicao,
+
+        @NotBlank(message = "Matrícula é obrigatório")
+        String matricula
+) {}

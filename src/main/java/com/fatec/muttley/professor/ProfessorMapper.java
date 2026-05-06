@@ -6,11 +6,14 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface ProfessorMapper {
+    // Converte Entity para DTO (para preencher formulário de edição)
     AtualizacaoProfessor toAtualizacaoDto(Professor professor);
 
+    // Converte DTO para Entity (para criação NOVA - ignora ID)
     @Mapping(target = "id", ignore = true)
     Professor toEntityFromAtualizacao(AtualizacaoProfessor dto);
 
-    @Mapping(target = "id", ignore = true)
+    // Atualiza Entity existente com dados do DTO
+    @Mapping(target = "id", ignore = true) // Não atualiza ID
     void updateEntityFromDto(AtualizacaoProfessor dto, @MappingTarget Professor professor);
 }

@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.fatec.muttley.participacao.Participacao;
-import com.fatec.muttley.participacao.ParticipacaoService;
+import com.fatec.muttley.aluno.Aluno;
+import com.fatec.muttley.aluno.AlunoService;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -18,23 +18,26 @@ public class MedalhaService {
     private MedalhaRepository medalhaRepository;
 
     @Autowired
-    private ParticipacaoService participacaoService;
+    private AlunoService alunoService;
 
     @Autowired
     private MedalhaMapper medalhaMapper;
 
     public Medalha salvarOuAtualizar(AtualizacaoMedalha dto) {
-        Participacao participacao = participacaoService.procurarPorId(dto.participacaoId())
-                .orElseThrow(() -> new EntityNotFoundException("Participacao não encontrada com ID: " + dto.participacaoId()));
+        // Valida se a aluno existe
+        Aluno aluno = alunoService.procurarPorId(dto.alunoId())
+                .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrada com ID: " + dto.alunoId()));
         if (dto.id() != null) {
+            // atualizando Busca existente e atualiza
             Medalha existente = medalhaRepository.findById(dto.id())
-                    .orElseThrow(() -> new EntityNotFoundException("Medalha não encontrada com ID: " + dto.id()));
+                    .orElseThrow(() -> new EntityNotFoundException("Caminhão não encontrado com ID: " + dto.id()));
             medalhaMapper.updateEntityFromDto(dto, existente);
-            existente.setParticipacao(participacao);
+            existente.setAluno(aluno); // Atualiza a aluno
             return medalhaRepository.save(existente);
         } else {
+            // criando Novo caminhão
             Medalha novoMedalha = medalhaMapper.toEntityFromAtualizacao(dto);
-            novoMedalha.setParticipacao(participacao);
+            novoMedalha.setAluno(aluno); // Define a aluno completa
 
             return medalhaRepository.save(novoMedalha);
         }

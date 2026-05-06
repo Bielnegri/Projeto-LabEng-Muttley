@@ -1,7 +1,11 @@
 package com.fatec.muttley.professor;
 
-import com.fatec.muttley.pessoa.Pessoa;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -20,23 +24,22 @@ public class Professor {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "id_professor")
     private long id;
-    private String areaFormacao;
-    private String titulacao;
-
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "pessoa_id")
-    private Pessoa pessoa;
+    private String nome;
+    private String email;
+    private String formacao;
 
     public Professor(AtualizacaoProfessor dados){
-        this.areaFormacao = dados.areaFormacao();
-        this.titulacao = dados.titulacao();
+        this.nome = dados.nome();
+        this.email = dados.email();
+        this.formacao = dados.formacao();
     }
 
     public void AtualizarInformações(AtualizacaoProfessor dados){
-        if (dados.areaFormacao() != null)
-            this.areaFormacao = dados.areaFormacao();
-        if(dados.titulacao() != null)
-            this.titulacao = dados.titulacao();
+        if (dados.nome() != null)
+            this.nome = dados.nome();
+        if (dados.email() != null)
+            this.email = dados.email();
+        if (dados.formacao() != null)
+            this.formacao = dados.formacao();
     }
 }
