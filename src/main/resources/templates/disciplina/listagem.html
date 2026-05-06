@@ -26,6 +26,7 @@
         <th scope="col">Nome</th>
         <th scope="col">Descrição</th>
         <th scope="col">Turno</th>
+        <th scope="col">Professor</th>
         <th scope="col">Ações</th>
       </tr>
       </thead>
@@ -34,6 +35,9 @@
         <td th:text="${disciplina.nome}"></td>
         <td th:text="${disciplina.descricao}"></td>
         <td th:text="${disciplina.turno}"></td>
+        <td th:text="${disciplina.professor != null and disciplina.professor.pessoa != null}
+                ? ${disciplina.professor.pessoa.nome}
+                : 'Não atribuído'">
         <td>
           <a th:href="@{'/disciplina/formulario/' + ${disciplina.id}}"
              title="Editar a Disciplina"

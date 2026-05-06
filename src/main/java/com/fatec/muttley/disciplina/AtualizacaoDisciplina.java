@@ -12,5 +12,7 @@ public record AtualizacaoDisciplina(
         String descricao,
 
         @NotBlank(message = "O turno é obrigatório")
-        String turno
+        String turno,
+
+        Long id_professor
 ) {}

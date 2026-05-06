@@ -33,7 +33,7 @@ public class Medalha {
     private String descricao;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_participacao", referencedColumnName = "id_participacao")
+    @JoinColumn(name = "id_participacao")
     private Participacao participacao;
 
     public Medalha(AtualizacaoMedalha dados, Participacao participacao) {

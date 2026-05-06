@@ -40,7 +40,7 @@ public class Certificado {
     private String assinatura;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_participacao", referencedColumnName = "id_participacao")
+    @JoinColumn(name = "id_participacao")
     private Participacao participacao;
 
     public Certificado(AtualizacaoCertificado dados, Participacao participacao){

@@ -17,7 +17,7 @@ import lombok.Setter;
 @EqualsAndHashCode(of ="id")
 public class Colaborador {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_colaborador")
     private Long id;
     private String funcao;
