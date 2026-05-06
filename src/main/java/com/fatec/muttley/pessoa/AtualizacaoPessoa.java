@@ -1,6 +1,6 @@
 package com.fatec.muttley.pessoa;
 
-import io.github.andrelamego.brValidator.annotation.ValidCpf;
+import io.github.andrelamego.brValidator.cpf.ValidCpf;
 import jakarta.validation.constraints.NotBlank;
 
 public record AtualizacaoPessoa(
