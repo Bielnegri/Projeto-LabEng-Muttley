@@ -17,7 +17,7 @@ import lombok.Setter;
 @EqualsAndHashCode(of = "id")
 public class Professor {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    //@GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "id_professor")
     private long id;
     private String areaFormacao;
@@ -25,7 +25,7 @@ public class Professor {
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "pessoa_id")
+    @JoinColumn(name = "id_pessoa")
     private Pessoa pessoa;
 
     public Professor(AtualizacaoProfessor dados){

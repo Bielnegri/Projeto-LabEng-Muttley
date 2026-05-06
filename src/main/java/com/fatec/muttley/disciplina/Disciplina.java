@@ -41,7 +41,7 @@ public class Disciplina {
     private String turno;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_professor", referencedColumnName = "id_professor")
+    @JoinColumn(name = "id_professor")
     private Professor professor;
 
     @OneToMany(mappedBy = "disciplina")

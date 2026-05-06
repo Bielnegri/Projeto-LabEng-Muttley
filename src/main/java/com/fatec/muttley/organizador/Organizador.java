@@ -17,7 +17,7 @@ import lombok.Setter;
 @EqualsAndHashCode(of ="id")
 public class Organizador {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_organizador")
     private Long id;
     private String instituicao;

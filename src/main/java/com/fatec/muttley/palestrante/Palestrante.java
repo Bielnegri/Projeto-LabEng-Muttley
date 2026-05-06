@@ -17,7 +17,7 @@ import lombok.Setter;
 @EqualsAndHashCode(of ="id")
 public class Palestrante {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_palestrante")
     private Long id;
     private String resumoProfissional;

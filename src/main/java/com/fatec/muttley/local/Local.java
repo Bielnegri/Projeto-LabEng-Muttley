@@ -25,7 +25,7 @@ public class Local {
     private int capacidade;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_endereco", referencedColumnName = "id_endereco")
+    @JoinColumn(name = "id_endereco")
     private Endereco endereco;
 
     public Local(AtualizacaoLocal dados, Endereco endereco){
