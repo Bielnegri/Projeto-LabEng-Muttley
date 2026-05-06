@@ -5,31 +5,27 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
-import com.fatec.muttley.aluno.Aluno;
+import com.fatec.muttley.participacao.Participacao;
 
 @Mapper(componentModel = "spring")
 public interface MedalhaMapper {
 
-    // Converte Entity para DTO (para preencher formulário de edição)
-    @Mapping(target = "alunoId", source = "aluno.id")
+    @Mapping(target = "participacaoId", source = "participacao.id")
     AtualizacaoMedalha toAtualizacaoDto(Medalha medalha);
 
-    // Converte DTO para Entity (para criação NOVA - ignora ID)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "aluno", source = "alunoId", qualifiedByName = "idToAluno")
+    @Mapping(target = "participacao", source = "participacaoId", qualifiedByName = "idToParticipacao")
     Medalha toEntityFromAtualizacao(AtualizacaoMedalha dto);
 
-    // Atualiza Entity existente com dados do DTO
     @Mapping(target = "id", ignore = true) // Não atualiza ID
-    @Mapping(target = "aluno", source = "alunoId", qualifiedByName = "idToAluno")
+    @Mapping(target = "participacao", source = "participacaoId", qualifiedByName = "idToParticipacao")
     void updateEntityFromDto(AtualizacaoMedalha dto, @MappingTarget Medalha medalha);
 
-    // Métod0 para converter alunoId em objeto Aluno
-    @Named("idToAluno")
-    default Aluno idToAluno(Long alunoId) {
-        if (alunoId == null) return null;
-        Aluno aluno = new Aluno();
-        aluno.setId(alunoId);
-        return aluno;
+    @Named("idToParticipacao")
+    default Participacao idToParticipacao(Long participacaoId) {
+        if (participacaoId == null) return null;
+        Participacao participacao = new Participacao();
+        participacao.setId(participacaoId);
+        return participacao;
     }
 }

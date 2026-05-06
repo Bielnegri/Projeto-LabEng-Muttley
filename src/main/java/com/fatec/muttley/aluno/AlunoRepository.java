@@ -6,5 +6,5 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional
-public interface AlunoRepository extends JpaRepository<Aluno, Long>{
+public interface AlunoRepository extends JpaRepository<Aluno, Long> {
 }

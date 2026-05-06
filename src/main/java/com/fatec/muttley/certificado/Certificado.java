@@ -2,7 +2,7 @@ package com.fatec.muttley.certificado;
 
 import java.sql.Date;
 
-import com.fatec.muttley.aluno.Aluno;
+import com.fatec.muttley.participacao.Participacao;
 import com.fatec.muttley.evento.Evento;
 
 import jakarta.persistence.Column;
@@ -40,28 +40,21 @@ public class Certificado {
     private String assinatura;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_aluno", referencedColumnName = "id_aluno")
-    private Aluno aluno;
+    @JoinColumn(name = "id_participacao", referencedColumnName = "id_participacao")
+    private Participacao participacao;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_evento", referencedColumnName = "id_evento")
-    private Evento evento;
-
-    public Certificado(AtualizacaoCertificado dados, Aluno aluno, Evento evento){
+    public Certificado(AtualizacaoCertificado dados, Participacao participacao){
         this.dataEmissao = dados.dataEmissao();
         this.assinatura = dados.assinatura();
-        this.aluno = aluno;
-        this.evento = evento;
+        this.participacao = participacao;
     }
 
-    public void atualizarInformacoes(AtualizacaoCertificado dados, Aluno aluno, Evento evento) {
+    public void atualizarInformacoes(AtualizacaoCertificado dados, Participacao participacao) {
         if (dados.dataEmissao() != null)
             this.dataEmissao = dados.dataEmissao();
         if (dados.assinatura() != null)
             this.assinatura = dados.assinatura();
-        if (aluno != null)
-            this.aluno = aluno;
-        if (evento != null)
-            this.evento = evento;
+        if (participacao != null)
+            this.participacao = participacao;
     }
 }

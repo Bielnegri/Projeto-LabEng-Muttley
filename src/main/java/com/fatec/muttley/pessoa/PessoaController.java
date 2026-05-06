@@ -1,4 +1,4 @@
-package com.fatec.muttley.aluno;
+package com.fatec.muttley.pessoa;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -11,88 +11,88 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/aluno")
-public class AlunoController {
+@RequestMapping("/pessoa")
+public class PessoaController {
     @Autowired
-    private AlunoService alunoService;
+    private PessoaService pessoaService;
 
     @Autowired
-    private AlunoMapper alunoMapper;
+    private PessoaMapper pessoaMapper;
 
     @GetMapping("/listagem")
     public String carregaPaginaFormulario (Model model){
         //devolver DTO
-        model.addAttribute("listaAlunos", alunoService.procurarTodos());
-        return "aluno/listagem";
+        model.addAttribute("listaPessoas", pessoaService.procurarTodos());
+        return "pessoa/listagem";
     }
 
     @GetMapping("/formulario")
     public String mostrarFormulario (@RequestParam(required = false) Long id, Model model) {
-        AtualizacaoAluno dto;
+        AtualizacaoPessoa dto;
         if (id != null) {
             //edição: Carrega dados existentes
-            Aluno aluno = alunoService.procurarPorId(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
-            dto = alunoMapper.toAtualizacaoDto(aluno);
+            Pessoa pessoa = pessoaService.procurarPorId(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada"));
+            dto = pessoaMapper.toAtualizacaoDto(pessoa);
         } else {
             // criação: DTO vazio
-            dto = new AtualizacaoAluno(null, "", "", "", "", "");
+            dto = new AtualizacaoPessoa(null, "", "", "", "");
         }
-        model.addAttribute("aluno", dto);
-        return "aluno/formulario";
+        model.addAttribute("pessoa", dto);
+        return "pessoa/formulario";
     }
 
     @GetMapping ("/formulario/{id}")
     public String carregaPaginaFormulario (@PathVariable("id") Long id, Model model,
                                            RedirectAttributes redirectAttributes) {
-        AtualizacaoAluno dto;
+        AtualizacaoPessoa dto;
         try {
             if(id != null) {
-                Aluno aluno = alunoService.procurarPorId(id).orElseThrow(() ->
-                        new EntityNotFoundException("Aluno não encontrado"));
-                //mapear aluno para AtualizacaoAluno
-                dto = alunoMapper.toAtualizacaoDto(aluno);
-                model.addAttribute("aluno", dto);
+                Pessoa pessoa = pessoaService.procurarPorId(id).orElseThrow(() ->
+                        new EntityNotFoundException("Pessoa não encontrada"));
+                //mapear pessoa para AtualizacaoPessoa
+                dto = pessoaMapper.toAtualizacaoDto(pessoa);
+                model.addAttribute("pessoa", dto);
             }
-            return "aluno/formulario";
+            return "pessoa/formulario";
         } catch (EntityNotFoundException e) {
             //resolver erros
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/aluno/formulario";
+            return "redirect:/pessoa/formulario";
         }
     }
 
     @PostMapping("/salvar")
-    public String salvar(@ModelAttribute("aluno") @Valid AtualizacaoAluno dto,
+    public String salvar(@ModelAttribute("pessoa") @Valid AtualizacaoPessoa dto,
                          BindingResult result,
                          RedirectAttributes redirectAttributes,
                          Model model) {
         if (result.hasErrors()) {
             // Recarrega dados necessários para mostrar erros
-            return "aluno/formulario";
+            return "pessoa/formulario";
         }
         try {
-            Aluno alunoSalvo = alunoService.salvarOuAtualizar(dto);
+            Pessoa pessoaSalvo = pessoaService.salvarOuAtualizar(dto);
             String mensagem = dto.id() != null
-                    ? "Aluno '" + alunoSalvo.getNome() + "' atualizado com sucesso!"
-                    : "Aluno '" + alunoSalvo.getNome() + "' criado com sucesso!";
+                    ? "Pessoa '" + pessoaSalvo.getNome() + "' atualizada com sucesso!"
+                    : "Pessoa '" + pessoaSalvo.getNome() + "' criada com sucesso!";
             redirectAttributes.addFlashAttribute("message", mensagem);
-            return "redirect:/aluno/listagem";
+            return "redirect:/pessoa/listagem";
         } catch (EntityNotFoundException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/aluno/formulario" + (dto.id() != null ? "?id=" + dto.id() : "");
+            return "redirect:/pessoa/formulario" + (dto.id() != null ? "?id=" + dto.id() : "");
         }
     }
 
     @GetMapping("/delete/{id}")
     @Transactional
-    public String deletarAluno(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String deletarPessoa(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
-            alunoService.apagarPorId(id);
-            redirectAttributes.addFlashAttribute("message", "O aluno " + id + " foi apagado!");
+            pessoaService.apagarPorId(id);
+            redirectAttributes.addFlashAttribute("message", "A pessoa " + id + " foi apagada!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
-        return "redirect:/aluno/listagem";
+        return "redirect:/pessoa/listagem";
     }
 }

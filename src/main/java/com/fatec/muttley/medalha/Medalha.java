@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import com.fatec.muttley.aluno.Aluno;
+import com.fatec.muttley.participacao.Participacao;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,22 +31,23 @@ public class Medalha {
     private Long id;
     private String nome;
     private String descricao;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_aluno", referencedColumnName = "id_aluno")
-    private Aluno aluno;
 
-    public Medalha(AtualizacaoMedalha dados, Aluno aluno) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_participacao", referencedColumnName = "id_participacao")
+    private Participacao participacao;
+
+    public Medalha(AtualizacaoMedalha dados, Participacao participacao) {
         this.nome = dados.nome();
         this.descricao = dados.descricao();
-        this.aluno = aluno;
+        this.participacao = participacao;
     }
 
-    public void atualizarInformacoes(AtualizacaoMedalha dados, Aluno aluno) {
+    public void atualizarInformacoes(AtualizacaoMedalha dados, Participacao participacao) {
         if (dados.nome() != null)
             this.nome = dados.nome();
         if (dados.descricao() != null)
             this.descricao = dados.descricao();
-        if (aluno != null)
-            this.aluno = aluno;
+        if (participacao != null)
+            this.participacao = participacao;
     }
 }
