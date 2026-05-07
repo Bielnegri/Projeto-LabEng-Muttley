@@ -39,7 +39,7 @@ public class DisciplinaController {
         AtualizacaoDisciplina dto;
         if (id != null) {
             Disciplina disciplina = disciplinaService.procurarPorId(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Disciplina nao encontrada."));
+                    .orElseThrow(() -> new EntityNotFoundException("Disciplina não encontrada."));
             dto = disciplinaMapper.toAtualizacaoDto(disciplina);
         } else {
             dto = new AtualizacaoDisciplina(null, "", "", "", null);
@@ -55,7 +55,7 @@ public class DisciplinaController {
                                          RedirectAttributes redirectAttributes) {
         try {
             Disciplina disciplina = disciplinaService.procurarPorId(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Disciplina nao encontrada."));
+                    .orElseThrow(() -> new EntityNotFoundException("Disciplina não encontrada."));
             model.addAttribute("disciplina", disciplinaMapper.toAtualizacaoDto(disciplina));
             model.addAttribute("professores", professorService.procurarTodos());
             return "admin/disciplinas/formulario";

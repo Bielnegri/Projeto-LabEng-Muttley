@@ -29,7 +29,7 @@
 
     <section class="events-section" aria-labelledby="pending-certificates-title">
         <div class="section-heading">
-            <h2 id="pending-certificates-title">Eventos aguardando emissao</h2>
+            <h2 id="pending-certificates-title">Eventos aguardando emissão</h2>
         </div>
 
         <div class="events-carousel" th:if="${eventosAguardandoCertificado != null and !#lists.isEmpty(eventosAguardandoCertificado)}">
@@ -57,7 +57,7 @@
                             <path d="M12 21s7-5.3 7-12a7 7 0 0 0-14 0c0 6.7 7 12 7 12z"></path>
                             <circle cx="12" cy="9" r="2.2"></circle>
                         </svg>
-                        <span th:text="${evento.local != null ? evento.local.nome : 'Local nao definido'}">Local</span>
+                        <span th:text="${evento.local != null ? evento.local.nome : 'Local não definido'}">Local</span>
                     </p>
                     <p class="event-description"
                        th:text="${evento.disciplina != null ? evento.disciplina.nome : (evento.modalidade != null ? evento.modalidade : 'Evento sem disciplina vinculada')}">
@@ -75,7 +75,7 @@
                 </article>
             </div>
 
-            <button class="carousel-control next" type="button" aria-label="Proximo evento"
+            <button class="carousel-control next" type="button" aria-label="Próximo evento"
                     onclick="this.parentElement.querySelector('.events-row').scrollBy({ left: 340, behavior: 'smooth' })">
                 <svg aria-hidden="true" viewBox="0 0 24 24">
                     <path d="m9 18 6-6-6-6"></path>
@@ -84,34 +84,39 @@
         </div>
 
         <div class="empty-state" th:if="${eventosAguardandoCertificado == null or #lists.isEmpty(eventosAguardandoCertificado)}">
-            <p>Nenhum evento encerrado aguardando emissao.</p>
+            <p>Nenhum evento encerrado aguardando emissão.</p>
         </div>
     </section>
 
     <section class="latest-certificates" aria-labelledby="latest-certificates-title">
         <div class="section-heading">
-            <h2 id="latest-certificates-title">Ultimos certificados emitidos</h2>
+            <h2 id="latest-certificates-title">Últimos certificados emitidos</h2>
         </div>
 
         <div class="people-panel">
             <table class="participants-table certificates-table">
                 <thead>
                 <tr>
-                    <th>Emissao</th>
+                    <th>Emissão</th>
                     <th>Participante</th>
                     <th>Evento</th>
                     <th>Assinatura</th>
+                    <th>Validação</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:if="${ultimosCertificados == null or #lists.isEmpty(ultimosCertificados)}">
-                    <td colspan="4">Nenhum certificado emitido.</td>
+                    <td colspan="5">Nenhum certificado emitido.</td>
                 </tr>
                 <tr th:each="certificado : ${ultimosCertificados}">
                     <td th:text="${certificado.dataEmissao != null ? #dates.format(certificado.dataEmissao, 'dd/MM/yyyy') : '-'}">01/04/2026</td>
                     <td th:text="${certificado.participacao != null and certificado.participacao.pessoa != null ? certificado.participacao.pessoa.nome : '-'}">Participante</td>
                     <td th:text="${certificado.participacao != null and certificado.participacao.evento != null ? certificado.participacao.evento.tema : '-'}">Evento</td>
                     <td th:text="${certificado.assinatura != null ? certificado.assinatura : '-'}">Assinatura</td>
+                    <td>
+                        <a class="table-action" th:if="${certificado.urlPublica != null}" th:href="${certificado.urlPublica}">Abrir</a>
+                        <span th:if="${certificado.urlPublica == null}">-</span>
+                    </td>
                 </tr>
                 </tbody>
             </table>

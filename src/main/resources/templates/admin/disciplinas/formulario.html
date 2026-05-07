@@ -38,7 +38,7 @@
             </label>
 
             <label class="field description-field">
-                <span>Descricao:</span>
+                <span>Descrição:</span>
                 <textarea th:field="*{descricao}" placeholder="Resumo da disciplina"></textarea>
                 <span class="field-error" th:if="${#fields.hasErrors('descricao')}" th:errors="*{descricao}"></span>
             </label>
@@ -47,7 +47,7 @@
         <div class="form-actions">
             <a th:href="@{/admin/disciplinas}">Cancelar</a>
             <button class="primary-action" type="submit"
-                    th:text="${disciplina.id != null} ? 'Salvar alteracoes' : 'Criar disciplina'">Criar disciplina</button>
+                    th:text="${disciplina.id != null} ? 'Salvar alterações' : 'Criar disciplina'">Criar disciplina</button>
         </div>
     </form>
 </main>

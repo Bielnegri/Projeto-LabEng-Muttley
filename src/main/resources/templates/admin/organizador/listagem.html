@@ -16,7 +16,7 @@
                 <th>Nome</th>
                 <th>Email</th>
                 <th>Telefone</th>
-                <th>Instituicao</th>
+                <th>Instituição</th>
                 <th>Cargo</th>
             </tr>
             </thead>
@@ -28,7 +28,7 @@
                 <td th:text="${organizador.pessoa != null ? organizador.pessoa.nome : '-'}">Nome</td>
                 <td th:text="${organizador.pessoa != null ? organizador.pessoa.email : '-'}">email@exemplo.com</td>
                 <td th:text="${organizador.pessoa != null ? organizador.pessoa.telefone : '-'}">(11) 99999-0000</td>
-                <td th:text="${organizador.instituicao}">Instituicao</td>
+                <td th:text="${organizador.instituicao}">Instituição</td>
                 <td th:text="${organizador.cargo}">Cargo</td>
             </tr>
             </tbody>

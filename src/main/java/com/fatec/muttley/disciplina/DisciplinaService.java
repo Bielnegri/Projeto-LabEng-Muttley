@@ -25,13 +25,13 @@ public class DisciplinaService {
         Professor professor = null;
         if (dto.id_professor() != null) {
             professor = professorRepository.findById(dto.id_professor())
-                    .orElseThrow(() -> new EntityNotFoundException("Professor nao encontrado com id: " + dto.id_professor()));
+                    .orElseThrow(() -> new EntityNotFoundException("Professor não encontrado com id: " + dto.id_professor()));
         }
 
         Disciplina disciplina;
         if (dto.id() != null) {
             disciplina = disciplinaRepository.findById(dto.id())
-                    .orElseThrow(() -> new EntityNotFoundException("Disciplina nao encontrada com id: " + dto.id()));
+                    .orElseThrow(() -> new EntityNotFoundException("Disciplina não encontrada com id: " + dto.id()));
             disciplinaMapper.updateEntityFromDto(dto, disciplina);
         } else {
             disciplina = disciplinaMapper.toEntityFromAtualizacao(dto);

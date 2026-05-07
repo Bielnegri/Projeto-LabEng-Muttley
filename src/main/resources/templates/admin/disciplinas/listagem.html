@@ -18,10 +18,10 @@
             <thead>
             <tr>
                 <th>Nome</th>
-                <th>Descricao</th>
+                <th>Descrição</th>
                 <th>Turno</th>
                 <th>Professor</th>
-                <th>Acoes</th>
+                <th>Ações</th>
             </tr>
             </thead>
             <tbody>
@@ -30,7 +30,7 @@
             </tr>
             <tr th:each="disciplina : ${listaDisciplinas}">
                 <td th:text="${disciplina.nome}">Laboratorio de Engenharia de Software</td>
-                <td th:text="${disciplina.descricao}">Descricao da disciplina</td>
+                <td th:text="${disciplina.descricao}">Descrição da disciplina</td>
                 <td th:text="${disciplina.turno}">Noturno</td>
                 <td th:text="${disciplina.professor != null and disciplina.professor.pessoa != null ? disciplina.professor.pessoa.nome : '-'}">Professor</td>
                 <td>

@@ -29,13 +29,13 @@ public class ParticipacaoService {
 
     public Participacao salvarOuAtualizar(AtualizacaoParticipacao dto) {
         Pessoa pessoa = pessoaService.procurarPorId(dto.pessoaId())
-                .orElseThrow(() -> new EntityNotFoundException("Pessoa nao encontrada com o id: " + dto.pessoaId()));
+                .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada com o id: " + dto.pessoaId()));
         Evento evento = eventoService.procurarPorId(dto.eventoId())
-                .orElseThrow(() -> new EntityNotFoundException("Evento nao encontrado com o id: " + dto.eventoId()));
+                .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado com o id: " + dto.eventoId()));
 
         if (dto.id() != null) {
             Participacao existente = participacaoRepository.findById(dto.id())
-                    .orElseThrow(() -> new EntityNotFoundException("Participacao nao encontrada com o id: " + dto.id()));
+                    .orElseThrow(() -> new EntityNotFoundException("Participação não encontrada com o id: " + dto.id()));
             participacaoMapper.updateEntityFromDto(dto, existente);
             existente.setPessoa(pessoa);
             existente.setEvento(evento);

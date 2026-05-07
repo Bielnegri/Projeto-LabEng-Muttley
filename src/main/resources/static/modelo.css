@@ -20,7 +20,7 @@
 .certificado {
     width: 100%;
     height: 100%;
-    background-image: url("../../../docs/Fundo.jpg");
+    background-image: url("/Fundo.jpg");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -132,5 +132,20 @@
         box-shadow: 0 0 20px rgba(0,0,0,0.3); /* Sombra de papel */
         position: relative;
         overflow: hidden;
+    }
+
+    body.modelo-preview {
+        width: 100vw;
+        height: 100vh;
+        align-items: center;
+        overflow: hidden;
+        padding: 0;
+        background: #ffffff;
+    }
+
+    body.modelo-preview .certificado {
+        width: min(100vw, 141.4vh);
+        height: min(70.72vw, 100vh);
+        box-shadow: none;
     }
 }

@@ -1,7 +1,7 @@
 <header class="app-header" th:fragment="header(activePage)">
     <a class="brand" th:href="@{/admin/inicio}" href="/admin/inicio">Muttley</a>
 
-    <nav class="main-nav" aria-label="Navegacao principal">
+    <nav class="main-nav" aria-label="Navegação principal">
         <a th:classappend="${activePage == 'inicio'} ? ' active' : ''"
            th:href="@{/admin/inicio}" href="/admin/inicio">Início</a>
         <div class="nav-dropdown" th:classappend="${activePage == 'eventos' or activePage == 'certificados' or activePage == 'medalhas' or activePage == 'locais'} ? ' active' : ''">
@@ -37,7 +37,7 @@
            th:href="@{/admin/disciplinas}" href="/admin/disciplinas">Disciplinas</a>
     </nav>
 
-    <div class="user-menu" aria-label="Usuario logado">
+    <div class="user-menu" aria-label="Usuário logado">
         <span>Luciano</span>
         <span class="avatar" aria-hidden="true">
             <svg viewBox="0 0 24 24">

@@ -31,10 +31,10 @@ public class CertificadoController {
         model.addAttribute("pessoa", "participante");
         model.addAttribute("nome", "Nome do participante");
         model.addAttribute("preambulo", "Por participar do evento ");
-        model.addAttribute("evento", "Modelo de Evento Academico");
+        model.addAttribute("evento", "Modelo de Evento Acadêmico");
         model.addAttribute("predicado", "realizado pela FATEC Zona Leste.");
         model.addAttribute("duracao", "2 (duas) horas.");
-        model.addAttribute("data", "Sao Paulo, 30 de marco de 2026");
+        model.addAttribute("data", "São Paulo, 30 de março de 2026");
         return "certificado/modelo";
     }
 }

@@ -15,7 +15,7 @@
             <tr>
                 <th>Nome</th>
                 <th>Email</th>
-                <th>Funcao</th>
+                <th>Função</th>
                 <th>Disponibilidade</th>
                 <th>Tipo</th>
             </tr>
@@ -27,9 +27,9 @@
             <tr th:each="colaborador : ${colaboradores}">
                 <td th:text="${colaborador.pessoa != null ? colaborador.pessoa.nome : '-'}">Nome</td>
                 <td th:text="${colaborador.pessoa != null ? colaborador.pessoa.email : '-'}">email@exemplo.com</td>
-                <td th:text="${colaborador.funcao}">Funcao</td>
+                <td th:text="${colaborador.funcao}">Função</td>
                 <td th:text="${colaborador.disponibilidade}">Noite</td>
-                <td th:text="${colaborador.tipo}">Voluntario</td>
+                <td th:text="${colaborador.tipo}">Voluntário</td>
             </tr>
             </tbody>
         </table>

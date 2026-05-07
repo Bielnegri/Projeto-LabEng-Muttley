@@ -39,7 +39,7 @@ public class ParticipacaoController {
         AtualizacaoParticipacao dto;
         if (id != null) {
             Participacao participacao = participacaoService.procurarPorId(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Participacao nao encontrada."));
+                    .orElseThrow(() -> new EntityNotFoundException("Participação não encontrada."));
             dto = participacaoMapper.toAtualizacaoDto(participacao);
         } else {
             dto = new AtualizacaoParticipacao(null, 0, null, null, null);
@@ -54,7 +54,7 @@ public class ParticipacaoController {
     public String carregaFormularioPorId(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             Participacao participacao = participacaoService.procurarPorId(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Participacao nao encontrada."));
+                    .orElseThrow(() -> new EntityNotFoundException("Participação não encontrada."));
             AtualizacaoParticipacao dto = participacaoMapper.toAtualizacaoDto(participacao);
             model.addAttribute("participacao", dto);
             model.addAttribute("pessoas", pessoaService.procurarTodos());
@@ -79,8 +79,8 @@ public class ParticipacaoController {
         try {
             Participacao participacaoSalvo = participacaoService.salvarOuAtualizar(dto);
             String mensagem = dto.id() != null
-                    ? "Participacao '" + participacaoSalvo.getInscricao() + "' foi alterada com sucesso."
-                    : "Participacao '" + participacaoSalvo.getInscricao() + "' criada com sucesso.";
+                    ? "Participação '" + participacaoSalvo.getInscricao() + "' foi alterada com sucesso."
+                    : "Participação '" + participacaoSalvo.getInscricao() + "' criada com sucesso.";
             redirectAttributes.addFlashAttribute("message", mensagem);
             return "redirect:/participacao/listagem";
         } catch (EntityNotFoundException exception) {

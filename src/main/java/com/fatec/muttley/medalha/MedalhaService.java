@@ -25,7 +25,7 @@ public class MedalhaService {
 
     public Medalha salvarOuAtualizar(AtualizacaoMedalha dto) {
         Participacao participacao = participacaoService.procurarPorId(dto.participacaoId())
-                .orElseThrow(() -> new EntityNotFoundException("Participacao não encontrada com ID: " + dto.participacaoId()));
+                .orElseThrow(() -> new EntityNotFoundException("Participação não encontrada com ID: " + dto.participacaoId()));
         if (dto.id() != null) {
             Medalha existente = medalhaRepository.findById(dto.id())
                     .orElseThrow(() -> new EntityNotFoundException("Medalha não encontrada com ID: " + dto.id()));

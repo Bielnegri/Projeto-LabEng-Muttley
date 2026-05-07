@@ -31,7 +31,7 @@ public class PatrocinadorController {
         AtualizacaoPatrocinador dto;
         if (id != null) {
             Patrocinador patrocinador = patrocinadorService.procurarPorId(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Patrocinador nao encontrado."));
+                    .orElseThrow(() -> new EntityNotFoundException("Patrocinador não encontrado."));
             dto = patrocinadorMapper.toAtualizacaoDto(patrocinador);
         } else {
             dto = new AtualizacaoPatrocinador(null, "", "", 0, "", "", "");
@@ -44,7 +44,7 @@ public class PatrocinadorController {
     public String carregaFormularioPorId(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             Patrocinador patrocinador = patrocinadorService.procurarPorId(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Patrocinador nao encontrado."));
+                    .orElseThrow(() -> new EntityNotFoundException("Patrocinador não encontrado."));
             AtualizacaoPatrocinador dto = patrocinadorMapper.toAtualizacaoDto(patrocinador);
             model.addAttribute("patrocinador", dto);
             return "patrocinador/formulario";
