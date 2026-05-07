@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Medalha | Muttley')}"></head>
+<body>
+<header th:replace="~{fragmentos/header :: header(activePage='medalhas')}"></header>
+
+<main class="admin-page">
+    <h1 th:text="${medalha.id != null} ? 'Editar medalha' : 'Nova medalha'">Nova medalha</h1>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
+    <form class="event-form" th:action="@{/admin/medalhas/salvar}" method="post" th:object="${medalha}">
+        <input type="hidden" th:field="*{id}">
+
+        <div class="form-grid">
+            <label class="field">
+                <span>Nome:</span>
+                <input type="text" th:field="*{nome}" placeholder="Nome da medalha">
+                <span class="field-error" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></span>
+            </label>
+
+            <label class="field">
+                <span>Participa&ccedil;&atilde;o:</span>
+                <select th:field="*{participacaoId}">
+                    <option value="">Selecione uma participacao</option>
+                    <option th:each="participacao : ${participacoes}"
+                            th:value="${participacao.id}"
+                            th:text="${'#' + participacao.inscricao + ' - ' + (participacao.pessoa != null ? participacao.pessoa.nome : 'Participante') + ' - ' + (participacao.evento != null ? participacao.evento.tema : 'Evento')}">
+                        #1001 - Participante - Evento
+                    </option>
+                </select>
+                <span class="field-error" th:if="${#fields.hasErrors('participacaoId')}" th:errors="*{participacaoId}"></span>
+            </label>
+
+            <label class="field description-field">
+                <span>Descri&ccedil;&atilde;o:</span>
+                <textarea th:field="*{descricao}" placeholder="Resumo da conquista"></textarea>
+                <span class="field-error" th:if="${#fields.hasErrors('descricao')}" th:errors="*{descricao}"></span>
+            </label>
+        </div>
+
+        <div class="form-actions">
+            <a th:href="@{/admin/medalhas}">Cancelar</a>
+            <button class="primary-action" type="submit"
+                    th:text="${medalha.id != null} ? 'Salvar alteracoes' : 'Criar medalha'">Criar medalha</button>
+        </div>
+    </form>
+</main>
+
+<footer th:replace="~{fragmentos/footer :: footer}"></footer>
+</body>
+</html>
