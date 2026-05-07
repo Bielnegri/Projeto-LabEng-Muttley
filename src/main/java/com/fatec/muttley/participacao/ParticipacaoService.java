@@ -52,6 +52,10 @@ public class ParticipacaoService {
         return participacaoRepository.findAll(Sort.by("inscricao").ascending());
     }
 
+    public List<Participacao> procurarPorEvento(Long eventoId) {
+        return participacaoRepository.findByEventoIdOrderByInscricaoAsc(eventoId);
+    }
+
     public void apagarPorId(Long id) {
         participacaoRepository.deleteById(id);
     }
