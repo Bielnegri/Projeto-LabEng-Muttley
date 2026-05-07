@@ -1,5 +1,10 @@
 package com.fatec.muttley.pessoa;
 
+import com.fatec.muttley.aluno.AlunoService;
+import com.fatec.muttley.colaborador.ColaboradorService;
+import com.fatec.muttley.organizador.OrganizadorService;
+import com.fatec.muttley.palestrante.PalestranteService;
+import com.fatec.muttley.professor.ProfessorService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/pessoa")
 public class PessoaController {
     @Autowired
     private PessoaService pessoaService;
@@ -19,14 +23,59 @@ public class PessoaController {
     @Autowired
     private PessoaMapper pessoaMapper;
 
-    @GetMapping("/listagem")
+    @Autowired
+    private AlunoService alunoService;
+
+    @Autowired
+    private ProfessorService professorService;
+
+    @Autowired
+    private PalestranteService palestranteService;
+
+    @Autowired
+    private OrganizadorService organizadorService;
+
+    @Autowired
+    private ColaboradorService colaboradorService;
+
+    @GetMapping("/admin/aluno")
+    public String listarAlunos(Model model) {
+        model.addAttribute("alunos", alunoService.procurarTodos());
+        return "admin/aluno/listagem";
+    }
+
+    @GetMapping("/admin/professor")
+    public String listarProfessores(Model model) {
+        model.addAttribute("professores", professorService.procurarTodos());
+        return "admin/professor/listagem";
+    }
+
+    @GetMapping("/admin/palestrante")
+    public String listarPalestrantes(Model model) {
+        model.addAttribute("palestrantes", palestranteService.procurarTodos());
+        return "admin/palestrante/listagem";
+    }
+
+    @GetMapping("/admin/organizador")
+    public String listarOrganizadores(Model model) {
+        model.addAttribute("organizadores", organizadorService.procurarTodos());
+        return "admin/organizador/listagem";
+    }
+
+    @GetMapping("/admin/colaborador")
+    public String listarColaboradores(Model model) {
+        model.addAttribute("colaboradores", colaboradorService.procurarTodos());
+        return "admin/colaborador/listagem";
+    }
+
+    @GetMapping("/pessoa/listagem")
     public String carregaPaginaFormulario (Model model){
         //devolver DTO
         model.addAttribute("listaPessoas", pessoaService.procurarTodos());
         return "pessoa/listagem";
     }
 
-    @GetMapping("/formulario")
+    @GetMapping("/pessoa/formulario")
     public String mostrarFormulario (@RequestParam(required = false) Long id, Model model) {
         AtualizacaoPessoa dto;
         if (id != null) {
@@ -42,7 +91,7 @@ public class PessoaController {
         return "pessoa/formulario";
     }
 
-    @GetMapping ("/formulario/{id}")
+    @GetMapping ("/pessoa/formulario/{id}")
     public String carregaPaginaFormulario (@PathVariable("id") Long id, Model model,
                                            RedirectAttributes redirectAttributes) {
         AtualizacaoPessoa dto;
@@ -62,7 +111,7 @@ public class PessoaController {
         }
     }
 
-    @PostMapping("/salvar")
+    @PostMapping("/pessoa/salvar")
     public String salvar(@ModelAttribute("pessoa") @Valid AtualizacaoPessoa dto,
                          BindingResult result,
                          RedirectAttributes redirectAttributes,
@@ -84,7 +133,7 @@ public class PessoaController {
         }
     }
 
-    @GetMapping("/delete/{id}")
+    @GetMapping("/pessoa/delete/{id}")
     @Transactional
     public String deletarPessoa(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
         try {

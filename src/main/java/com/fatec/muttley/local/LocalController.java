@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/local")
+@RequestMapping("/admin/locais")
 public class LocalController {
     @Autowired
     private LocalService localService;
@@ -23,11 +23,12 @@ public class LocalController {
     @Autowired
     private LocalMapper localMapper;
 
-    @GetMapping("/listagem")
+    @GetMapping({"", "/listagem"})
     public String carregaPaginaFormulario (Model model){
         //devolver DTO
         model.addAttribute("listaLocais", localService.procurarTodos());
-        return "local/listagem";
+        model.addAttribute("listaEnderecos", enderecoService.procurarTodos());
+        return "admin/locais/listagem";
     }
 
     @GetMapping("/formulario")
@@ -44,7 +45,7 @@ public class LocalController {
         }
         model.addAttribute("local", dto);
         model.addAttribute("enderecos", enderecoService.procurarTodos());
-        return "local/formulario";
+        return "admin/locais/formulario";
     }
     @GetMapping ("/formulario/{id}")
     public String carregaPaginaFormulario (@PathVariable("id") Long id, Model model,
@@ -59,11 +60,11 @@ public class LocalController {
                 dto = localMapper.toAtualizacaoDto(local);
                 model.addAttribute("local", dto);
             }
-            return "local/formulario";
+            return "admin/locais/formulario";
         } catch (EntityNotFoundException e) {
             //resolver erros
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/local/formulario";
+            return "redirect:/admin/locais/formulario";
         }
     }
 
@@ -75,7 +76,7 @@ public class LocalController {
         if (result.hasErrors()) {
             // Recarrega dados necessários para mostrar erros
             model.addAttribute("enderecos", enderecoService.procurarTodos());
-            return "local/formulario";
+            return "admin/locais/formulario";
         }
         try {
             Local localSalvo = localService.salvarOuAtualizar(dto);
@@ -83,10 +84,10 @@ public class LocalController {
                     ? "Local '" + localSalvo.getNome() + "' atualizado com sucesso!"
                     : "Local '" + localSalvo.getNome() + "' criado com sucesso!";
             redirectAttributes.addFlashAttribute("message", mensagem);
-            return "redirect:/local/listagem";
+            return "redirect:/admin/locais";
         } catch (EntityNotFoundException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/local/formulario" + (dto.id() != null ? "?id=" + dto.id() : "");
+            return "redirect:/admin/locais/formulario" + (dto.id() != null ? "?id=" + dto.id() : "");
         }
     }
 
@@ -99,6 +100,6 @@ public class LocalController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
-        return "redirect:/local/listagem";
+        return "redirect:/admin/locais";
     }
 }

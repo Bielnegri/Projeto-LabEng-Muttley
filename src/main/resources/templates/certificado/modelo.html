@@ -2,9 +2,9 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragmentos/headModelo :: head('Modelo Certificado')}">
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../../static/modelo.css" th:href="@{/css/modelo.css}">
+    <link rel="stylesheet" href="../../static/modelo.css" th:href="@{/modelo.css}">
 </head>
-<body class="background-container">
+<body th:class="${preview} ? 'background-container modelo-preview' : 'background-container'">
     <div class="certificado">
         <section class="section-titulo">
             <div class="text-titulo">
@@ -13,16 +13,15 @@
         </section>
         <section class="section-conteudo">
             <div class="text-destinatario">
-                <p th:inline="pessoa">Este certificado é concedido ao <span th:text="${pessoa}">Professor</span></p>
+                <p>Este certificado é concedido ao <span th:text="${pessoa}">Professor</span></p>
             </div>
             <div class="text-nome-destinatario">
                 <p th:text="${nome}">Gabriel</p>
             </div>
             <div class="text-descricao">
                 <p>
-                    <span th:text="${preambulo}">Por ministrar a palestra </span><b><span th:text="${evento}">“Inteligência Cibernética em Tempos de Guerra Híbrida”</span></b>
-                    <span th:text="${predicado}">realizada no dia 30 de março de 2026, promovida pelo Curso Superior de Tecnologia em Análise e
-                    Desenvolvimento de Sistemas.</span>
+                    <span th:text="${preambulo}">Por ministrar a palestra </span><b><span th:text="${evento}">Inteligência Cibernética em Tempos de Guerra Híbrida</span></b>
+                    <span th:text="${predicado}">realizada no dia 30 de março de 2026, promovida pelo Curso Superior de Tecnologia em Análise e Desenvolvimento de Sistemas.</span>
                 </p>
             </div>
             <div class="text-descricao">
@@ -31,8 +30,6 @@
             <div class="text-data">
                 <p th:text="${data}">São Paulo, 30 de março de 2026</p>
             </div>
-
-
         </section>
         <section class="section-assinatura">
             <div>

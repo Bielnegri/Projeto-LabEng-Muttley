@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Medalhas | Muttley')}"></head>
+<body>
+<header th:replace="~{fragmentos/header :: header(activePage='medalhas')}"></header>
+
+<main class="admin-page">
+    <div class="page-title-row">
+        <h1>Medalhas</h1>
+        <a class="new-event-button" th:href="@{/admin/medalhas/formulario}">Nova medalha</a>
+    </div>
+
+    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
+    <section class="people-panel">
+        <table class="participants-table">
+            <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Descri&ccedil;&atilde;o</th>
+                <th>Participante</th>
+                <th>Evento</th>
+                <th>A&ccedil;&otilde;es</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${listaMedalhas == null or #lists.isEmpty(listaMedalhas)}">
+                <td colspan="5">Nenhuma medalha cadastrada.</td>
+            </tr>
+            <tr th:each="medalha : ${listaMedalhas}">
+                <td th:text="${medalha.nome}">Medalha ouro</td>
+                <td th:text="${medalha.descricao}">Destaque no evento</td>
+                <td th:text="${medalha.participacao != null and medalha.participacao.pessoa != null ? medalha.participacao.pessoa.nome : '-'}">Participante</td>
+                <td th:text="${medalha.participacao != null and medalha.participacao.evento != null ? medalha.participacao.evento.tema : '-'}">Evento</td>
+                <td>
+                    <div class="table-actions">
+                        <a class="table-action" th:href="@{/admin/medalhas/formulario(id=${medalha.id})}">Editar</a>
+                        <a class="table-action danger"
+                           th:href="@{/admin/medalhas/delete/{id}(id=${medalha.id})}"
+                           onclick="return confirm('Excluir esta medalha?')">Excluir</a>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<footer th:replace="~{fragmentos/footer :: footer}"></footer>
+</body>
+</html>

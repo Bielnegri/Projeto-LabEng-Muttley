@@ -26,7 +26,7 @@ public class Palestrante {
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "pessoa_id")
+    @JoinColumn(name = "id_pessoa")
     private Pessoa pessoa;
 
     public Palestrante(AtualizacaoPalestrante dados){

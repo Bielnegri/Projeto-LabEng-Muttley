@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Disciplinas | Muttley')}"></head>
+<body>
+<header th:replace="~{fragmentos/header :: header(activePage='disciplinas')}"></header>
+
+<main class="admin-page">
+    <div class="page-title-row">
+        <h1>Disciplinas</h1>
+        <a class="new-event-button" th:href="@{/admin/disciplinas/formulario}">Nova Disciplina</a>
+    </div>
+
+    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
+    <section class="people-panel">
+        <table class="participants-table">
+            <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Turno</th>
+                <th>Professor</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${listaDisciplinas == null or #lists.isEmpty(listaDisciplinas)}">
+                <td colspan="5">Nenhuma disciplina cadastrada.</td>
+            </tr>
+            <tr th:each="disciplina : ${listaDisciplinas}">
+                <td th:text="${disciplina.nome}">Laboratorio de Engenharia de Software</td>
+                <td th:text="${disciplina.descricao}">Descrição da disciplina</td>
+                <td th:text="${disciplina.turno}">Noturno</td>
+                <td th:text="${disciplina.professor != null and disciplina.professor.pessoa != null ? disciplina.professor.pessoa.nome : '-'}">Professor</td>
+                <td>
+                    <div class="table-actions">
+                        <a class="table-action" th:href="@{/admin/disciplinas/formulario(id=${disciplina.id})}">Editar</a>
+                        <a class="table-action danger" th:href="@{/admin/disciplinas/delete/{id}(id=${disciplina.id})}"
+                           onclick="return confirm('Excluir esta disciplina?')">Excluir</a>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<footer th:replace="~{fragmentos/footer :: footer}"></footer>
+</body>
+</html>

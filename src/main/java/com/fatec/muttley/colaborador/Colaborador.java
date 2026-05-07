@@ -26,7 +26,7 @@ public class Colaborador {
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "pessoa_id")
+    @JoinColumn(name = "id_pessoa")
     private Pessoa pessoa;
 
     public Colaborador(AtualizacaoColaborador dados){

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Colaboradores | Muttley')}"></head>
+<body>
+<header th:replace="~{fragmentos/header :: header(activePage='participantes')}"></header>
+
+<main class="admin-page">
+    <div class="page-title-row">
+        <h1>Colaboradores</h1>
+    </div>
+
+    <section class="people-panel">
+        <table class="participants-table">
+            <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Função</th>
+                <th>Disponibilidade</th>
+                <th>Tipo</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(colaboradores)}">
+                <td colspan="5">Nenhum colaborador cadastrado.</td>
+            </tr>
+            <tr th:each="colaborador : ${colaboradores}">
+                <td th:text="${colaborador.pessoa != null ? colaborador.pessoa.nome : '-'}">Nome</td>
+                <td th:text="${colaborador.pessoa != null ? colaborador.pessoa.email : '-'}">email@exemplo.com</td>
+                <td th:text="${colaborador.funcao}">Função</td>
+                <td th:text="${colaborador.disponibilidade}">Noite</td>
+                <td th:text="${colaborador.tipo}">Voluntário</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<footer th:replace="~{fragmentos/footer :: footer}"></footer>
+</body>
+</html>

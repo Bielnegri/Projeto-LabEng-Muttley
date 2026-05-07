@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Novo Evento | Muttley')}"></head>
+<body>
+<header th:replace="~{fragmentos/header :: header(activePage='eventos')}"></header>
+
+<main class="admin-page">
+    <h1 th:text="${evento.id != null} ? 'Editar evento' : 'Novo evento'">Novo evento</h1>
+
+    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
+    <form class="event-form" th:action="@{/admin/salvar}" method="post" th:object="${evento}">
+        <input type="hidden" th:field="*{id}">
+
+        <div class="form-grid">
+            <label class="field full-left">
+                <span>Tema do evento:</span>
+                <input type="text" th:field="*{tema}" placeholder="Nome ou tema do evento">
+                <span class="field-error" th:if="${#fields.hasErrors('tema')}" th:errors="*{tema}"></span>
+            </label>
+
+            <label class="field">
+                <span>Data:</span>
+                <input type="date" th:field="*{data}">
+                <span class="field-error" th:if="${#fields.hasErrors('data')}" th:errors="*{data}"></span>
+            </label>
+
+            <fieldset class="date-group">
+                <legend>Início:</legend>
+                <input type="time" th:field="*{horarioInicio}" aria-label="Hora de início">
+                <span class="field-error" th:if="${#fields.hasErrors('horarioInicio')}" th:errors="*{horarioInicio}"></span>
+            </fieldset>
+
+            <fieldset class="date-group">
+                <legend>Fim:</legend>
+                <input type="time" th:field="*{horarioFim}" aria-label="Hora de fim">
+                <span class="field-error" th:if="${#fields.hasErrors('horarioFim')}" th:errors="*{horarioFim}"></span>
+            </fieldset>
+
+            <label class="field">
+                <span>Modalidade:</span>
+                <input type="text" th:field="*{modalidade}" placeholder="Ex: Presencial, Online, Híbrido">
+                <span class="field-error" th:if="${#fields.hasErrors('modalidade')}" th:errors="*{modalidade}"></span>
+            </label>
+
+            <label class="field">
+                <span>Disciplina:</span>
+                <select th:field="*{disciplinaId}">
+                    <option value="">Selecione uma disciplina</option>
+                    <option th:each="d : ${disciplinas}"
+                            th:value="${d.id}"
+                            th:text="${d.nome}">Disciplina</option>
+                </select>
+                <span class="field-error" th:if="${#fields.hasErrors('disciplinaId')}" th:errors="*{disciplinaId}"></span>
+            </label>
+
+            <label class="field">
+                <span>Patrocinador:</span>
+                <select th:field="*{patrocinadorId}">
+                    <option value="">Selecione um patrocinador</option>
+                    <option th:each="p : ${patrocinadores}"
+                            th:value="${p.id}"
+                            th:text="${p.nome}">Patrocinador</option>
+                </select>
+                <span class="field-error" th:if="${#fields.hasErrors('patrocinadorId')}" th:errors="*{patrocinadorId}"></span>
+            </label>
+
+            <label class="field">
+                <span>Local:</span>
+                <select th:field="*{localId}">
+                    <option value="">Selecione um local</option>
+                    <option th:each="l : ${locais}"
+                            th:value="${l.id}"
+                            th:text="${l.nome}">Local</option>
+                </select>
+                <span class="field-error" th:if="${#fields.hasErrors('localId')}" th:errors="*{localId}"></span>
+            </label>
+        </div>
+
+        <div class="form-actions">
+            <a th:href="@{/admin/eventos}">Cancelar</a>
+            <button class="primary-action" type="submit"
+                    th:text="${evento.id != null} ? 'Salvar alterações' : 'Criar evento'">Criar evento</button>
+        </div>
+    </form>
+
+    <section class="participants-section" aria-labelledby="participacoes-title">
+        <div class="participants-heading">
+            <h2 id="participacoes-title">Participações</h2>
+        </div>
+
+        <div class="empty-state compact-empty" th:if="${participacoes == null or #lists.isEmpty(participacoes)}">
+            <p th:text="${evento.id != null} ? 'Nenhuma participação cadastrada para este evento.' : 'Salve o evento para visualizar participações.'">
+                Nenhuma participação cadastrada.
+            </p>
+        </div>
+
+        <table class="participants-table" th:if="${participacoes != null and !#lists.isEmpty(participacoes)}">
+            <thead>
+            <tr>
+                <th>Inscrição</th>
+                <th>Participante</th>
+                <th>Tipo</th>
+                <th>Email</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="participacao : ${participacoes}">
+                <td th:text="${participacao.inscricao}">1001</td>
+                <td th:text="${participacao.pessoa != null ? participacao.pessoa.nome : 'Participante não informado'}">Nome</td>
+                <td th:text="${participacao.tipo}">Aluno</td>
+                <td th:text="${participacao.pessoa != null ? participacao.pessoa.email : '-'}">email@exemplo.com</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<footer th:replace="~{fragmentos/footer :: footer}"></footer>
+</body>
+</html>

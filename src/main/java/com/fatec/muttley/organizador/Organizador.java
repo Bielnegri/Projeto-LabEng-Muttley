@@ -25,7 +25,7 @@ public class Organizador {
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "pessoa_id")
+    @JoinColumn(name = "id_pessoa")
     private Pessoa pessoa;
 
     public Organizador(AtualizacaoOrganizador dados){

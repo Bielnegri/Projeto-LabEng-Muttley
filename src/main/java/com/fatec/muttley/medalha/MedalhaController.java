@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/medalha")
+@RequestMapping("/admin/medalhas")
 public class MedalhaController {
     @Autowired
     private MedalhaService medalhaService;
@@ -23,10 +23,10 @@ public class MedalhaController {
     @Autowired
     private MedalhaMapper medalhaMapper;
 
-    @GetMapping("/listagem")
+    @GetMapping({"", "/listagem"})
     public String carregaPaginaFormulario (Model model){
         model.addAttribute("listaMedalhas", medalhaService.procurarTodos());
-        return "medalha/listagem";
+        return "admin/medalhas/listagem";
     }
 
     @GetMapping("/formulario")
@@ -41,7 +41,7 @@ public class MedalhaController {
         }
         model.addAttribute("medalha", dto);
         model.addAttribute("participacoes", participacaoService.procurarTodos());
-        return "medalha/formulario";
+        return "admin/medalhas/formulario";
     }
 
     @GetMapping ("/formulario/{id}")
@@ -56,10 +56,10 @@ public class MedalhaController {
                 dto = medalhaMapper.toAtualizacaoDto(medalha);
                 model.addAttribute("medalha", dto);
             }
-            return "medalha/formulario";
+            return "admin/medalhas/formulario";
         } catch (EntityNotFoundException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/medalha/formulario";
+            return "redirect:/admin/medalhas/formulario";
         }
     }
 
@@ -70,7 +70,7 @@ public class MedalhaController {
                          Model model) {
         if (result.hasErrors()) {
             model.addAttribute("participacoes", participacaoService.procurarTodos());
-            return "medalha/formulario";
+            return "admin/medalhas/formulario";
         }
         try {
             Medalha medalhaSalvo = medalhaService.salvarOuAtualizar(dto);
@@ -78,10 +78,10 @@ public class MedalhaController {
                     ? "Medalha '" + medalhaSalvo.getNome() + "' atualizada com sucesso!"
                     : "Medalha '" + medalhaSalvo.getNome() + "' criada com sucesso!";
             redirectAttributes.addFlashAttribute("message", mensagem);
-            return "redirect:/medalha/listagem";
+            return "redirect:/admin/medalhas";
         } catch (EntityNotFoundException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/medalha/formulario" + (dto.id() != null ? "?id=" + dto.id() : "");
+            return "redirect:/admin/medalhas/formulario" + (dto.id() != null ? "?id=" + dto.id() : "");
         }
     }
 
@@ -94,6 +94,6 @@ public class MedalhaController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
-        return "redirect:/medalha/listagem";
+        return "redirect:/admin/medalhas";
     }
 }
