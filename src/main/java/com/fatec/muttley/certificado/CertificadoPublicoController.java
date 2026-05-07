@@ -3,8 +3,14 @@ package com.fatec.muttley.certificado;
 import com.fatec.muttley.evento.Evento;
 import com.fatec.muttley.participacao.Participacao;
 import com.fatec.muttley.pessoa.Pessoa;
+import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.jsoup.Jsoup;
+import org.jsoup.helper.W3CDom;
+import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +19,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.time.Duration;
 import java.time.LocalTime;
@@ -23,6 +32,9 @@ import java.time.format.DateTimeFormatter;
 public class CertificadoPublicoController {
     @Autowired
     private CertificadoService certificadoService;
+
+    @Autowired
+    private TemplateEngine templateEngine;
 
     @GetMapping("/certificados/{codigo}")
     public String exibirPaginaPublica(@PathVariable("codigo") String codigo, Model model, HttpServletRequest request) {
@@ -41,10 +53,10 @@ public class CertificadoPublicoController {
     }
 
     @GetMapping("/certificados/{codigo}/download")
-    public String exibirDownload(@PathVariable("codigo") String codigo, Model model) {
+    public void exibirDownload(@PathVariable("codigo") String codigo, Model model, HttpServletResponse response) throws IOException{
         Certificado certificado = buscarCertificado(codigo);
         preencherModelo(certificado, model);
-        return "certificado/modeloPdf";
+        baixar(response, model);
     }
 
     private Certificado buscarCertificado(String codigo) {
@@ -76,6 +88,26 @@ public class CertificadoPublicoController {
         }
 
         return builder.build().encode().toUriString();
+    }
+
+    @GetMapping("/baixar")
+    public void baixar(HttpServletResponse response, Model model) throws IOException {
+        Context context = new Context();
+        context.setVariables(model.asMap());
+
+        String htmlProcessado = templateEngine.process("certificado/modeloPdf", context);
+        Document doc = Jsoup.parse(htmlProcessado, "UTF-8");
+        doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
+
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=\"certificado.pdf\"");
+
+        String baseUri = new ClassPathResource("static/").getURL().toExternalForm();
+
+        PdfRendererBuilder builder = new PdfRendererBuilder();
+        builder.withW3cDocument(new W3CDom().fromJsoup(doc), baseUri);
+        builder.toStream(response.getOutputStream());
+        builder.run();
     }
 
     private String montarNomeCertificado(Evento evento) {

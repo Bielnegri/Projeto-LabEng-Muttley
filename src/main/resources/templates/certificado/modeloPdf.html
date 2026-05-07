@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Certificado | Muttley</title>
-    <link rel="stylesheet" th:href="@{/modeloPdf.css}" href="/modeloPdf.css">
-</head>
+<head th:replace="~{fragmentos/headModeloPdf :: head('Modelo Certificado PDF')}">
 <body>
     <div class="certificado">
         <section class="section-titulo">
@@ -42,13 +37,5 @@
             </div>
         </section>
     </div>
-
-    <script>
-        window.addEventListener('load', function () {
-            window.setTimeout(function () {
-                window.print();
-            }, 250);
-        });
-    </script>
 </body>
 </html>
