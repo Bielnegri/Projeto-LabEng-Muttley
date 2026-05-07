@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +43,10 @@ public class CertificadoService {
 
     public List<Certificado> procurarTodos(){
         return certificadoRepository.findAll(Sort.by("assinatura").ascending());
+    }
+
+    public List<Certificado> procurarUltimosEmitidos() {
+        return certificadoRepository.findUltimosEmitidos(PageRequest.of(0, 8));
     }
 
     public void apagarPorId (Long id) {

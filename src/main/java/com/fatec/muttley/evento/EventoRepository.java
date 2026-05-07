@@ -26,6 +26,21 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
     );
 
     @Query("""
+            select evento
+            from Evento evento
+            left join fetch evento.disciplina
+            left join fetch evento.local
+            where evento.data < :dataAtual
+               or (evento.data = :dataAtual and evento.horarioFim is not null and evento.horarioFim < :horaAtual)
+            order by evento.data desc, evento.horarioFim desc
+            """)
+    List<Evento> findEventosEncerrados(
+            @Param("dataAtual") Date dataAtual,
+            @Param("horaAtual") String horaAtual,
+            Pageable pageable
+    );
+
+    @Query("""
             select e from Evento e
             where (e.data > :dataAtual
                 or (e.data = :dataAtual and (e.horarioInicio is null or e.horarioInicio >= :horaAtual)))

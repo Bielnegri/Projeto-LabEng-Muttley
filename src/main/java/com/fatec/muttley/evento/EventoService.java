@@ -89,6 +89,11 @@ public class EventoService {
         return eventoRepository.findProximosEventos(Date.valueOf(LocalDate.now()), horaAtual, PageRequest.of(0, 8));
     }
 
+    public List<Evento> procurarEventosEncerradosAguardandoCertificado() {
+        String horaAtual = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
+        return eventoRepository.findEventosEncerrados(Date.valueOf(LocalDate.now()), horaAtual, PageRequest.of(0, 10));
+    }
+
     public Page<Evento> procurarProximosFiltrados(String busca, Pageable pageable) {
         String horaAtual = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
         String termoBusca = (busca == null) ? "" : busca;
