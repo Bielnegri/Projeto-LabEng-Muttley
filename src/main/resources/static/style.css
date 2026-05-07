@@ -1152,6 +1152,24 @@ svg {
     color: #fff;
 }
 
+.table-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.table-action.danger {
+    background: var(--danger-soft);
+    color: var(--danger);
+}
+
+.table-action.danger:hover,
+.table-action.danger:focus-visible {
+    background: var(--danger);
+    color: #fff;
+}
+
 @media (max-width: 860px) {
     .app-header {
         grid-template-columns: 1fr auto;
