@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Alunos | Muttley')}"></head>
+<body>
+<header th:replace="~{fragmentos/header :: header(activePage='participantes')}"></header>
+
+<main class="admin-page">
+    <div class="page-title-row">
+        <h1>Alunos</h1>
+    </div>
+
+    <section class="people-panel">
+        <table class="participants-table">
+            <thead>
+            <tr>
+                <th>Matricula</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>Instituicao</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(alunos)}">
+                <td colspan="5">Nenhum aluno cadastrado.</td>
+            </tr>
+            <tr th:each="aluno : ${alunos}">
+                <td th:text="${aluno.matricula}">2026001</td>
+                <td th:text="${aluno.pessoa != null ? aluno.pessoa.nome : '-'}">Nome</td>
+                <td th:text="${aluno.pessoa != null ? aluno.pessoa.email : '-'}">email@exemplo.com</td>
+                <td th:text="${aluno.pessoa != null ? aluno.pessoa.telefone : '-'}">(11) 99999-0000</td>
+                <td th:text="${aluno.instituicao}">FATEC</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<footer th:replace="~{fragmentos/footer :: footer}"></footer>
+</body>
+</html>
