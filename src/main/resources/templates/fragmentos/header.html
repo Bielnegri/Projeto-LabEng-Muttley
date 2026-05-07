@@ -2,6 +2,8 @@
     <a class="brand" th:href="@{/admin/inicio}" href="/admin/inicio">Muttley</a>
 
     <nav class="main-nav" aria-label="Navegacao principal">
+        <a th:classappend="${activePage == 'inicio'} ? ' active' : ''"
+           th:href="@{/admin/inicio}" href="/admin/inicio">Início</a>
         <div class="nav-dropdown" th:classappend="${activePage == 'eventos' or activePage == 'certificados' or activePage == 'medalhas' or activePage == 'locais'} ? ' active' : ''">
             <button class="nav-dropdown__trigger" type="button" aria-haspopup="true" aria-expanded="false">
                 Eventos
@@ -16,8 +18,6 @@
                 <a role="menuitem" th:href="@{/local/listagem}" href="/local/listagem">Locais</a>
             </div>
         </div>
-        <a th:classappend="${activePage == 'disciplinas'} ? ' active' : ''"
-           th:href="@{/admin/disciplinas}" href="/admin/disciplinas">Disciplinas</a>
         <div class="nav-dropdown" th:classappend="${activePage == 'participantes'} ? ' active' : ''">
             <button class="nav-dropdown__trigger" type="button" aria-haspopup="true" aria-expanded="false">
                 Participantes
@@ -33,6 +33,8 @@
                 <a role="menuitem" th:href="@{/admin/colaborador}" href="/admin/colaborador">Colaborador</a>
             </div>
         </div>
+        <a th:classappend="${activePage == 'disciplinas'} ? ' active' : ''"
+           th:href="@{/admin/disciplinas}" href="/admin/disciplinas">Disciplinas</a>
     </nav>
 
     <div class="user-menu" aria-label="Usuario logado">
