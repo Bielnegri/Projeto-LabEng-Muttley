@@ -1129,6 +1129,22 @@ svg {
     margin-bottom: 2.3rem;
 }
 
+.public-certificate-view {
+    width: min(100% - 2rem, 1120px);
+}
+
+.public-certificate-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+.public-certificate-actions .primary-action:disabled {
+    cursor: not-allowed;
+    opacity: 0.72;
+    transform: none;
+}
+
 .certificates-table td:last-child {
     width: 92px;
 }
@@ -1168,6 +1184,87 @@ svg {
 .table-action.danger:focus-visible {
     background: var(--danger);
     color: #fff;
+}
+
+.public-certificate-page {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    padding: 2rem 1rem;
+}
+
+.public-certificate-panel {
+    width: min(100%, 780px);
+    padding: 1.4rem;
+    border: 1px solid rgba(217, 222, 216, 0.9);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: var(--shadow-md);
+}
+
+.public-certificate-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 2.1rem;
+    padding: 0 0.75rem;
+    border-radius: 999px;
+    background: var(--primary-soft);
+    color: var(--primary-strong);
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.public-certificate-panel h1 {
+    margin: 1rem 0 1.2rem;
+    color: var(--ink-strong);
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.05;
+}
+
+.certificate-data-list {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.certificate-data-list div {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    border-bottom: 1px solid var(--line);
+}
+
+.certificate-data-list div:last-child {
+    border-bottom: 0;
+}
+
+.certificate-data-list dt,
+.certificate-data-list dd {
+    margin: 0;
+    padding: 0.85rem 1rem;
+}
+
+.certificate-data-list dt {
+    background: var(--surface-soft);
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.certificate-data-list dd {
+    color: var(--ink);
+    font-weight: 650;
+    overflow-wrap: anywhere;
+}
+
+.certificate-data-list a {
+    color: var(--primary-strong);
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
 @media (max-width: 860px) {

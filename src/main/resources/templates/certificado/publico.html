@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Certificado | Muttley')}"></head>
+<body>
+<main class="admin-page public-certificate-view">
+    <div class="page-title-row">
+        <h1>Certificado</h1>
+    </div>
+
+    <section class="certificate-overview" aria-label="Preview do certificado">
+        <article class="certificate-preview-panel">
+            <div class="section-heading">
+                <h2>Preview do certificado</h2>
+            </div>
+            <div class="certificate-preview-shell">
+                <iframe title="Preview do certificado"
+                        th:src="@{/certificados/{codigo}/preview(codigo=${certificado.codigoValidacao})}">
+                </iframe>
+            </div>
+            <div class="public-certificate-actions">
+                <a class="primary-action"
+                   th:href="@{/certificados/{codigo}/download(codigo=${certificado.codigoValidacao})}">
+                    Baixar PDF
+                </a>
+            </div>
+        </article>
+    </section>
+</main>
+</body>
+</html>
