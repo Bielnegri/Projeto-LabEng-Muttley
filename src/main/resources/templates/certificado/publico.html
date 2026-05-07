@@ -11,17 +11,23 @@
         <article class="certificate-preview-panel">
             <div class="section-heading">
                 <h2>Preview do certificado</h2>
+                <div class="public-certificate-actions">
+                    <a class="primary-action linkedin-action"
+                       th:href="${linkedinUrl}"
+                       target="_blank"
+                       rel="noopener">
+                        Adicionar no LinkedIn
+                    </a>
+                    <a class="primary-action"
+                       th:href="@{/certificados/{codigo}/download(codigo=${certificado.codigoValidacao})}">
+                        Baixar PDF
+                    </a>
+                </div>
             </div>
             <div class="certificate-preview-shell">
                 <iframe title="Preview do certificado"
                         th:src="@{/certificados/{codigo}/preview(codigo=${certificado.codigoValidacao})}">
                 </iframe>
-            </div>
-            <div class="public-certificate-actions">
-                <a class="primary-action"
-                   th:href="@{/certificados/{codigo}/download(codigo=${certificado.codigoValidacao})}">
-                    Baixar PDF
-                </a>
             </div>
         </article>
     </section>

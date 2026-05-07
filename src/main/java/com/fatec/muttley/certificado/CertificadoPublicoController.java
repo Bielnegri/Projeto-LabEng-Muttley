@@ -3,13 +3,16 @@ package com.fatec.muttley.certificado;
 import com.fatec.muttley.evento.Evento;
 import com.fatec.muttley.participacao.Participacao;
 import com.fatec.muttley.pessoa.Pessoa;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.sql.Date;
 import java.time.Duration;
@@ -22,9 +25,10 @@ public class CertificadoPublicoController {
     private CertificadoService certificadoService;
 
     @GetMapping("/certificados/{codigo}")
-    public String exibirPaginaPublica(@PathVariable("codigo") String codigo, Model model) {
+    public String exibirPaginaPublica(@PathVariable("codigo") String codigo, Model model, HttpServletRequest request) {
         Certificado certificado = buscarCertificado(codigo);
         model.addAttribute("certificado", certificado);
+        model.addAttribute("linkedinUrl", montarUrlLinkedIn(certificado, request));
         return "certificado/publico";
     }
 
@@ -46,6 +50,39 @@ public class CertificadoPublicoController {
     private Certificado buscarCertificado(String codigo) {
         return certificadoService.procurarPorCodigoValidacao(codigo)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Certificado não encontrado."));
+    }
+
+    private String montarUrlLinkedIn(Certificado certificado, HttpServletRequest request) {
+        Participacao participacao = certificado.getParticipacao();
+        Evento evento = participacao != null ? participacao.getEvento() : null;
+        Date dataEmissao = certificado.getDataEmissao() != null ? certificado.getDataEmissao() : evento != null ? evento.getData() : null;
+        String codigo = certificado.getCodigoValidacao();
+        String urlCertificado = ServletUriComponentsBuilder.fromRequestUri(request)
+                .replacePath("/certificados/" + codigo)
+                .replaceQuery(null)
+                .build()
+                .toUriString();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("https://www.linkedin.com/profile/add")
+                .queryParam("startTask", "CERTIFICATION_NAME")
+                .queryParam("name", montarNomeCertificado(evento))
+                .queryParam("organizationName", "FATEC Zona Leste")
+                .queryParam("certId", codigo)
+                .queryParam("certUrl", urlCertificado);
+
+        if (dataEmissao != null) {
+            builder.queryParam("issueYear", dataEmissao.toLocalDate().getYear());
+            builder.queryParam("issueMonth", dataEmissao.toLocalDate().getMonthValue());
+        }
+
+        return builder.build().encode().toUriString();
+    }
+
+    private String montarNomeCertificado(Evento evento) {
+        if (evento == null || evento.getTema() == null || evento.getTema().isBlank()) {
+            return "Certificado Muttley";
+        }
+        return "Certificado - " + evento.getTema();
     }
 
     private void preencherModelo(Certificado certificado, Model model) {
