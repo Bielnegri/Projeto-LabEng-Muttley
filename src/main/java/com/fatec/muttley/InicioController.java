@@ -7,14 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/")
 public class InicioController {
-
-    @GetMapping("/inicio")
-    public String carregarPaginaInicial() {
-        return "inicio";
-    }
-
     @GetMapping
     public String carregarIndex() {
-        return "inicio";
+        return "redirect:/admin/inicio";
     }
 }
