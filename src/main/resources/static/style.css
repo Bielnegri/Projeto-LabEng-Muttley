@@ -1135,8 +1135,20 @@ svg {
 
 .public-certificate-actions {
     display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
     justify-content: flex-end;
     margin-top: 1rem;
+}
+
+.linkedin-action {
+    background: #0a66c2;
+    box-shadow: 0 10px 18px rgba(10, 102, 194, 0.18);
+}
+
+.linkedin-action:hover,
+.linkedin-action:focus-visible {
+    background: #004182;
 }
 
 .public-certificate-actions .primary-action:disabled {

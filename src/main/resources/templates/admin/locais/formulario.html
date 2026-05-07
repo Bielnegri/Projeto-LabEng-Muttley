@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Local | Muttley')}"></head>
+<body>
+<header th:replace="~{fragmentos/header :: header(activePage='locais')}"></header>
+
+<main class="admin-page">
+    <h1 th:text="${local.id != null} ? 'Editar local' : 'Novo local'">Novo local</h1>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
+    <form class="event-form" th:action="@{/admin/locais/salvar}" method="post" th:object="${local}">
+        <input type="hidden" th:field="*{id}">
+
+        <div class="form-grid">
+            <label class="field">
+                <span>Nome:</span>
+                <input type="text" th:field="*{nome}" placeholder="Nome do local">
+                <span class="field-error" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></span>
+            </label>
+
+            <label class="field">
+                <span>Capacidade:</span>
+                <input type="number" th:field="*{capacidade}" min="1" placeholder="Ex: 120">
+                <span class="field-error" th:if="${#fields.hasErrors('capacidade')}" th:errors="*{capacidade}"></span>
+            </label>
+
+            <label class="field">
+                <span>Endere&ccedil;o:</span>
+                <select th:field="*{enderecoId}">
+                    <option value="">Selecione um endereco</option>
+                    <option th:each="endereco : ${enderecos}"
+                            th:value="${endereco.id}"
+                            th:text="${endereco.logradouro + ', ' + endereco.numero + ' - ' + endereco.cidade}">
+                        Rua Exemplo, 100 - Sao Paulo
+                    </option>
+                </select>
+                <span class="field-error" th:if="${#fields.hasErrors('enderecoId')}" th:errors="*{enderecoId}"></span>
+            </label>
+
+            <label class="field description-field">
+                <span>Descri&ccedil;&atilde;o:</span>
+                <textarea th:field="*{descricao}" placeholder="Resumo do local"></textarea>
+                <span class="field-error" th:if="${#fields.hasErrors('descricao')}" th:errors="*{descricao}"></span>
+            </label>
+        </div>
+
+        <div class="form-actions">
+            <a th:href="@{/admin/locais}">Cancelar</a>
+            <button class="primary-action" type="submit"
+                    th:text="${local.id != null} ? 'Salvar alteracoes' : 'Criar local'">Criar local</button>
+        </div>
+    </form>
+</main>
+
+<footer th:replace="~{fragmentos/footer :: footer}"></footer>
+</body>
+</html>

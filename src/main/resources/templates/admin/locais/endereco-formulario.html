@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Endereco | Muttley')}"></head>
+<body>
+<header th:replace="~{fragmentos/header :: header(activePage='locais')}"></header>
+
+<main class="admin-page">
+    <h1 th:text="${endereco.id != null} ? 'Editar endereco' : 'Novo endereco'">Novo endereco</h1>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
+    <form class="event-form" th:action="@{/admin/locais/enderecos/salvar}" method="post" th:object="${endereco}">
+        <input type="hidden" th:field="*{id}">
+
+        <div class="form-grid">
+            <label class="field">
+                <span>Estado:</span>
+                <input type="text" th:field="*{estado}" maxlength="2" placeholder="Ex: SP">
+                <span class="field-error" th:if="${#fields.hasErrors('estado')}" th:errors="*{estado}"></span>
+            </label>
+
+            <label class="field">
+                <span>Cidade:</span>
+                <input type="text" th:field="*{cidade}" placeholder="Nome da cidade">
+                <span class="field-error" th:if="${#fields.hasErrors('cidade')}" th:errors="*{cidade}"></span>
+            </label>
+
+            <label class="field">
+                <span>Bairro:</span>
+                <input type="text" th:field="*{bairro}" placeholder="Nome do bairro">
+                <span class="field-error" th:if="${#fields.hasErrors('bairro')}" th:errors="*{bairro}"></span>
+            </label>
+
+            <label class="field">
+                <span>N&uacute;mero:</span>
+                <input type="number" th:field="*{numero}" min="1" placeholder="Ex: 100">
+                <span class="field-error" th:if="${#fields.hasErrors('numero')}" th:errors="*{numero}"></span>
+            </label>
+
+            <label class="field description-field">
+                <span>Logradouro:</span>
+                <input type="text" th:field="*{logradouro}" placeholder="Rua, avenida ou travessa">
+                <span class="field-error" th:if="${#fields.hasErrors('logradouro')}" th:errors="*{logradouro}"></span>
+            </label>
+
+            <label class="field description-field">
+                <span>Complemento:</span>
+                <input type="text" th:field="*{complemento}" placeholder="Bloco, sala, andar ou referencia">
+                <span class="field-error" th:if="${#fields.hasErrors('complemento')}" th:errors="*{complemento}"></span>
+            </label>
+        </div>
+
+        <div class="form-actions">
+            <a th:href="@{/admin/locais}">Cancelar</a>
+            <button class="primary-action" type="submit"
+                    th:text="${endereco.id != null} ? 'Salvar alteracoes' : 'Criar endereco'">Criar endereco</button>
+        </div>
+    </form>
+</main>
+
+<footer th:replace="~{fragmentos/footer :: footer}"></footer>
+</body>
+</html>
