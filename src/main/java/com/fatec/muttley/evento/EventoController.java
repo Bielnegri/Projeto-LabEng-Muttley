@@ -8,6 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +17,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Controller
 public class EventoController {
@@ -38,6 +43,16 @@ public class EventoController {
 
     @Autowired
     private ParticipacaoService participacaoService;
+
+    @GetMapping("/eventos/{id_evento}")
+    public String carregarPaginaEvento(@PathVariable("id_evento") Long idEvento, Model model) {
+        Evento evento = eventoService.procurarPorId(idEvento)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento nÃ£o encontrado."));
+
+        model.addAttribute("evento", evento);
+        model.addAttribute("inscricoesEncerradas", inscricoesEncerradas(evento));
+        return "user/evento/detalhe";
+    }
 
     @GetMapping("/admin/eventos")
     public String carregarEventos(
@@ -124,5 +139,21 @@ public class EventoController {
         model.addAttribute("participacoes", dto.id() != null
                 ? participacaoService.procurarPorEvento(dto.id())
                 : java.util.List.of());
+    }
+
+    private boolean inscricoesEncerradas(Evento evento) {
+        if (evento.getData() == null || evento.getHorarioInicio() == null || evento.getHorarioInicio().isBlank()) {
+            return false;
+        }
+
+        try {
+            LocalDateTime inicioEvento = LocalDateTime.of(
+                    evento.getData().toLocalDate(),
+                    LocalTime.parse(evento.getHorarioInicio())
+            );
+            return !inicioEvento.isAfter(LocalDateTime.now());
+        } catch (RuntimeException exception) {
+            return false;
+        }
     }
 }
