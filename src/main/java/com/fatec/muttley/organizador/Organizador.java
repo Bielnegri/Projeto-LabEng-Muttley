@@ -1,5 +1,6 @@
 package com.fatec.muttley.organizador;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fatec.muttley.pessoa.Pessoa;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,7 @@ public class Organizador {
     @OneToOne
     @MapsId
     @JoinColumn(name = "id_pessoa")
+    @JsonBackReference
     private Pessoa pessoa;
 
     public Organizador(AtualizacaoOrganizador dados){

@@ -1,5 +1,6 @@
 package com.fatec.muttley.palestrante;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fatec.muttley.pessoa.Pessoa;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ public class Palestrante {
     @OneToOne
     @MapsId
     @JoinColumn(name = "id_pessoa")
+    @JsonBackReference
     private Pessoa pessoa;
 
     public Palestrante(AtualizacaoPalestrante dados){
