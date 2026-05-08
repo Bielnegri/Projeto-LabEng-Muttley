@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fatec.muttley.disciplina.Disciplina;
+import com.fatec.muttley.evento.enums.ModalidadeEventoEnum;
+import com.fatec.muttley.evento.enums.StatusEventoEnum;
 import com.fatec.muttley.local.Local;
 import com.fatec.muttley.participacao.Participacao;
 import com.fatec.muttley.patrocinador.Patrocinador;
@@ -27,7 +29,8 @@ public class Evento {
     private Date data;
     private String horarioInicio;
     private String horarioFim;
-    private String modalidade;
+    private ModalidadeEventoEnum modalidade;
+    private StatusEventoEnum status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_disciplina")
