@@ -1,5 +1,6 @@
 package com.fatec.muttley.evento;
 
+import com.fatec.muttley.evento.enums.ModalidadeEventoEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -20,8 +21,8 @@ public record AtualizacaoEvento (
         @NotBlank(message = "Horário de fim é obrigatório")
         String horarioFim,
 
-        @NotBlank(message = "Modalidade é obrigatória")
-        String modalidade,
+        @NotNull(message = "Modalidade é obrigatória")
+        ModalidadeEventoEnum modalidade,
 
         @NotNull(message = "Disciplina é obrigatória")
         Long disciplinaId,

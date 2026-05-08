@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.sql.Date;
+import java.time.LocalDate;
 
 @Service
 public class CertificadoService {
@@ -66,6 +68,25 @@ public class CertificadoService {
 
     public Optional<Certificado> procurarPorCodigoValidacao(String codigoValidacao) {
         return certificadoRepository.findByCodigoValidacaoComDados(codigoValidacao);
+    }
+
+    @Transactional
+    public void gerarCertificadosParaParticipacoes(List<Long> participacaoIds) {
+        for (Long participacaoId : participacaoIds) {
+            if (participacaoId == null || certificadoRepository.existsByParticipacaoId(participacaoId)) {
+                continue;
+            }
+
+            Participacao participacao = participacaoService.procurarPorId(participacaoId)
+                    .orElseThrow(() -> new EntityNotFoundException("Participação não encontrada com ID: " + participacaoId));
+
+            Certificado certificado = new Certificado();
+            certificado.setDataEmissao(Date.valueOf(LocalDate.now()));
+            certificado.setAssinatura("Coordenação FATEC");
+            certificado.setParticipacao(participacao);
+            preencherDadosPublicos(certificado);
+            certificadoRepository.save(certificado);
+        }
     }
 
     private void preencherDadosPublicos(Certificado certificado) {

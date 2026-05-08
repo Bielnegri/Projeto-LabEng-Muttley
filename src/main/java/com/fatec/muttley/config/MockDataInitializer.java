@@ -12,6 +12,8 @@ import com.fatec.muttley.endereco.Endereco;
 import com.fatec.muttley.endereco.EnderecoRepository;
 import com.fatec.muttley.evento.Evento;
 import com.fatec.muttley.evento.EventoRepository;
+import com.fatec.muttley.evento.enums.ModalidadeEventoEnum;
+import com.fatec.muttley.evento.enums.StatusEventoEnum;
 import com.fatec.muttley.local.Local;
 import com.fatec.muttley.local.LocalRepository;
 import com.fatec.muttley.medalha.Medalha;
@@ -140,22 +142,22 @@ public class MockDataInitializer {
             Disciplina disciplina6 = disciplinaRepository.save(new Disciplina(null, "Gestão de Produtos Digitais", "Descoberta, métricas e roadmap", "Noturno", profProduto, new ArrayList<>()));
 
             List<Evento> eventos = List.of(
-                    eventoRepository.save(criarEvento("Workshop de Testes Automatizados", 3, "19:00", "21:30", "Presencial", disciplina1, patrocinador1, local2)),
-                    eventoRepository.save(criarEvento("Palestra: Boas Práticas em APIs", 5, "19:30", "22:00", "Híbrido", disciplina2, patrocinador2, local1)),
-                    eventoRepository.save(criarEvento("Mesa Redonda de Carreira em TI", 7, "20:00", "22:00", "Presencial", disciplina6, patrocinador1, local1)),
-                    eventoRepository.save(criarEvento("Imersão em Banco de Dados", 9, "08:30", "12:00", "Presencial", disciplina3, patrocinador3, local3)),
-                    eventoRepository.save(criarEvento("Introducao a Machine Learning", 11, "19:00", "21:00", "Online", disciplina4, patrocinador3, local5)),
-                    eventoRepository.save(criarEvento("Clínica de Currículo para Devs", 13, "18:30", "20:30", "Presencial", disciplina6, patrocinador2, local4)),
-                    eventoRepository.save(criarEvento("Cibersegurança na Prática", 15, "19:00", "22:00", "Presencial", disciplina5, patrocinador4, local2)),
-                    eventoRepository.save(criarEvento("Design Sprint para Apps", 17, "09:00", "13:00", "Presencial", disciplina6, patrocinador2, local3)),
-                    eventoRepository.save(criarEvento("Deploy Contínuo com Docker", 19, "19:00", "21:30", "Híbrido", disciplina2, patrocinador5, local5)),
-                    eventoRepository.save(criarEvento("Observabilidade e Logs", 21, "20:00", "22:00", "Online", disciplina2, patrocinador5, local5)),
-                    eventoRepository.save(criarEvento("SQL para Análise de Dados", 23, "14:00", "17:00", "Presencial", disciplina3, patrocinador3, local2)),
-                    eventoRepository.save(criarEvento("Arquitetura Hexagonal", 25, "19:30", "21:30", "Presencial", disciplina1, patrocinador1, local1)),
-                    eventoRepository.save(criarEvento("LGPD para Projetos Academicos", 27, "18:00", "20:00", "Online", disciplina5, patrocinador4, local5)),
-                    eventoRepository.save(criarEvento("Pitch de Soluções Digitais", 29, "10:00", "12:30", "Presencial", disciplina6, patrocinador2, local4)),
-                    eventoRepository.save(criarEvento("Integração com Serviços em Nuvem", 31, "19:00", "21:30", "Híbrido", disciplina2, patrocinador5, local5)),
-                    eventoRepository.save(criarEvento("Hackday de Prototipos", 35, "09:00", "18:00", "Presencial", disciplina1, patrocinador1, local3))
+                    eventoRepository.save(criarEvento("Workshop de Testes Automatizados", 3, "19:00", "21:30", ModalidadeEventoEnum.PRESENCIAL, disciplina1, patrocinador1, local2)),
+                    eventoRepository.save(criarEvento("Palestra: Boas Práticas em APIs", 5, "19:30", "22:00", ModalidadeEventoEnum.ONLINE, disciplina2, patrocinador2, local1)),
+                    eventoRepository.save(criarEvento("Mesa Redonda de Carreira em TI", 7, "20:00", "22:00", ModalidadeEventoEnum.PRESENCIAL, disciplina6, patrocinador1, local1)),
+                    eventoRepository.save(criarEvento("Imersão em Banco de Dados", 9, "08:30", "12:00", ModalidadeEventoEnum.PRESENCIAL, disciplina3, patrocinador3, local3)),
+                    eventoRepository.save(criarEvento("Introducao a Machine Learning", 11, "19:00", "21:00", ModalidadeEventoEnum.ONLINE, disciplina4, patrocinador3, local5)),
+                    eventoRepository.save(criarEvento("Clínica de Currículo para Devs", 13, "18:30", "20:30", ModalidadeEventoEnum.PRESENCIAL, disciplina6, patrocinador2, local4)),
+                    eventoRepository.save(criarEvento("Cibersegurança na Prática", 15, "19:00", "22:00", ModalidadeEventoEnum.PRESENCIAL, disciplina5, patrocinador4, local2)),
+                    eventoRepository.save(criarEvento("Design Sprint para Apps", 17, "09:00", "13:00", ModalidadeEventoEnum.PRESENCIAL, disciplina6, patrocinador2, local3)),
+                    eventoRepository.save(criarEvento("Deploy Contínuo com Docker", 19, "19:00", "21:30", ModalidadeEventoEnum.ONLINE, disciplina2, patrocinador5, local5)),
+                    eventoRepository.save(criarEvento("Observabilidade e Logs", 21, "20:00", "22:00", ModalidadeEventoEnum.ONLINE, disciplina2, patrocinador5, local5)),
+                    eventoRepository.save(criarEvento("SQL para Análise de Dados", 23, "14:00", "17:00", ModalidadeEventoEnum.PRESENCIAL, disciplina3, patrocinador3, local2)),
+                    eventoRepository.save(criarEvento("Arquitetura Hexagonal", 25, "19:30", "21:30", ModalidadeEventoEnum.PRESENCIAL, disciplina1, patrocinador1, local1)),
+                    eventoRepository.save(criarEvento("LGPD para Projetos Academicos", 27, "18:00", "20:00", ModalidadeEventoEnum.ONLINE, disciplina5, patrocinador4, local5)),
+                    eventoRepository.save(criarEvento("Pitch de Soluções Digitais", 29, "10:00", "12:30", ModalidadeEventoEnum.PRESENCIAL, disciplina6, patrocinador2, local4)),
+                    eventoRepository.save(criarEvento("Integração com Serviços em Nuvem", 31, "19:00", "21:30", ModalidadeEventoEnum.ONLINE, disciplina2, patrocinador5, local5)),
+                    eventoRepository.save(criarEvento("Hackday de Prototipos", 35, "09:00", "18:00", ModalidadeEventoEnum.PRESENCIAL, disciplina1, patrocinador1, local3))
             );
 
             List<Participacao> participacoes = new ArrayList<>();
@@ -195,9 +197,9 @@ public class MockDataInitializer {
         return pessoa;
     }
 
-    private Evento criarEvento(String tema, int dias, String inicio, String fim, String modalidade,
+    private Evento criarEvento(String tema, int dias, String inicio, String fim, ModalidadeEventoEnum modalidade,
                                Disciplina disciplina, Patrocinador patrocinador, Local local) {
-        return new Evento(0, tema, Date.valueOf(LocalDate.now().plusDays(dias)), inicio, fim, modalidade,
+        return new Evento(0, tema, Date.valueOf(LocalDate.now().plusDays(dias)), inicio, fim, modalidade, StatusEventoEnum.CRIADO,
                 disciplina, patrocinador, local, new ArrayList<>());
     }
 }

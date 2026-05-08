@@ -107,6 +107,13 @@
             <div class="event-list-content">
                 <h2 th:text="${evento.tema}">Tema</h2>
                 <div class="event-tags">
+                    <span>
+                        <svg aria-hidden="true" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 7v5l3 3"></path>
+                        </svg>
+                        <span th:text="${evento.status}">Status</span>
+                    </span>
                     <span th:if="${evento.disciplina != null}">
                         <svg aria-hidden="true" viewBox="0 0 24 24">
                             <path d="M4 19.5V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-1.5z"></path>
@@ -131,6 +138,8 @@
             </div>
             <div class="event-actions">
                 <a th:href="@{/admin/novoEvento(id=${evento.id})}">Editar</a>
+                <a th:if="${evento.status != null and evento.status.name() == 'EM_ANDAMENTO'}"
+                   th:href="@{/admin/eventos/concluir/{id}(id=${evento.id})}">Concluir evento</a>
                 <a th:href="@{/admin/deletar/{id}(id=${evento.id})}"
                    onclick="return confirm('Cancelar este evento?')"
                    class="danger">Cancelar</a>

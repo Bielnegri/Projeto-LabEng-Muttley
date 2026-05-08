@@ -1040,6 +1040,56 @@ svg {
     margin-top: 3rem;
 }
 
+.completion-subtitle {
+    margin: 0.35rem 0 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-weight: 650;
+}
+
+.completion-hero {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem;
+    margin-bottom: 1.4rem;
+}
+
+.completion-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.completion-counter {
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 750;
+}
+
+.attendance-table th:first-child,
+.attendance-table td:first-child {
+    width: 150px;
+    text-align: left;
+}
+
+.attendance-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--ink);
+    font-size: 0.84rem;
+    font-weight: 700;
+}
+
+.attendance-check input {
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--primary);
+}
+
+.completion-actions {
+    margin-top: 0;
+}
+
 .participants-table {
     width: 100%;
     overflow: hidden;
@@ -1806,6 +1856,10 @@ svg {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .completion-hero {
+        grid-template-columns: 1fr;
+    }
+
     .events-toolbar {
         grid-template-columns: 1fr 1fr;
     }
@@ -1870,7 +1924,8 @@ svg {
     }
 
     .summary-grid,
-    .events-toolbar {
+    .events-toolbar,
+    .completion-hero {
         grid-template-columns: 1fr;
     }
 
