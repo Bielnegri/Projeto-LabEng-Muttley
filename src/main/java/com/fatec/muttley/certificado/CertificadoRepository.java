@@ -24,6 +24,7 @@ public interface CertificadoRepository extends JpaRepository<Certificado, Long> 
     List<Certificado> findUltimosEmitidos(Pageable pageable);
 
     boolean existsByCodigoValidacao(String codigoValidacao);
+    boolean existsByParticipacaoId(Long participacaoId);
 
     @Query("""
             select certificado

@@ -20,7 +20,7 @@ public class CertificadoController {
     @GetMapping
     public String carregaPaginaCertificados(Model model) {
         model.addAttribute("listaCertificados", certificadoService.procurarTodos());
-        model.addAttribute("eventosAguardandoCertificado", eventoService.procurarEventosEncerradosAguardandoCertificado());
+        model.addAttribute("eventosAguardandoCertificado", eventoService.procurarEventosAguardandoEmissaoCertificado());
         model.addAttribute("ultimosCertificados", certificadoService.procurarUltimosEmitidos());
         return "admin/certificados/listagem";
     }
