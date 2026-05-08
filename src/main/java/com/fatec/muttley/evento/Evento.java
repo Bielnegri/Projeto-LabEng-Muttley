@@ -29,7 +29,9 @@ public class Evento {
     private Date data;
     private String horarioInicio;
     private String horarioFim;
+    @Enumerated(EnumType.STRING)
     private ModalidadeEventoEnum modalidade;
+    @Enumerated(EnumType.STRING)
     private StatusEventoEnum status;
 
     @ManyToOne(fetch = FetchType.LAZY)
