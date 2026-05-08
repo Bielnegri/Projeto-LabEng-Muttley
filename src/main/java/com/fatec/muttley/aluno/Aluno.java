@@ -1,5 +1,6 @@
 package com.fatec.muttley.aluno;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fatec.muttley.pessoa.Pessoa;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,7 @@ public class Aluno {
 	@OneToOne
 	@MapsId
 	@JoinColumn(name = "id_pessoa")
+	@JsonBackReference
 	private Pessoa pessoa;
 
 	public Aluno(AtualizacaoAluno dados){

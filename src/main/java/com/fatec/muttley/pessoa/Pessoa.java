@@ -1,5 +1,6 @@
 package com.fatec.muttley.pessoa;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fatec.muttley.aluno.Aluno;
 import com.fatec.muttley.colaborador.Colaborador;
 import com.fatec.muttley.organizador.Organizador;
@@ -32,18 +33,23 @@ public class Pessoa {
     private String cpf;
 
     @OneToOne(mappedBy = "pessoa", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Aluno aluno;
 
     @OneToOne(mappedBy = "pessoa", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Professor professor;
 
     @OneToOne(mappedBy = "pessoa", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Palestrante palestrante;
 
     @OneToOne(mappedBy = "pessoa", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Organizador organizador;
 
     @OneToOne(mappedBy = "pessoa", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Colaborador colaborador;
 
     @OneToMany(mappedBy = "pessoa")
