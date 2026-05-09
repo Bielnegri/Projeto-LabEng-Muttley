@@ -24,7 +24,12 @@
             </button>
 
             <div class="events-row">
-                <article class="event-card" th:each="evento : ${proximosEventos}">
+                <article class="event-card clickable-event-card"
+                         th:each="evento : ${proximosEventos}"
+                         th:data-event-url="@{/admin/novoEvento(id=${evento.id})}"
+                         th:attr="aria-label=${'Abrir evento ' + evento.tema}"
+                         role="link"
+                         tabindex="0">
                     <div class="event-main">
                         <h3 th:text="${evento.tema}">Nome do evento</h3>
                         <time th:datetime="${#dates.format(evento.data, 'yyyy-MM-dd')}">
@@ -43,8 +48,8 @@
                         <span th:text="${evento.local != null ? evento.local.nome : 'Local não definido'}">FATEC ZONA LESTE</span>
                     </p>
                     <p class="event-description"
-                       th:text="${evento.disciplina != null ? evento.disciplina.nome : (evento.modalidade != null ? evento.modalidade : 'Evento sem disciplina vinculada')}">
-                        Disciplina do evento
+                       th:text="${evento.descricao != null and !evento.descricao.isBlank() ? evento.descricao : (evento.disciplina != null ? evento.disciplina.nome : 'Evento sem descricao cadastrada.')}">
+                        Descricao do evento
                     </p>
                     <div class="event-footer">
                         <span>
@@ -80,50 +85,79 @@
         <div class="stats-grid">
             <article class="stat-panel">
                 <h3>Certificados emitidos por evento</h3>
-                <div class="bar-chart vertical" aria-label="Gráfico de certificados emitidos por evento">
-                    <span style="--value: 12"></span>
-                    <span style="--value: 34"></span>
-                    <span style="--value: 48"></span>
-                    <span style="--value: 61"></span>
-                    <span style="--value: 78"></span>
-                    <span style="--value: 69"></span>
-                    <span style="--value: 96"></span>
-                    <span style="--value: 49"></span>
-                    <span style="--value: 63"></span>
+                <div class="bar-chart vertical" aria-label="Grafico de certificados emitidos por evento"
+                     th:if="${certificadosPorEvento != null and !#lists.isEmpty(certificadosPorEvento)}">
+                    <div class="bar-item" th:each="item : ${certificadosPorEvento}">
+                        <span th:style="${'--value: ' + item.percentual}"
+                              th:attr="aria-label=${item.rotulo + ': ' + item.total + ' certificados'}"></span>
+                        <strong th:text="${item.total}">0</strong>
+                        <small th:text="${item.rotulo}">Evento</small>
+                    </div>
                 </div>
+                <p class="stat-empty" th:if="${certificadosPorEvento == null or #lists.isEmpty(certificadosPorEvento)}">
+                    Nenhum certificado emitido ainda.
+                </p>
             </article>
 
             <article class="stat-panel">
                 <h3>Participantes com mais medalhas</h3>
-                <ul class="ranking-list" aria-label="Ranking de participantes com mais medalhas">
-                    <li><span>André Lamego</span><strong style="--value: 100">18</strong></li>
-                    <li><span>Gustavo Gerês</span><strong style="--value: 84">15</strong></li>
-                    <li><span>Bruno Hiroshi</span><strong style="--value: 79">14</strong></li>
-                    <li><span>João Branco</span><strong style="--value: 56">10</strong></li>
-                    <li><span>Gabriel de Negri</span><strong style="--value: 39">7</strong></li>
-                    <li><span>Barack Obama</span><strong style="--value: 34">6</strong></li>
-                    <li><span>Yuri Alberto</span><strong style="--value: 31">5</strong></li>
+                <ul class="ranking-list" aria-label="Ranking de participantes com mais medalhas"
+                    th:if="${medalhasPorParticipante != null and !#lists.isEmpty(medalhasPorParticipante)}">
+                    <li th:each="item : ${medalhasPorParticipante}">
+                        <span th:text="${item.rotulo}">Participante</span>
+                        <strong th:style="${'--value: ' + item.percentual}" th:text="${item.total}">0</strong>
+                    </li>
                 </ul>
+                <p class="stat-empty" th:if="${medalhasPorParticipante == null or #lists.isEmpty(medalhasPorParticipante)}">
+                    Nenhuma medalha cadastrada ainda.
+                </p>
             </article>
 
             <article class="stat-panel compact">
-                <h3>Certificados emitidos no último mês</h3>
+                <h3>Certificados emitidos nos ultimos 30 dias</h3>
                 <div class="metric-row">
-                    <strong>284</strong>
-                    <span>+18% em relação ao mês anterior</span>
+                    <strong th:text="${certificadosUltimos30Dias}">0</strong>
+                    <span th:text="${(variacaoCertificadosUltimos30Dias > 0 ? '+' : '') + variacaoCertificadosUltimos30Dias + '% em relacao aos 30 dias anteriores'}">
+                        0% em relacao aos 30 dias anteriores
+                    </span>
                 </div>
             </article>
 
             <article class="stat-panel compact">
                 <h3>Eventos ativos</h3>
                 <div class="metric-row">
-                    <strong>12</strong>
-                    <span>4 eventos programados para esta semana</span>
+                    <strong th:text="${eventosAtivos}">0</strong>
+                    <span th:text="${eventosAtivosNaSemana + ' eventos programados para os proximos 7 dias'}">
+                        0 eventos programados para os proximos 7 dias
+                    </span>
                 </div>
             </article>
         </div>
     </section>
 </main>
+
+<script>
+    document.querySelectorAll('[data-event-url]').forEach((card) => {
+        const openEvent = () => {
+            window.location.href = card.dataset.eventUrl;
+        };
+
+        card.addEventListener('click', (event) => {
+            if (event.target.closest('a, button')) {
+                return;
+            }
+            openEvent();
+        });
+
+        card.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') {
+                return;
+            }
+            event.preventDefault();
+            openEvent();
+        });
+    });
+</script>
 
 <footer th:replace="~{fragmentos/footer :: footer}"></footer>
 </body>

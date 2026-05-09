@@ -1,5 +1,6 @@
 package com.fatec.muttley.medalha;
 
+import com.fatec.muttley.participacao.Participacao;
 import com.fatec.muttley.participacao.ParticipacaoService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -30,17 +31,18 @@ public class MedalhaController {
     }
 
     @GetMapping("/formulario")
-    public String mostrarFormulario(@RequestParam(required = false) Long id, Model model) {
+    public String mostrarFormulario(@RequestParam(required = false) Long id,
+                                    @RequestParam(required = false) Long participacaoId,
+                                    Model model) {
         AtualizacaoMedalha dto;
         if (id != null) {
             Medalha medalha = medalhaService.procurarPorId(id)
                     .orElseThrow(() -> new EntityNotFoundException("Medalha não encontrada"));
             dto = medalhaMapper.toAtualizacaoDto(medalha);
         } else {
-            dto = new AtualizacaoMedalha(null, "", "", null);
+            dto = new AtualizacaoMedalha(null, "", "", participacaoId);
         }
-        model.addAttribute("medalha", dto);
-        model.addAttribute("participacoes", participacaoService.procurarTodos());
+        popularFormulario(model, dto);
         return "admin/medalhas/formulario";
     }
 
@@ -52,9 +54,8 @@ public class MedalhaController {
             if(id != null) {
                 Medalha medalha = medalhaService.procurarPorId(id).orElseThrow(() ->
                         new EntityNotFoundException("Medalha não encontrada"));
-                model.addAttribute("participacoes", participacaoService.procurarTodos());
                 dto = medalhaMapper.toAtualizacaoDto(medalha);
-                model.addAttribute("medalha", dto);
+                popularFormulario(model, dto);
             }
             return "admin/medalhas/formulario";
         } catch (EntityNotFoundException e) {
@@ -69,7 +70,7 @@ public class MedalhaController {
                          RedirectAttributes redirectAttributes,
                          Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("participacoes", participacaoService.procurarTodos());
+            popularFormulario(model, dto);
             return "admin/medalhas/formulario";
         }
         try {
@@ -95,5 +96,14 @@ public class MedalhaController {
             redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
         return "redirect:/admin/medalhas";
+    }
+
+    private void popularFormulario(Model model, AtualizacaoMedalha dto) {
+        model.addAttribute("medalha", dto);
+        model.addAttribute("participacoes", participacaoService.procurarTodos());
+        Participacao participacaoSelecionada = dto.participacaoId() != null
+                ? participacaoService.procurarPorId(dto.participacaoId()).orElse(null)
+                : null;
+        model.addAttribute("participacaoSelecionada", participacaoSelecionada);
     }
 }

@@ -80,6 +80,12 @@
                 </select>
                 <span class="field-error" th:if="${#fields.hasErrors('localId')}" th:errors="*{localId}"></span>
             </label>
+
+            <label class="field description-field">
+                <span>Descrição:</span>
+                <textarea th:field="*{descricao}" placeholder="Descrição do evento" rows="4"></textarea>
+                <span class="field-error" th:if="${#fields.hasErrors('descricao')}" th:errors="*{descricao}"></span>
+            </label>
         </div>
 
         <div class="form-actions">
@@ -107,6 +113,7 @@
                 <th>Participante</th>
                 <th>Tipo</th>
                 <th>Email</th>
+                <th th:if="${evento.status != null and evento.status.name() == 'FINALIZADO'}">Medalha</th>
             </tr>
             </thead>
             <tbody>
@@ -115,6 +122,9 @@
                 <td th:text="${participacao.pessoa != null ? participacao.pessoa.nome : 'Participante não informado'}">Nome</td>
                 <td th:text="${participacao.tipo}">Aluno</td>
                 <td th:text="${participacao.pessoa != null ? participacao.pessoa.email : '-'}">email@exemplo.com</td>
+                <td th:if="${evento.status != null and evento.status.name() == 'FINALIZADO'}">
+                    <a th:href="@{/admin/medalhas/formulario(participacaoId=${participacao.id})}" class="primary-action">Adicionar Medalha</a>
+                </td>
             </tr>
             </tbody>
         </table>

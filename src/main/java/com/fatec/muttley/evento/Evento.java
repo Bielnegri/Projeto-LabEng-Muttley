@@ -29,8 +29,10 @@ public class Evento {
     private Date data;
     private String horarioInicio;
     private String horarioFim;
+
     @Enumerated(EnumType.STRING)
     private ModalidadeEventoEnum modalidade;
+
     @Enumerated(EnumType.STRING)
     private StatusEventoEnum status;
 
@@ -46,11 +48,14 @@ public class Evento {
     @JoinColumn(name = "id_local")
     private Local local;
 
+    private String descricao;
+
     @OneToMany(mappedBy = "evento")
     private List<Participacao> participacoes = new ArrayList<>();
 
     public Evento(AtualizacaoEvento dados, Disciplina disciplina, Patrocinador patrocinador, Local local) {
         this.tema = dados.tema();
+        this.descricao = dados.descricao();
         this.data = dados.data();
         this.horarioInicio = dados.horarioInicio();
         this.horarioFim = dados.horarioFim();
@@ -63,6 +68,8 @@ public class Evento {
     public void atualizarInformacoes(AtualizacaoEvento dados, Disciplina disciplina, Patrocinador patrocinador, Local local) {
         if (dados.tema() != null)
             this.tema = dados.tema();
+        if (dados.descricao() != null)
+            this.descricao = dados.descricao();
         if (dados.data() != null)
             this.data = dados.data();
         if (dados.horarioInicio() != null)

@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,6 +57,10 @@ public class EventoService {
         if (dto.id() != null) {
             Evento existente = eventoRepository.findById(dto.id())
                     .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado com ID: " + dto.id()));
+            atualizarStatusParaEmAndamentoSeNecessario(existente);
+            if (existente.getStatus() == StatusEventoEnum.FINALIZADO) {
+                throw new IllegalStateException("Eventos finalizados não podem ser alterados.");
+            }
             eventoMapper.updateEntityFromDto(dto, existente);
             existente.setDisciplina(disciplina);
             existente.setPatrocinador(patrocinador);
@@ -120,14 +126,30 @@ public class EventoService {
         return eventoRepository.findEventosEncerrados(StatusEventoEnum.EM_ANDAMENTO, PageRequest.of(0, 10));
     }
 
-    public Page<Evento> procurarProximosFiltrados(String busca, Pageable pageable) {
+    public Page<Evento> procurarProximosFiltrados(String busca, StatusEventoEnum statusFiltro, Pageable pageable) {
         String termoBusca = (busca == null) ? "" : busca;
-        return eventoRepository.findProximosEventosFiltrados(statusesAtivos(), termoBusca, pageable)
+        return eventoRepository.findProximosEventosFiltrados(statusesVisiveisNaListagem(), statusFiltro, termoBusca, pageable)
                 .map(this::atualizarStatusParaEmAndamentoSeNecessario);
+    }
+
+    public long contarEventosAtivos() {
+        return eventoRepository.countByStatusIn(statusesAtivos());
+    }
+
+    public long contarEventosAtivosNoPeriodo(LocalDate inicio, LocalDate fim) {
+        return eventoRepository.countEventosAtivosNoPeriodo(
+                statusesAtivos(),
+                Date.valueOf(inicio),
+                Date.valueOf(fim)
+        );
     }
 
     private List<StatusEventoEnum> statusesAtivos() {
         return List.of(StatusEventoEnum.CRIADO, StatusEventoEnum.EM_ANDAMENTO);
+    }
+
+    private List<StatusEventoEnum> statusesVisiveisNaListagem() {
+        return List.of(StatusEventoEnum.CRIADO, StatusEventoEnum.EM_ANDAMENTO, StatusEventoEnum.FINALIZADO);
     }
 
     private Evento atualizarStatusParaEmAndamentoSeNecessario(Evento evento) {

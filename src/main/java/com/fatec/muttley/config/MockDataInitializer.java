@@ -200,6 +200,6 @@ public class MockDataInitializer {
     private Evento criarEvento(String tema, int dias, String inicio, String fim, ModalidadeEventoEnum modalidade,
                                Disciplina disciplina, Patrocinador patrocinador, Local local) {
         return new Evento(0, tema, Date.valueOf(LocalDate.now().plusDays(dias)), inicio, fim, modalidade, StatusEventoEnum.CRIADO,
-                disciplina, patrocinador, local, new ArrayList<>());
+                disciplina, patrocinador, local, "Evento academico sobre " + tema.toLowerCase() + ".", new ArrayList<>());
     }
 }

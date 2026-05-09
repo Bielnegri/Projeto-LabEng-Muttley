@@ -42,6 +42,11 @@
     <form class="completion-form" th:action="@{/admin/eventos/gerarCertificados/{id}(id=${evento.id})}" method="post">
         <section class="participants-section" aria-labelledby="participacoes-title">
             <div class="participants-heading">
+                <label class="attendance-toggle"
+                       th:if="${participacoes != null and !#lists.isEmpty(participacoes)}">
+                    <input type="checkbox" data-toggle-all-presentes>
+                    <span data-toggle-all-label>Selecionar todos</span>
+                </label>
                 <h2 id="participacoes-title">Lista de presença</h2>
                 <span class="completion-counter" th:text="${#lists.size(participacoes)} + ' inscriçõe(s)'">0 inscrição(ões)</span>
             </div>
@@ -83,6 +88,33 @@
         </div>
     </form>
 </main>
+
+<script>
+    const toggleAllPresentes = document.querySelector('[data-toggle-all-presentes]');
+    const toggleAllLabel = document.querySelector('[data-toggle-all-label]');
+    const presencaCheckboxes = Array.from(document.querySelectorAll('input[name="presentes"]'));
+
+    if (toggleAllPresentes) {
+        const syncToggleState = () => {
+            const todosSelecionados = presencaCheckboxes.length > 0 && presencaCheckboxes.every((checkbox) => checkbox.checked);
+            toggleAllPresentes.checked = todosSelecionados;
+            toggleAllLabel.textContent = todosSelecionados ? 'Desselecionar todos' : 'Selecionar todos';
+        };
+
+        toggleAllPresentes.addEventListener('change', () => {
+            presencaCheckboxes.forEach((checkbox) => {
+                checkbox.checked = toggleAllPresentes.checked;
+            });
+            syncToggleState();
+        });
+
+        presencaCheckboxes.forEach((checkbox) => {
+            checkbox.addEventListener('change', syncToggleState);
+        });
+
+        syncToggleState();
+    }
+</script>
 
 <footer th:replace="~{fragmentos/footer :: footer}"></footer>
 </body>

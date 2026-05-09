@@ -1,36 +1,42 @@
 package com.fatec.muttley.evento;
 
 import com.fatec.muttley.evento.enums.ModalidadeEventoEnum;
+import com.fatec.muttley.evento.enums.StatusEventoEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.sql.Date;
 
-public record AtualizacaoEvento (
+public record AtualizacaoEvento(
         Long id,
 
-        @NotBlank(message = "Tema é obrigatório")
+        @NotBlank(message = "Tema e obrigatorio")
         String tema,
 
-        @NotNull(message = "Data é obrigatória")
+        @NotBlank(message = "Descricao e obrigatoria")
+        String descricao,
+
+        @NotNull(message = "Data e obrigatoria")
         Date data,
 
-        @NotBlank(message = "Horário de início é obrigatório")
+        @NotBlank(message = "Horario de inicio e obrigatorio")
         String horarioInicio,
 
-        @NotBlank(message = "Horário de fim é obrigatório")
+        @NotBlank(message = "Horario de fim e obrigatorio")
         String horarioFim,
 
-        @NotNull(message = "Modalidade é obrigatória")
+        @NotNull(message = "Modalidade e obrigatoria")
         ModalidadeEventoEnum modalidade,
 
-        @NotNull(message = "Disciplina é obrigatória")
+        StatusEventoEnum status,
+
+        @NotNull(message = "Disciplina e obrigatoria")
         Long disciplinaId,
 
-        @NotNull(message = "Patrocinador é obrigatório")
+        @NotNull(message = "Patrocinador e obrigatorio")
         Long patrocinadorId,
 
-        @NotNull(message = "Local é obrigatório")
+        @NotNull(message = "Local e obrigatorio")
         Long localId
-) {}
-
+) {
+}

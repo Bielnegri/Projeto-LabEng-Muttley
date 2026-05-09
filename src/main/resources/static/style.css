@@ -34,12 +34,18 @@ html {
 
 body {
     margin: 0;
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
     background: transparent;
     color: var(--ink);
     font-family: var(--font-body);
     font-size: 15px;
     text-rendering: optimizeLegibility;
+}
+
+body > main {
+    flex: 1 0 auto;
 }
 
 a {
@@ -302,6 +308,10 @@ svg {
     letter-spacing: 0;
 }
 
+.participants-heading h2 {
+    order: -1;
+}
+
 .new-event-button,
 .primary-action,
 .events-toolbar button,
@@ -378,6 +388,18 @@ svg {
     padding: 1.05rem;
     overflow: hidden;
     scroll-snap-align: start;
+}
+
+.clickable-event-card {
+    cursor: pointer;
+}
+
+.clickable-event-card:hover,
+.clickable-event-card:focus-visible {
+    border-color: rgba(15, 118, 110, 0.45);
+    outline: 0;
+    box-shadow: 0 14px 32px rgba(20, 28, 36, 0.12);
+    transform: translateY(-2px);
 }
 
 .event-card::before {
@@ -556,12 +578,24 @@ svg {
 .bar-chart.vertical {
     display: grid;
     grid-template-columns: repeat(9, 1fr);
-    align-items: end;
+    align-items: stretch;
     gap: 0.55rem;
-    height: 160px;
+    min-height: 190px;
     padding: 0.65rem;
     border-radius: var(--radius);
     background: var(--surface-soft);
+}
+
+.bar-chart.vertical:has(.bar-item) {
+    grid-template-columns: repeat(auto-fit, minmax(58px, 1fr));
+}
+
+.bar-item {
+    display: grid;
+    grid-template-rows: minmax(86px, 1fr) auto auto;
+    align-items: end;
+    min-width: 0;
+    gap: 0.3rem;
 }
 
 .bar-chart.vertical span {
@@ -572,12 +606,45 @@ svg {
     background: var(--primary);
 }
 
-.bar-chart.vertical span:nth-child(3n) {
+.bar-item strong {
+    color: var(--ink-strong);
+    font-size: 0.82rem;
+    font-weight: 850;
+    line-height: 1;
+    text-align: center;
+}
+
+.bar-item small {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 750;
+    line-height: 1.2;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bar-chart.vertical span:nth-child(3n),
+.bar-item:nth-child(3n) span {
     background: var(--accent);
 }
 
-.bar-chart.vertical span:nth-child(4n) {
+.bar-chart.vertical span:nth-child(4n),
+.bar-item:nth-child(4n) span {
     background: #2563eb;
+}
+
+.stat-empty {
+    display: grid;
+    flex: 1;
+    min-height: 150px;
+    place-items: center;
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+    text-align: center;
 }
 
 .ranking-list {
@@ -636,6 +703,8 @@ svg {
 }
 
 .app-footer {
+    flex-shrink: 0;
+    margin-top: auto;
     border-top: 1px solid rgba(217, 222, 216, 0.9);
     background: rgba(255, 255, 255, 0.66);
 }
@@ -709,7 +778,7 @@ svg {
 
 .events-toolbar {
     display: grid;
-    grid-template-columns: minmax(260px, 1fr) minmax(150px, 0.22fr) minmax(115px, 0.16fr) auto;
+    grid-template-columns: minmax(240px, 1fr) minmax(130px, 0.2fr) minmax(170px, 0.24fr) minmax(105px, 0.14fr) auto;
     gap: 0.7rem;
     margin-bottom: 1rem;
 }
@@ -781,29 +850,21 @@ svg {
 
 .event-list-card {
     display: grid;
-    grid-template-columns: 170px minmax(0, 1fr) 126px;
+    grid-template-columns: minmax(170px, 0.35fr) minmax(0, 1fr) 126px;
     grid-template-areas:
-        "thumb content actions"
         "meta content actions";
-    gap: 0.55rem 1rem;
-    min-height: 160px;
-    padding: 0.85rem;
-}
-
-.event-thumb {
-    grid-area: thumb;
-    min-height: 86px;
-    border-radius: 7px;
-    background:
-        radial-gradient(circle at 78% 18%, rgba(217, 119, 6, 0.38), transparent 26%),
-        linear-gradient(135deg, rgba(15, 118, 110, 0.96), rgba(17, 24, 39, 0.92));
+    gap: 1rem;
+    min-height: 132px;
+    padding: 1rem;
 }
 
 .event-list-meta {
     grid-area: meta;
     display: grid;
-    align-content: start;
+    align-content: center;
     gap: 0.55rem;
+    padding-right: 1rem;
+    border-right: 1px solid var(--line);
 }
 
 .event-list-meta svg,
@@ -838,10 +899,14 @@ svg {
 }
 
 .event-list-content p {
-    margin: 1rem 0 0;
+    display: -webkit-box;
+    margin: 0.85rem 0 0;
+    overflow: hidden;
     color: var(--muted);
     font-size: 0.9rem;
     line-height: 1.5;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
 }
 
 .event-actions {
@@ -888,6 +953,12 @@ svg {
     border-color: #f5b5ae;
     background: var(--danger-soft);
     color: var(--danger);
+}
+
+.alert-info {
+    border: 1px solid #a8d7c8;
+    background: var(--primary-soft);
+    color: var(--primary-strong);
 }
 
 .field-error {
@@ -976,6 +1047,20 @@ svg {
     resize: vertical;
 }
 
+.autocomplete-field {
+    position: relative;
+}
+
+.event-form .autocomplete-field input[type="hidden"] {
+    display: none;
+}
+
+.field-hint {
+    color: var(--muted);
+    font-size: 0.76rem;
+    line-height: 1.35;
+}
+
 .date-group {
     align-content: start;
 }
@@ -1036,6 +1121,34 @@ svg {
     cursor: pointer;
 }
 
+.selected-participation {
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.85rem 0.95rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface-soft);
+}
+
+.selected-participation span {
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.selected-participation strong {
+    color: var(--ink-strong);
+    font-size: 0.98rem;
+    font-weight: 800;
+}
+
+.selected-participation small {
+    color: var(--muted);
+    font-size: 0.86rem;
+    font-weight: 650;
+}
+
 .participants-section {
     margin-top: 3rem;
 }
@@ -1063,6 +1176,57 @@ svg {
     color: var(--muted);
     font-size: 0.82rem;
     font-weight: 750;
+}
+
+.attendance-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-left: auto;
+    color: var(--ink);
+    font-size: 0.84rem;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.attendance-toggle input {
+    appearance: none;
+    position: relative;
+    width: 2.45rem;
+    height: 1.35rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: #dfe5e1;
+    cursor: pointer;
+    transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.attendance-toggle input::after {
+    content: "";
+    position: absolute;
+    top: 0.16rem;
+    left: 0.16rem;
+    width: 0.92rem;
+    height: 0.92rem;
+    border-radius: 50%;
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    transition: transform 160ms ease;
+}
+
+.attendance-toggle input:checked {
+    border-color: var(--primary);
+    background: var(--primary);
+}
+
+.attendance-toggle input:checked::after {
+    transform: translateX(1.08rem);
+}
+
+.attendance-toggle input:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
 }
 
 .attendance-table th:first-child,
@@ -1873,11 +2037,14 @@ svg {
     }
 
     .event-list-card {
-        grid-template-columns: 140px minmax(0, 1fr);
+        grid-template-columns: minmax(150px, 0.38fr) minmax(0, 1fr);
         grid-template-areas:
-            "thumb content"
             "meta content"
             "actions actions";
+    }
+
+    .event-list-meta {
+        align-content: start;
     }
 
     .event-actions {
@@ -1937,14 +2104,16 @@ svg {
     .event-list-card {
         grid-template-columns: 1fr;
         grid-template-areas:
-            "thumb"
             "meta"
             "content"
             "actions";
     }
 
-    .event-thumb {
-        min-height: 120px;
+    .event-list-meta {
+        padding-right: 0;
+        padding-bottom: 0.8rem;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
     }
 
     .event-list-content h2 {

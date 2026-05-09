@@ -68,6 +68,7 @@ public class EventoController {
     public String carregarEventos(
             @RequestParam(defaultValue = "") String busca,
             @RequestParam(defaultValue = "data") String ordenar,
+            @RequestParam(required = false) StatusEventoEnum status,
             @RequestParam(defaultValue = "0") int pagina,
             @RequestParam(defaultValue = "10") int tamanho,
             Model model) {
@@ -77,11 +78,17 @@ public class EventoController {
                 : Sort.by("data").ascending().and(Sort.by("horarioInicio").ascending());
 
         Pageable pageable = PageRequest.of(pagina, tamanho, sort);
-        Page<Evento> paginaEventos = eventoService.procurarProximosFiltrados(busca, pageable);
+        Page<Evento> paginaEventos = eventoService.procurarProximosFiltrados(busca, status, pageable);
 
         model.addAttribute("paginaEventos", paginaEventos);
         model.addAttribute("busca", busca);
         model.addAttribute("ordenar", ordenar);
+        model.addAttribute("statusSelecionado", status);
+        model.addAttribute("statusEventos", List.of(
+                StatusEventoEnum.CRIADO,
+                StatusEventoEnum.EM_ANDAMENTO,
+                StatusEventoEnum.FINALIZADO
+        ));
         model.addAttribute("tamanho", tamanho);
         return "admin/eventos/eventos";
     }
@@ -90,19 +97,21 @@ public class EventoController {
     public String carregarFormularioEvento(@RequestParam(required = false) Long id, Model model,
                                            RedirectAttributes redirectAttributes) {
         AtualizacaoEvento dto;
+        boolean eventoFinalizado = false;
         if (id != null) {
             try {
                 Evento evento = eventoService.procurarPorId(id)
                         .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
                 dto = eventoMapper.toAtualizacaoDto(evento);
+                eventoFinalizado = evento.getStatus() == StatusEventoEnum.FINALIZADO;
             } catch (EntityNotFoundException e) {
                 redirectAttributes.addFlashAttribute("erro", e.getMessage());
                 return "redirect:/admin/novoEvento";
             }
         } else {
-            dto = new AtualizacaoEvento(null, "", null, "", "", null, null, null, null);
+            dto = new AtualizacaoEvento(null, "", "", null, "", "", null, null, null, null, null);
         }
-        popularFormulario(model, dto);
+        popularFormulario(model, dto, eventoFinalizado);
         return "admin/eventos/formEvento";
     }
 
@@ -112,7 +121,7 @@ public class EventoController {
                          RedirectAttributes redirectAttributes,
                          Model model) {
         if (result.hasErrors()) {
-            popularFormulario(model, dto);
+            popularFormulario(model, dto, false);
             return "admin/eventos/formEvento";
         }
         try {
@@ -121,7 +130,7 @@ public class EventoController {
                     ? "Evento '" + eventoSalvo.getTema() + "' atualizado com sucesso."
                     : "Evento '" + eventoSalvo.getTema() + "' criado com sucesso.";
             redirectAttributes.addFlashAttribute("message", mensagem);
-        } catch (EntityNotFoundException | IllegalArgumentException e) {
+        } catch (EntityNotFoundException | IllegalArgumentException | IllegalStateException e) {
             redirectAttributes.addFlashAttribute("erro", e.getMessage());
             String suffix = dto.id() != null ? "?id=" + dto.id() : "";
             return "redirect:/admin/novoEvento" + suffix;
@@ -191,8 +200,9 @@ public class EventoController {
         return "redirect:/admin/eventos";
     }
 
-    private void popularFormulario(Model model, AtualizacaoEvento dto) {
+    private void popularFormulario(Model model, AtualizacaoEvento dto, boolean eventoFinalizado) {
         model.addAttribute("evento", dto);
+        model.addAttribute("eventoFinalizado", eventoFinalizado);
         model.addAttribute("modalidadesEvento", ModalidadeEventoEnum.values());
         model.addAttribute("statusEmAndamento", StatusEventoEnum.EM_ANDAMENTO);
         model.addAttribute("disciplinas", disciplinaService.procurarTodas());

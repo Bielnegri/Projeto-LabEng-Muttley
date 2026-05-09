@@ -16,34 +16,34 @@
         <div class="user-event-heading">
             <span class="user-event-status"
                   th:classappend="${inscricoesEncerradas} ? ' is-closed' : ''"
-                  th:text="${inscricoesEncerradas} ? 'Encerrado' : 'Inscrições abertas'">Inscrições abertas</span>
+                  th:text="${inscricoesEncerradas} ? 'Encerrado' : 'Inscricoes abertas'">Inscricoes abertas</span>
             <h1 id="event-title" th:text="${evento.tema}">Nome do evento</h1>
-            <p th:text="${evento.disciplina != null && evento.disciplina.descricao != null ? evento.disciplina.descricao : 'Evento acadêmico da FATEC Zona Leste.'}">
-                Evento acadêmico da FATEC Zona Leste.
+            <p th:text="${evento.descricao != null and !evento.descricao.isBlank() ? evento.descricao : 'Evento academico da FATEC Zona Leste.'}">
+                Evento academico da FATEC Zona Leste.
             </p>
         </div>
     </section>
 
-    <section class="user-event-action-panel" aria-label="Inscrição">
+    <section class="user-event-action-panel" aria-label="Inscricao">
         <button class="event-signup-button"
                 type="button"
                 th:disabled="${inscricoesEncerradas}"
                 th:classappend="${inscricoesEncerradas} ? ' is-muted' : ''"
-                th:text="${inscricoesEncerradas} ? 'Inscrições encerradas' : 'Inscrever-se'">
+                th:text="${inscricoesEncerradas} ? 'Inscricoes encerradas' : 'Inscrever-se'">
             Inscrever-se
         </button>
     </section>
 
-    <section class="user-event-details" aria-label="Informações do evento">
+    <section class="user-event-details" aria-label="Informacoes do evento">
         <article class="user-event-info-card">
             <span>Data</span>
-            <strong th:text="${evento.data != null ? #dates.format(evento.data, 'dd/MM/yyyy') : 'Data não definida'}">
+            <strong th:text="${evento.data != null ? #dates.format(evento.data, 'dd/MM/yyyy') : 'Data nao definida'}">
                 12/05/2026
             </strong>
         </article>
 
         <article class="user-event-info-card">
-            <span>Horário</span>
+            <span>Horario</span>
             <strong th:text="${(evento.horarioInicio != null ? evento.horarioInicio : '--:--') + ' - ' + (evento.horarioFim != null ? evento.horarioFim : '--:--')}">
                 19:00 - 21:00
             </strong>
@@ -51,50 +51,56 @@
 
         <article class="user-event-info-card">
             <span>Modalidade</span>
-            <strong th:text="${evento.modalidade != null ? evento.modalidade : 'Não informada'}">Presencial</strong>
+            <strong th:text="${evento.modalidade != null ? evento.modalidade : 'Nao informada'}">Presencial</strong>
         </article>
 
         <article class="user-event-info-card">
             <span>Disciplina</span>
-            <strong th:text="${evento.disciplina != null ? evento.disciplina.nome : 'Não vinculada'}">
-                Laboratório de Engenharia de Software
+            <strong th:text="${evento.disciplina != null ? evento.disciplina.nome : 'Nao vinculada'}">
+                Laboratorio de Engenharia de Software
             </strong>
         </article>
 
         <article class="user-event-info-card">
             <span>Local</span>
-            <strong th:text="${evento.local != null ? evento.local.nome : 'Local não definido'}">Auditório Principal</strong>
+            <strong th:text="${evento.local != null ? evento.local.nome : 'Local nao definido'}">Auditorio Principal</strong>
             <small th:if="${evento.local != null && evento.local.descricao != null}" th:text="${evento.local.descricao}">
-                Espaço para palestras e painéis
+                Espaco para palestras e paineis
             </small>
         </article>
 
         <article class="user-event-info-card">
-            <span>Endereço</span>
+            <span>Endereco</span>
             <strong th:if="${evento.local != null && evento.local.endereco != null}"
                     th:text="${evento.local.endereco.logradouro + ', ' + evento.local.endereco.numero}">
                 Rua das Flores, 120
             </strong>
-            <strong th:unless="${evento.local != null && evento.local.endereco != null}">Endereço não definido</strong>
+            <strong th:unless="${evento.local != null && evento.local.endereco != null}">Endereco nao definido</strong>
             <small th:if="${evento.local != null && evento.local.endereco != null}"
                    th:text="${evento.local.endereco.bairro + ' - ' + evento.local.endereco.cidade + '/' + evento.local.endereco.estado}">
-                Centro - São Paulo/SP
+                Centro - Sao Paulo/SP
             </small>
         </article>
 
         <article class="user-event-info-card">
             <span>Capacidade</span>
-            <strong th:text="${evento.local != null && evento.local.capacidade > 0 ? evento.local.capacidade + ' pessoas' : 'Não informada'}">
+            <strong th:text="${evento.local != null && evento.local.capacidade > 0 ? evento.local.capacidade + ' pessoas' : 'Nao informada'}">
                 250 pessoas
             </strong>
         </article>
 
         <article class="user-event-info-card">
             <span>Patrocinador</span>
-            <strong th:text="${evento.patrocinador != null ? evento.patrocinador.nome : 'Não informado'}">InovaTech</strong>
+            <strong th:text="${evento.patrocinador != null ? evento.patrocinador.nome : 'Nao informado'}">InovaTech</strong>
             <small th:if="${evento.patrocinador != null && evento.patrocinador.site != null}" th:text="${evento.patrocinador.site}">
                 https://inovatech.com
             </small>
+        </article>
+
+        <article class="user-event-info-card" style="grid-column: 1 / -1"
+                 th:if="${evento.descricao != null and !evento.descricao.isBlank()}">
+            <span>Descricao</span>
+            <p th:text="${evento.descricao}"></p>
         </article>
     </section>
 </main>

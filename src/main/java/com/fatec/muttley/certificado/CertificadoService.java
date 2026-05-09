@@ -58,6 +58,21 @@ public class CertificadoService {
         return certificados;
     }
 
+    public List<CertificadoRepository.CertificadosPorEvento> procurarTotaisPorEvento(int limite) {
+        return certificadoRepository.findTotaisPorEvento(PageRequest.of(0, limite));
+    }
+
+    public long contarEmitidosDesde(LocalDate dataInicio) {
+        return certificadoRepository.countByDataEmissaoGreaterThanEqual(Date.valueOf(dataInicio));
+    }
+
+    public long contarEmitidosEntre(LocalDate dataInicio, LocalDate dataFimExclusiva) {
+        return certificadoRepository.countByDataEmissaoGreaterThanEqualAndDataEmissaoLessThan(
+                Date.valueOf(dataInicio),
+                Date.valueOf(dataFimExclusiva)
+        );
+    }
+
     public void apagarPorId(Long id) {
         certificadoRepository.deleteById(id);
     }
