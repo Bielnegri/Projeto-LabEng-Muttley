@@ -1,6 +1,7 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 @page {
@@ -8,86 +9,110 @@
     margin: 0;
 }
 
-html, body {
+html,
+body {
     width: 297mm;
-    height: 209mm;
+    height: 210mm;
+    margin: 0;
+    overflow: hidden;
     background: #ffffff;
-    font-family: Calibri, Arial, sans-serif;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
 }
 
 .certificado {
-    position: relative;
     width: 297mm;
-    height: 209mm;
+    height: 210mm;
     background-image: url("Fundo.jpg");
-    background-size: 100% 100%;
+    background-size: contain;
     background-repeat: no-repeat;
-    overflow: hidden;
+    background-position: center;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
 }
 
 .section-titulo {
-    position: absolute;
-    top: 0;
     width: 100%;
     height: 25%;
-    text-align: center;
-}
-
-.text-titulo {
-    margin-top: 80px;
-    font-size: 75px;
-    font-weight: bold;
-    color: #ffc000;
+    align-content: end;
+    justify-items: center;
+    padding-bottom: 20px;
 }
 
 .section-conteudo {
-    position: absolute;
-    top: 25%;
     width: 100%;
-    height: 45%;
-    text-align: center;
-}
-
-.text-destinatario, .text-nome-destinatario, .text-descricao, .text-data {
-    width: 75%;
-    margin: 0 auto 25px auto;
-    text-align: center;
-}
-
-.text-destinatario {
-    font-size: 20px;
-}
-.text-nome-destinatario {
-    font-size: 25px;
-    font-weight: bold;
-    margin: 10px auto 20px auto;
-}
-.text-descricao {
-    font-size: 20px;
-    text-align: justify;
-    line-height: 1.3;
-}
-.text-data {
-    font-size: 25px;
-    margin-top: 20px;
+    height: 35%;
+    align-content: center;
+    justify-items: center;
 }
 
 .section-assinatura {
-    position: absolute;
-    bottom: 40mm;
     width: 100%;
+    height: 35%;
+    align-content: center;
+    justify-items: center;
+}
+
+.text-titulo {
+    width: 75%;
     text-align: center;
+    font-family: Calibri, Arial, sans-serif;
+    font-size: 80px;
+    font-weight: bold;
+    color: #ffc000;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: #e5ad0b;
+}
+
+.text-destinatario {
+    width: 75%;
+    margin-bottom: 20px;
+    text-align: center;
+    font-family: Calibri, Arial, sans-serif;
+    font-size: 22px;
+    color: #000000;
+}
+
+.text-nome-destinatario {
+    width: 75%;
+    margin-bottom: 30px;
+    text-align: center;
+    font-family: Calibri, Arial, sans-serif;
+    font-size: 27px;
+    font-weight: bold;
+    color: #000000;
+}
+
+.text-descricao {
+    width: 75%;
+    margin-bottom: 20px;
+    text-align: justify;
+    font-family: Calibri, Arial, sans-serif;
+    font-size: 22px;
+    color: #000000;
+}
+
+.text-data {
+    width: 75%;
+    margin-bottom: 20px;
+    text-align: center;
+    font-family: Calibri, Arial, sans-serif;
+    font-size: 27px;
+    color: #000000;
 }
 
 .text-assinatura {
     width: 40%;
-    margin: 0 auto;
+    margin-bottom: 20px;
+    text-align: center;
+    font-family: Calibri, Arial, sans-serif;
     font-size: 17px;
+    color: #000000;
 }
 
 .linha-assinatura {
-    width: 300px;
-    margin: 0 auto 30px auto;
+    width: 250px;
+    margin: 25px;
     border: none;
     border-top: 2px solid #000000;
 }

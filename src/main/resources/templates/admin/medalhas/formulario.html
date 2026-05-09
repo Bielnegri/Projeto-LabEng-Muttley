@@ -33,6 +33,14 @@
                 <span class="field-error" th:if="${#fields.hasErrors('participacaoId')}" th:errors="*{participacaoId}"></span>
             </label>
 
+            <div class="selected-participation description-field" th:if="${participacaoSelecionada != null}">
+                <span>Participante selecionado</span>
+                <strong th:text="${participacaoSelecionada.pessoa != null ? participacaoSelecionada.pessoa.nome : 'Participante'}">Participante</strong>
+                <small th:text="${'#' + participacaoSelecionada.inscricao + ' - ' + (participacaoSelecionada.evento != null ? participacaoSelecionada.evento.tema : 'Evento')}">
+                    #1001 - Evento
+                </small>
+            </div>
+
             <label class="field description-field">
                 <span>Descri&ccedil;&atilde;o:</span>
                 <textarea th:field="*{descricao}" placeholder="Resumo da conquista"></textarea>

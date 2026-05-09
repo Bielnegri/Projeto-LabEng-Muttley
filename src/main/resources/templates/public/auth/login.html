@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Login | Muttley')}"></head>
+<body class="auth-body">
+<main class="auth-page">
+    <section class="auth-visual">
+        <a class="brand auth-brand" th:href="@{/login}" href="/login">Muttley</a>
+    </section>
+
+    <section class="auth-panel" aria-labelledby="login-title">
+        <div class="auth-heading">
+            <span class="auth-kicker">Acesso</span>
+            <h1 id="login-title">Entrar no Muttley</h1>
+        </div>
+
+        <form class="event-form auth-form" data-auth-form>
+            <label class="field">
+                <span>Email</span>
+                <input type="email" name="email" autocomplete="email" placeholder="seu.email@exemplo.com" required>
+            </label>
+
+            <label class="field">
+                <span>Senha</span>
+                <input type="password" name="senha" autocomplete="current-password" placeholder="Sua senha" required>
+            </label>
+
+            <div class="auth-options">
+                <label class="checkbox-field">
+                    <input type="checkbox" name="lembrar">
+                    <span>Lembrar acesso</span>
+                </label>
+                <a th:href="@{/register}" href="/register">Criar conta</a>
+            </div>
+
+            <p class="auth-status" data-auth-status role="status" aria-live="polite"></p>
+
+            <button class="primary-action auth-submit" type="submit">Entrar</button>
+        </form>
+    </section>
+</main>
+
+</body>
+</html>

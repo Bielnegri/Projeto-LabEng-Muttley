@@ -2,16 +2,15 @@ package com.fatec.muttley.certificado;
 
 import com.fatec.muttley.evento.Evento;
 import com.fatec.muttley.participacao.Participacao;
+import com.fatec.muttley.pdf.PdfService;
 import com.fatec.muttley.pessoa.Pessoa;
-import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.jsoup.Jsoup;
-import org.jsoup.helper.W3CDom;
-import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +33,9 @@ public class CertificadoPublicoController {
     private CertificadoService certificadoService;
 
     @Autowired
+    private PdfService pdfService;
+
+    @Autowired
     private TemplateEngine templateEngine;
 
     @GetMapping("/certificados/{codigo}")
@@ -41,7 +43,7 @@ public class CertificadoPublicoController {
         Certificado certificado = buscarCertificado(codigo);
         model.addAttribute("certificado", certificado);
         model.addAttribute("linkedinUrl", montarUrlLinkedIn(certificado, request));
-        return "certificado/publico";
+        return "public/certificados/publico";
     }
 
     @GetMapping("/certificados/{codigo}/preview")
@@ -49,14 +51,14 @@ public class CertificadoPublicoController {
         Certificado certificado = buscarCertificado(codigo);
         preencherModelo(certificado, model);
         model.addAttribute("preview", true);
-        return "certificado/modelo";
+        return "public/certificados/modelo";
     }
 
     @GetMapping("/certificados/{codigo}/download")
-    public void exibirDownload(@PathVariable("codigo") String codigo, Model model, HttpServletResponse response) throws IOException{
+    public ResponseEntity<byte[]> exibirDownload(@PathVariable("codigo") String codigo, Model model, HttpServletResponse response) throws IOException{
         Certificado certificado = buscarCertificado(codigo);
         preencherModelo(certificado, model);
-        baixar(response, model);
+        return baixar(model);
     }
 
     private Certificado buscarCertificado(String codigo) {
@@ -90,24 +92,20 @@ public class CertificadoPublicoController {
         return builder.build().encode().toUriString();
     }
 
-    @GetMapping("/baixar")
-    public void baixar(HttpServletResponse response, Model model) throws IOException {
+    public ResponseEntity<byte[]> baixar(Model model) throws IOException {
         Context context = new Context();
         context.setVariables(model.asMap());
+        String htmlProcessado = templateEngine.process("public/certificados/modeloPdf", context);
 
-        String htmlProcessado = templateEngine.process("certificado/modeloPdf", context);
-        Document doc = Jsoup.parse(htmlProcessado, "UTF-8");
-        doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
+        byte[] pdfBytes = pdfService.generatePdfFromHtml(htmlProcessado);
 
-        response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition", "attachment; filename=\"certificado.pdf\"");
+        System.out.println("PDF gerado com sucesso!");
 
-        String baseUri = new ClassPathResource("static/").getURL().toExternalForm();
-
-        PdfRendererBuilder builder = new PdfRendererBuilder();
-        builder.withW3cDocument(new W3CDom().fromJsoup(doc), baseUri);
-        builder.toStream(response.getOutputStream());
-        builder.run();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"certificado.pdf\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .contentLength(pdfBytes.length)
+                .body(pdfBytes);
     }
 
     private String montarNomeCertificado(Evento evento) {

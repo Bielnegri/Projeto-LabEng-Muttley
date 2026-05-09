@@ -20,7 +20,7 @@
                     <rect x="4" y="5" width="16" height="15" rx="2"></rect>
                     <path d="M8 3v4M16 3v4M4 10h16"></path>
                 </svg>
-                <span>Próximos eventos</span>
+                <span>Eventos exibidos</span>
             </div>
             <strong th:text="${paginaEventos.totalElements}">0</strong>
         </article>
@@ -73,6 +73,14 @@
             <option value="tema" th:selected="${ordenar == 'tema'}">Nome</option>
         </select>
 
+        <select name="status" aria-label="Filtrar por status" onchange="document.getElementById('filtros-form').submit()">
+            <option value="" th:selected="${statusSelecionado == null}">Todos os status</option>
+            <option th:each="statusEvento : ${statusEventos}"
+                    th:value="${statusEvento.name()}"
+                    th:selected="${statusSelecionado == statusEvento}"
+                    th:text="${statusEvento}">Status</option>
+        </select>
+
         <select name="tamanho" aria-label="Quantidade exibida" onchange="document.getElementById('filtros-form').submit()">
             <option value="10" th:selected="${tamanho == 10}">10</option>
             <option value="25" th:selected="${tamanho == 25}">25</option>
@@ -84,10 +92,9 @@
     </form>
 
     <section class="event-list" aria-label="Lista de eventos">
-        <p th:if="${paginaEventos.empty}" style="padding: 1rem;">Nenhum próximo evento encontrado.</p>
+        <p th:if="${paginaEventos.empty}" style="padding: 1rem;">Nenhum evento encontrado.</p>
 
         <article class="event-list-card" th:each="evento : ${paginaEventos.content}">
-            <div class="event-thumb" aria-hidden="true"></div>
             <div class="event-list-meta">
                 <span>
                     <svg aria-hidden="true" viewBox="0 0 24 24">
@@ -107,6 +114,13 @@
             <div class="event-list-content">
                 <h2 th:text="${evento.tema}">Tema</h2>
                 <div class="event-tags">
+                    <span>
+                        <svg aria-hidden="true" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 7v5l3 3"></path>
+                        </svg>
+                        <span th:text="${evento.status}">Status</span>
+                    </span>
                     <span th:if="${evento.disciplina != null}">
                         <svg aria-hidden="true" viewBox="0 0 24 24">
                             <path d="M4 19.5V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-1.5z"></path>
@@ -128,16 +142,17 @@
                         <span th:text="${evento.modalidade}">Modalidade</span>
                     </span>
                 </div>
+                <p th:text="${evento.descricao != null and !evento.descricao.isBlank() ? evento.descricao : 'Evento sem descricao cadastrada.'}">
+                    Descricao do evento
+                </p>
             </div>
             <div class="event-actions">
-                <a th:href="@{/admin/novoEvento(id=${evento.id})}">Editar</a>
-                <a th:href="@{/admin/eventos/{id}/qrcode(id=${evento.id})}"
-                   th:if="${evento.qrCodeUrl != null}">QR Code</a>
-                <form th:action="@{/admin/eventos/{id}/concluir(id=${evento.id})}" method="post"
-                      onsubmit="return confirm('Concluir este evento e notificar participantes?')">
-                    <button type="submit" class="concluir">Concluir</button>
-                </form>
-                <a th:href="@{/admin/deletar/{id}(id=${evento.id})}"
+                <a th:href="@{/admin/novoEvento(id=${evento.id})}"
+                   th:text="${evento.status != null and evento.status.name() == 'FINALIZADO'} ? 'Ver detalhes' : 'Editar'">Editar</a>
+                <a th:if="${evento.status != null and evento.status.name() == 'EM_ANDAMENTO'}"
+                   th:href="@{/admin/eventos/concluir/{id}(id=${evento.id})}">Concluir evento</a>
+                <a th:if="${evento.status == null or evento.status.name() != 'FINALIZADO'}"
+                   th:href="@{/admin/deletar/{id}(id=${evento.id})}"
                    onclick="return confirm('Cancelar este evento?')"
                    class="danger">Cancelar</a>
             </div>
@@ -145,22 +160,22 @@
     </section>
 
     <nav class="pagination" aria-label="Paginação de eventos" th:if="${paginaEventos.totalPages > 0}">
-        <a th:href="@{/admin/eventos(busca=${busca},ordenar=${ordenar},tamanho=${tamanho},pagina=0)}"
+        <a th:href="@{/admin/eventos(busca=${busca},ordenar=${ordenar},status=${statusSelecionado},tamanho=${tamanho},pagina=0)}"
            th:classappend="${paginaEventos.first} ? 'disabled'">Primeiro</a>
 
-        <a th:href="@{/admin/eventos(busca=${busca},ordenar=${ordenar},tamanho=${tamanho},pagina=${paginaEventos.number - 1})}"
+        <a th:href="@{/admin/eventos(busca=${busca},ordenar=${ordenar},status=${statusSelecionado},tamanho=${tamanho},pagina=${paginaEventos.number - 1})}"
            th:classappend="${!paginaEventos.hasPrevious()} ? 'disabled'">Anterior</a>
 
         <th:block th:each="i : ${#numbers.sequence(0, paginaEventos.totalPages - 1)}">
-            <a th:href="@{/admin/eventos(busca=${busca},ordenar=${ordenar},tamanho=${tamanho},pagina=${i})}"
+            <a th:href="@{/admin/eventos(busca=${busca},ordenar=${ordenar},status=${statusSelecionado},tamanho=${tamanho},pagina=${i})}"
                th:text="${i + 1}"
                th:classappend="${i == paginaEventos.number} ? 'active'">1</a>
         </th:block>
 
-        <a th:href="@{/admin/eventos(busca=${busca},ordenar=${ordenar},tamanho=${tamanho},pagina=${paginaEventos.number + 1})}"
+        <a th:href="@{/admin/eventos(busca=${busca},ordenar=${ordenar},status=${statusSelecionado},tamanho=${tamanho},pagina=${paginaEventos.number + 1})}"
            th:classappend="${!paginaEventos.hasNext()} ? 'disabled'">Próximo</a>
 
-        <a th:href="@{/admin/eventos(busca=${busca},ordenar=${ordenar},tamanho=${tamanho},pagina=${paginaEventos.totalPages - 1})}"
+        <a th:href="@{/admin/eventos(busca=${busca},ordenar=${ordenar},status=${statusSelecionado},tamanho=${tamanho},pagina=${paginaEventos.totalPages - 1})}"
            th:classappend="${paginaEventos.last} ? 'disabled'">Último</a>
     </nav>
 </main>

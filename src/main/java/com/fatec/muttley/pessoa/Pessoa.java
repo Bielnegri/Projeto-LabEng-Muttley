@@ -31,6 +31,8 @@ public class Pessoa {
     private String telefone;
     private String cpf;
 
+    private String senha;
+
     @OneToOne(mappedBy = "pessoa", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Aluno aluno;
 

@@ -26,6 +26,7 @@ public interface EventoMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "qrCodeUrl", ignore = true)
+    @Mapping(target = "status", ignore = true)
     @Mapping(target = "disciplina", source = "disciplinaId", qualifiedByName = "idToDisciplina")
     @Mapping(target = "patrocinador", source = "patrocinadorId", qualifiedByName = "idToPatrocinador")
     @Mapping(target = "local", source = "localId", qualifiedByName = "idToLocal")

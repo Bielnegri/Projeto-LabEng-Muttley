@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Concluir Evento | Muttley')}"></head>
+<body>
+<header th:replace="~{fragmentos/header :: header(activePage='eventos')}"></header>
+
+<main class="admin-page">
+    <div class="page-title-row">
+        <div>
+            <h1>Concluir evento</h1>
+            <p class="completion-subtitle" th:text="${evento.tema}">Tema do evento</p>
+        </div>
+        <a class="link-action" th:href="@{/admin/eventos}">Voltar</a>
+    </div>
+
+    <div class="completion-hero">
+        <article class="summary-card">
+            <div>
+                <svg aria-hidden="true" viewBox="0 0 24 24">
+                    <rect x="4" y="5" width="16" height="15" rx="2"></rect>
+                    <path d="M8 3v4M16 3v4M4 10h16"></path>
+                </svg>
+                <span>Data e horário</span>
+            </div>
+            <strong th:text="${#dates.format(evento.data, 'dd/MM/yyyy')}">00/00/0000</strong>
+            <small th:text="${(evento.horarioInicio != null ? evento.horarioInicio : '--:--') + ' - ' + (evento.horarioFim != null ? evento.horarioFim : '--:--')}">00:00 - 00:00</small>
+        </article>
+
+        <article class="summary-card">
+            <div>
+                <svg aria-hidden="true" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M12 7v5l3 3"></path>
+                </svg>
+                <span>Status atual</span>
+            </div>
+            <strong th:text="${evento.status}">EM_ANDAMENTO</strong>
+            <small class="up">Somente presentes receberão certificado</small>
+        </article>
+    </div>
+
+    <form class="completion-form" th:action="@{/admin/eventos/gerarCertificados/{id}(id=${evento.id})}" method="post">
+        <section class="participants-section" aria-labelledby="participacoes-title">
+            <div class="participants-heading">
+                <label class="attendance-toggle"
+                       th:if="${participacoes != null and !#lists.isEmpty(participacoes)}">
+                    <input type="checkbox" data-toggle-all-presentes>
+                    <span data-toggle-all-label>Selecionar todos</span>
+                </label>
+                <h2 id="participacoes-title">Lista de presença</h2>
+                <span class="completion-counter" th:text="${#lists.size(participacoes)} + ' inscriçõe(s)'">0 inscrição(ões)</span>
+            </div>
+
+            <div class="empty-state compact-empty" th:if="${participacoes == null or #lists.isEmpty(participacoes)}">
+                <p>Nenhuma participação cadastrada para este evento.</p>
+            </div>
+
+            <table class="participants-table attendance-table" th:if="${participacoes != null and !#lists.isEmpty(participacoes)}">
+                <thead>
+                <tr>
+                    <th>Presença</th>
+                    <th>Inscrição</th>
+                    <th>Participante</th>
+                    <th>Tipo</th>
+                    <th>Email</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="participacao : ${participacoes}">
+                    <td>
+                        <label class="attendance-check">
+                            <input type="checkbox" name="presentes" th:value="${participacao.id}">
+                            <span>Presente</span>
+                        </label>
+                    </td>
+                    <td th:text="${participacao.inscricao}">1001</td>
+                    <td th:text="${participacao.pessoa != null ? participacao.pessoa.nome : 'Participante não informado'}">Nome</td>
+                    <td th:text="${participacao.tipo}">Aluno</td>
+                    <td th:text="${participacao.pessoa != null ? participacao.pessoa.email : '-'}">email@exemplo.com</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <div class="form-actions completion-actions">
+            <a th:href="@{/admin/eventos}">Cancelar</a>
+            <button class="primary-action" type="submit">Gerar certificados e concluir</button>
+        </div>
+    </form>
+</main>
+
+<script>
+    const toggleAllPresentes = document.querySelector('[data-toggle-all-presentes]');
+    const toggleAllLabel = document.querySelector('[data-toggle-all-label]');
+    const presencaCheckboxes = Array.from(document.querySelectorAll('input[name="presentes"]'));
+
+    if (toggleAllPresentes) {
+        const syncToggleState = () => {
+            const todosSelecionados = presencaCheckboxes.length > 0 && presencaCheckboxes.every((checkbox) => checkbox.checked);
+            toggleAllPresentes.checked = todosSelecionados;
+            toggleAllLabel.textContent = todosSelecionados ? 'Desselecionar todos' : 'Selecionar todos';
+        };
+
+        toggleAllPresentes.addEventListener('change', () => {
+            presencaCheckboxes.forEach((checkbox) => {
+                checkbox.checked = toggleAllPresentes.checked;
+            });
+            syncToggleState();
+        });
+
+        presencaCheckboxes.forEach((checkbox) => {
+            checkbox.addEventListener('change', syncToggleState);
+        });
+
+        syncToggleState();
+    }
+</script>
+
+<footer th:replace="~{fragmentos/footer :: footer}"></footer>
+</body>
+</html>
