@@ -1,4 +1,4 @@
-<h1 align="center">Muttley/h1>
+<h1 align="center">Muttley</h1>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Java-21-orange?style=flat-square" />
@@ -81,7 +81,7 @@ Esses padrões garantem flexibilidade, testabilidade e baixo acoplamento.
 Abaixo estão os principais diagramas que representam a arquitetura e o fluxo da aplicação:
 
 ### 1. Diagrama de Classes
-![Diagrama de Classes](docs/Muttley-Class-Diagram)
+![Diagrama de Classes](docs/Muttley-Class-Diagram.png)
 
 ### 2. Diagrama de Entidade-Relacionamento
 ![Diagrama de Entidade-Relacionamento](docs/erd.png)
