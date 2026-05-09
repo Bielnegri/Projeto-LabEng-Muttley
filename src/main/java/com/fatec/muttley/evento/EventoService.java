@@ -179,4 +179,8 @@ public class EventoService {
             return false;
         }
     }
+
+    public Evento salvarEntidade(Evento evento) {
+        return eventoRepository.save(evento);
+    }
 }

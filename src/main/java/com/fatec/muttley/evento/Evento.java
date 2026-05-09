@@ -20,6 +20,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 public class Evento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,6 +49,8 @@ public class Evento {
     @JoinColumn(name = "id_local")
     private Local local;
 
+    @Column(name = "qr_code_url")
+    private String qrCodeUrl;
     private String descricao;
 
     @OneToMany(mappedBy = "evento")
