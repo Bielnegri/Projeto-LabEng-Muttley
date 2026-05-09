@@ -198,6 +198,6 @@ public class MockDataInitializer {
     private Evento criarEvento(String tema, int dias, String inicio, String fim, String modalidade,
                                Disciplina disciplina, Patrocinador patrocinador, Local local) {
         return new Evento(0, tema, Date.valueOf(LocalDate.now().plusDays(dias)), inicio, fim, modalidade,
-                disciplina, patrocinador, local, new ArrayList<>());
+                disciplina, patrocinador, local, null, new ArrayList<>()); // adiciona null para qrCodeUrl
     }
 }

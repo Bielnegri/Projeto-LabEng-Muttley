@@ -57,7 +57,6 @@ public class GmailService {
     public void enviarEmailComPdf(String destinatario, String assunto, String corpo, File pdf) throws Exception {
         Gmail gmail = buildGmailClient();
 
-        // Monta o e-mail MIME com anexo
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
 
@@ -66,11 +65,9 @@ public class GmailService {
         email.addRecipient(jakarta.mail.Message.RecipientType.TO, new InternetAddress(destinatario));
         email.setSubject(assunto);
 
-        // Parte do texto
         MimeBodyPart textPart = new MimeBodyPart();
         textPart.setText(corpo, "utf-8");
 
-        // Parte do PDF
         MimeBodyPart attachmentPart = new MimeBodyPart();
         DataSource source = new FileDataSource(pdf);
         attachmentPart.setDataHandler(new DataHandler(source));
@@ -81,7 +78,6 @@ public class GmailService {
         multipart.addBodyPart(attachmentPart);
         email.setContent(multipart);
 
-        // Converte para o formato da Gmail API
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         email.writeTo(buffer);
         String encodedEmail = Base64.getUrlEncoder().encodeToString(buffer.toByteArray());
@@ -92,7 +88,7 @@ public class GmailService {
         gmail.users().messages().send("me", message).execute();
     }
 
-    public static void enviarEmail(String destinatario, String assunto, String corpo) throws Exception {
+    public void enviarEmail(String destinatario, String assunto, String corpo) throws Exception {
         Gmail gmail = buildGmailClient();
 
         Properties props = new Properties();

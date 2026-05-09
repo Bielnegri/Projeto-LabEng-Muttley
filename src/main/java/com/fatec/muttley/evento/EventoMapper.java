@@ -18,12 +18,14 @@ public interface EventoMapper {
     AtualizacaoEvento toAtualizacaoDto(Evento evento);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "qrCodeUrl", ignore = true)
     @Mapping(target = "disciplina", source = "disciplinaId", qualifiedByName = "idToDisciplina")
     @Mapping(target = "patrocinador", source = "patrocinadorId", qualifiedByName = "idToPatrocinador")
     @Mapping(target = "local", source = "localId", qualifiedByName = "idToLocal")
     Evento toEntityFromAtualizacao(AtualizacaoEvento dto);
 
-    @Mapping(target = "id", ignore = true) // Não atualiza ID
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "qrCodeUrl", ignore = true)
     @Mapping(target = "disciplina", source = "disciplinaId", qualifiedByName = "idToDisciplina")
     @Mapping(target = "patrocinador", source = "patrocinadorId", qualifiedByName = "idToPatrocinador")
     @Mapping(target = "local", source = "localId", qualifiedByName = "idToLocal")

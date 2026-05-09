@@ -131,6 +131,12 @@
             </div>
             <div class="event-actions">
                 <a th:href="@{/admin/novoEvento(id=${evento.id})}">Editar</a>
+                <a th:href="@{/admin/eventos/{id}/qrcode(id=${evento.id})}"
+                   th:if="${evento.qrCodeUrl != null}">QR Code</a>
+                <form th:action="@{/admin/eventos/{id}/concluir(id=${evento.id})}" method="post"
+                      onsubmit="return confirm('Concluir este evento e notificar participantes?')">
+                    <button type="submit" class="concluir">Concluir</button>
+                </form>
                 <a th:href="@{/admin/deletar/{id}(id=${evento.id})}"
                    onclick="return confirm('Cancelar este evento?')"
                    class="danger">Cancelar</a>

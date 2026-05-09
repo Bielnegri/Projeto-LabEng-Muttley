@@ -1,10 +1,13 @@
 package com.fatec.muttley.evento;
 
 import com.fatec.muttley.disciplina.DisciplinaService;
+import com.fatec.muttley.email.EmailService;
 import com.fatec.muttley.local.LocalService;
 import com.fatec.muttley.participacao.ParticipacaoService;
 import com.fatec.muttley.patrocinador.PatrocinadorService;
+import com.fatec.muttley.qrcode.QrCodeService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -38,6 +44,12 @@ public class EventoController {
 
     @Autowired
     private ParticipacaoService participacaoService;
+
+    @Autowired
+    private QrCodeService qrCodeService;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/admin/eventos")
     public String carregarEventos(
@@ -85,6 +97,7 @@ public class EventoController {
     public String salvar(@ModelAttribute("evento") @Valid AtualizacaoEvento dto,
                          BindingResult result,
                          RedirectAttributes redirectAttributes,
+                         HttpServletRequest request,
                          Model model) {
         if (result.hasErrors()) {
             popularFormulario(model, dto);
@@ -92,10 +105,27 @@ public class EventoController {
         }
         try {
             Evento eventoSalvo = eventoService.salvarOuAtualizar(dto);
+
+            if (dto.id() == null) {
+                String baseUrl = request.getScheme() + "://" + request.getServerName()
+                        + (request.getServerPort() != 80 && request.getServerPort() != 443
+                        ? ":" + request.getServerPort() : "");
+
+                String qrCodeUrl = qrCodeService.gerarUrlQrCode(
+                        baseUrl,
+                        eventoSalvo.getId(),
+                        eventoSalvo.getTema()
+                );
+
+                eventoSalvo.setQrCodeUrl(qrCodeUrl);
+                eventoService.salvarEntidade(eventoSalvo);
+            }
+
             String mensagem = dto.id() != null
                     ? "Evento '" + eventoSalvo.getTema() + "' atualizado com sucesso."
                     : "Evento '" + eventoSalvo.getTema() + "' criado com sucesso.";
             redirectAttributes.addFlashAttribute("message", mensagem);
+
         } catch (EntityNotFoundException | IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("erro", e.getMessage());
             String suffix = dto.id() != null ? "?id=" + dto.id() : "";
@@ -108,12 +138,50 @@ public class EventoController {
     @Transactional
     public String deletarEvento(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         try {
+            Evento evento = eventoService.procurarPorId(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+            emailService.enviarEventoCancelado(evento);
             eventoService.apagarPorId(id);
             redirectAttributes.addFlashAttribute("message", "Evento cancelado com sucesso.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erro", e.getMessage());
         }
         return "redirect:/admin/eventos";
+    }
+
+    @PostMapping("/admin/eventos/{id}/concluir")
+    public String concluirEvento(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            Evento evento = eventoService.procurarPorId(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+            emailService.enviarEventoConcluido(evento);
+            redirectAttributes.addFlashAttribute("message",
+                    "Evento '" + evento.getTema() + "' concluído. Participantes notificados.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+        }
+        return "redirect:/admin/eventos";
+    }
+
+    @GetMapping("/admin/eventos/{id}/qrcode")
+    public ResponseEntity<byte[]> baixarQrCode(@PathVariable Long id) {
+        try {
+            Evento evento = eventoService.procurarPorId(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+
+            byte[] imagem = qrCodeService.baixarQrCode(evento.getQrCodeUrl());
+
+            String nomeArquivo = "qrcode-" + evento.getTema()
+                    .replaceAll("\\s+", "-").toLowerCase() + ".png";
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nomeArquivo + "\"")
+                    .contentType(MediaType.IMAGE_PNG)
+                    .body(imagem);
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     private void popularFormulario(Model model, AtualizacaoEvento dto) {

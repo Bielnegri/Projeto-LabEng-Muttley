@@ -18,6 +18,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 public class Evento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +41,9 @@ public class Evento {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_local")
     private Local local;
+
+    @Column(name = "qr_code_url")
+    private String qrCodeUrl;
 
     @OneToMany(mappedBy = "evento")
     private List<Participacao> participacoes = new ArrayList<>();

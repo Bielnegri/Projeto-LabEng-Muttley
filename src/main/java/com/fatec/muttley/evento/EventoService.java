@@ -100,4 +100,8 @@ public class EventoService {
         return eventoRepository.findProximosEventosFiltrados(
                 Date.valueOf(LocalDate.now()), horaAtual, termoBusca, pageable);
     }
+
+    public Evento salvarEntidade(Evento evento) {
+        return eventoRepository.save(evento);
+    }
 }
