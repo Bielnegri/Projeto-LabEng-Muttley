@@ -62,6 +62,8 @@ public class EventoController {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
     private CertificadoService certificadoService;
 
     @GetMapping("/eventos/{id_evento}")
