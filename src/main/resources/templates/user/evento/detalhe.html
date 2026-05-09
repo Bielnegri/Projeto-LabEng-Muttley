@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head(${evento.tema + ' | Muttley'})}"></head>
+<body class="user-event-body">
+<main class="user-event-page">
+    <header class="user-event-topbar">
+        <a class="brand user-event-brand" th:href="@{/login}" href="/login">Muttley</a>
+    </header>
+
+    <section class="user-event-hero" aria-labelledby="event-title">
+        <div class="user-event-date-card">
+            <span th:text="${evento.data != null ? #dates.format(evento.data, 'dd') : '--'}">12</span>
+            <strong th:text="${evento.data != null ? #dates.format(evento.data, 'MMM') : '---'}">mai</strong>
+        </div>
+
+        <div class="user-event-heading">
+            <span class="user-event-status"
+                  th:classappend="${inscricoesEncerradas} ? ' is-closed' : ''"
+                  th:text="${inscricoesEncerradas} ? 'Encerrado' : 'Inscrições abertas'">Inscrições abertas</span>
+            <h1 id="event-title" th:text="${evento.tema}">Nome do evento</h1>
+            <p th:text="${evento.disciplina != null && evento.disciplina.descricao != null ? evento.disciplina.descricao : 'Evento acadêmico da FATEC Zona Leste.'}">
+                Evento acadêmico da FATEC Zona Leste.
+            </p>
+        </div>
+    </section>
+
+    <section class="user-event-action-panel" aria-label="Inscrição">
+        <button class="event-signup-button"
+                type="button"
+                th:disabled="${inscricoesEncerradas}"
+                th:classappend="${inscricoesEncerradas} ? ' is-muted' : ''"
+                th:text="${inscricoesEncerradas} ? 'Inscrições encerradas' : 'Inscrever-se'">
+            Inscrever-se
+        </button>
+    </section>
+
+    <section class="user-event-details" aria-label="Informações do evento">
+        <article class="user-event-info-card">
+            <span>Data</span>
+            <strong th:text="${evento.data != null ? #dates.format(evento.data, 'dd/MM/yyyy') : 'Data não definida'}">
+                12/05/2026
+            </strong>
+        </article>
+
+        <article class="user-event-info-card">
+            <span>Horário</span>
+            <strong th:text="${(evento.horarioInicio != null ? evento.horarioInicio : '--:--') + ' - ' + (evento.horarioFim != null ? evento.horarioFim : '--:--')}">
+                19:00 - 21:00
+            </strong>
+        </article>
+
+        <article class="user-event-info-card">
+            <span>Modalidade</span>
+            <strong th:text="${evento.modalidade != null ? evento.modalidade : 'Não informada'}">Presencial</strong>
+        </article>
+
+        <article class="user-event-info-card">
+            <span>Disciplina</span>
+            <strong th:text="${evento.disciplina != null ? evento.disciplina.nome : 'Não vinculada'}">
+                Laboratório de Engenharia de Software
+            </strong>
+        </article>
+
+        <article class="user-event-info-card">
+            <span>Local</span>
+            <strong th:text="${evento.local != null ? evento.local.nome : 'Local não definido'}">Auditório Principal</strong>
+            <small th:if="${evento.local != null && evento.local.descricao != null}" th:text="${evento.local.descricao}">
+                Espaço para palestras e painéis
+            </small>
+        </article>
+
+        <article class="user-event-info-card">
+            <span>Endereço</span>
+            <strong th:if="${evento.local != null && evento.local.endereco != null}"
+                    th:text="${evento.local.endereco.logradouro + ', ' + evento.local.endereco.numero}">
+                Rua das Flores, 120
+            </strong>
+            <strong th:unless="${evento.local != null && evento.local.endereco != null}">Endereço não definido</strong>
+            <small th:if="${evento.local != null && evento.local.endereco != null}"
+                   th:text="${evento.local.endereco.bairro + ' - ' + evento.local.endereco.cidade + '/' + evento.local.endereco.estado}">
+                Centro - São Paulo/SP
+            </small>
+        </article>
+
+        <article class="user-event-info-card">
+            <span>Capacidade</span>
+            <strong th:text="${evento.local != null && evento.local.capacidade > 0 ? evento.local.capacidade + ' pessoas' : 'Não informada'}">
+                250 pessoas
+            </strong>
+        </article>
+
+        <article class="user-event-info-card">
+            <span>Patrocinador</span>
+            <strong th:text="${evento.patrocinador != null ? evento.patrocinador.nome : 'Não informado'}">InovaTech</strong>
+            <small th:if="${evento.patrocinador != null && evento.patrocinador.site != null}" th:text="${evento.patrocinador.site}">
+                https://inovatech.com
+            </small>
+        </article>
+    </section>
+</main>
+</body>
+</html>

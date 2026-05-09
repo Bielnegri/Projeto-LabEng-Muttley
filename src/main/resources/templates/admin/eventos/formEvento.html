@@ -39,7 +39,12 @@
 
             <label class="field">
                 <span>Modalidade:</span>
-                <input type="text" th:field="*{modalidade}" placeholder="Ex: Presencial, Online, Híbrido">
+                <select th:field="*{modalidade}">
+                    <option value="">Selecione uma modalidade</option>
+                    <option th:each="modalidade : ${modalidadesEvento}"
+                            th:value="${modalidade.name()}"
+                            th:text="${modalidade}">Modalidade</option>
+                </select>
                 <span class="field-error" th:if="${#fields.hasErrors('modalidade')}" th:errors="*{modalidade}"></span>
             </label>
 

@@ -60,7 +60,9 @@
                             </svg>
                             <span th:text="${(evento.horarioInicio != null ? evento.horarioInicio : '--:--') + ' - ' + (evento.horarioFim != null ? evento.horarioFim : '--:--')}">08:00 - 12:00</span>
                         </span>
-                        <button type="button">Concluir evento</button>
+                        <a th:if="${evento.status != null and evento.status.name() == 'EM_ANDAMENTO'}"
+                           class="event-footer-action"
+                           th:href="@{/admin/eventos/concluir/{id}(id=${evento.id})}">Concluir evento</a>
                     </div>
                 </article>
             </div>
