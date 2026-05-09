@@ -127,6 +127,31 @@ public class EventoController {
         return "admin/eventos/formEvento";
     }
 
+    @GetMapping("/admin/eventos/{id}/qrcode")
+    public ResponseEntity<byte[]> baixarQrCode(@PathVariable Long id) {
+        try {
+            Evento evento = eventoService.procurarPorId(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+
+            if (evento.getQrCodeUrl() == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            byte[] imagem = qrCodeService.baixarQrCode(evento.getQrCodeUrl());
+
+            String nomeArquivo = "qrcode-" + evento.getTema()
+                    .replaceAll("\\s+", "-").toLowerCase() + ".png";
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nomeArquivo + "\"")
+                    .contentType(MediaType.IMAGE_PNG)
+                    .body(imagem);
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @PostMapping("/admin/salvar")
     public String salvar(@ModelAttribute("evento") @Valid AtualizacaoEvento dto,
                          BindingResult result,

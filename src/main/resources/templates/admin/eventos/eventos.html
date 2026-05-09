@@ -155,6 +155,9 @@
                    th:href="@{/admin/deletar/{id}(id=${evento.id})}"
                    onclick="return confirm('Cancelar este evento?')"
                    class="danger">Cancelar</a>
+                <a th:href="@{/admin/eventos/{id}/qrcode(id=${evento.id})}"
+                   th:if="${evento.qrCodeUrl != null}"> Baixar QR Code
+                </a>
             </div>
         </article>
     </section>
