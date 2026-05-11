@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Cadastro | Muttley')}"></head>
+<body class="auth-body">
+<main class="auth-page register-page">
+    <section class="auth-visual register-visual">
+        <a class="brand auth-brand" th:href="@{/login}" href="/login">Muttley</a>
+    </section>
+
+    <section class="auth-panel register-panel" aria-labelledby="register-title">
+        <div class="auth-heading">
+            <span class="auth-kicker">Cadastro</span>
+            <h1 id="register-title">Criar cadastro</h1>
+        </div>
+
+        <form class="event-form auth-form register-form" data-auth-form>
+            <div class="form-grid">
+                <label class="field">
+                    <span>Nome</span>
+                    <input type="text" name="nome" autocomplete="name" placeholder="Nome completo" required>
+                </label>
+
+                <label class="field">
+                    <span>Email</span>
+                    <input type="email" name="email" autocomplete="email" placeholder="seu.email@exemplo.com" required>
+                </label>
+
+                <label class="field">
+                    <span>Telefone</span>
+                    <input type="tel" name="telefone" autocomplete="tel" placeholder="(11) 99999-9999" required>
+                </label>
+
+                <label class="field">
+                    <span>CPF</span>
+                    <input type="text" name="cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" required>
+                </label>
+
+                <label class="field">
+                    <span>Senha</span>
+                    <input type="password" name="senha" autocomplete="new-password" placeholder="Crie uma senha" required>
+                </label>
+
+                <label class="field">
+                    <span>Confirmar senha</span>
+                    <input type="password" name="confirmarSenha" autocomplete="new-password" placeholder="Repita a senha" required>
+                </label>
+
+                <label class="field description-field">
+                    <span>Especialização</span>
+                    <select name="especializacao" data-specialty-select required>
+                        <option value="aluno" selected>Aluno</option>
+                        <option value="professor">Professor</option>
+                        <option value="palestrante">Palestrante</option>
+                        <option value="organizador">Organizador</option>
+                        <option value="colaborador">Colaborador</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="specialty-fields">
+                <fieldset class="specialty-panel" data-specialty-panel="aluno">
+                    <legend>Dados de aluno</legend>
+                    <div class="form-grid">
+                        <label class="field">
+                            <span>Instituição</span>
+                            <input type="text" name="alunoInstituicao" placeholder="FATEC Zona Leste" required>
+                        </label>
+                        <label class="field">
+                            <span>Matrícula</span>
+                            <input type="text" name="matricula" placeholder="Número de matrícula" required>
+                        </label>
+                    </div>
+                </fieldset>
+
+                <fieldset class="specialty-panel" data-specialty-panel="professor" hidden>
+                    <legend>Dados de professor</legend>
+                    <div class="form-grid">
+                        <label class="field">
+                            <span>Área de formação</span>
+                            <input type="text" name="areaFormacao" placeholder="Ex: Engenharia de Software" required disabled>
+                        </label>
+                        <label class="field">
+                            <span>Titulação</span>
+                            <input type="text" name="titulacao" placeholder="Ex: Mestre, Doutor" required disabled>
+                        </label>
+                    </div>
+                </fieldset>
+
+                <fieldset class="specialty-panel" data-specialty-panel="palestrante" hidden>
+                    <legend>Dados de palestrante</legend>
+                    <div class="form-grid">
+                        <label class="field">
+                            <span>Empresa atual</span>
+                            <input type="text" name="empresaAtual" placeholder="Empresa ou instituição" required disabled>
+                        </label>
+                        <label class="field">
+                            <span>Cargo</span>
+                            <input type="text" name="palestranteCargo" placeholder="Cargo atual" required disabled>
+                        </label>
+                        <label class="field description-field">
+                            <span>Resumo profissional</span>
+                            <textarea name="resumoProfissional" placeholder="Resumo da atuação profissional" required disabled></textarea>
+                        </label>
+                    </div>
+                </fieldset>
+
+                <fieldset class="specialty-panel" data-specialty-panel="organizador" hidden>
+                    <legend>Dados de organizador</legend>
+                    <div class="form-grid">
+                        <label class="field">
+                            <span>Instituição</span>
+                            <input type="text" name="organizadorInstituicao" placeholder="Instituição vinculada" required disabled>
+                        </label>
+                        <label class="field">
+                            <span>Cargo</span>
+                            <input type="text" name="organizadorCargo" placeholder="Cargo na organização" required disabled>
+                        </label>
+                    </div>
+                </fieldset>
+
+                <fieldset class="specialty-panel" data-specialty-panel="colaborador" hidden>
+                    <legend>Dados de colaborador</legend>
+                    <div class="form-grid">
+                        <label class="field">
+                            <span>Função</span>
+                            <input type="text" name="funcao" placeholder="Função no evento" required disabled>
+                        </label>
+                        <label class="field">
+                            <span>Disponibilidade</span>
+                            <input type="text" name="disponibilidade" placeholder="Ex: Manhã, tarde, noite" required disabled>
+                        </label>
+                        <label class="field description-field">
+                            <span>Tipo</span>
+                            <input type="text" name="tipo" placeholder="Ex: Apoio, monitoria, recepção" required disabled>
+                        </label>
+                    </div>
+                </fieldset>
+            </div>
+
+            <p class="auth-status" data-auth-status role="status" aria-live="polite"></p>
+
+            <div class="form-actions auth-actions">
+                <a th:href="@{/login}" href="/login">Já tenho conta</a>
+                <button class="primary-action" type="submit">Criar cadastro</button>
+            </div>
+        </form>
+    </section>
+</main>
+
+</body>
+</html>

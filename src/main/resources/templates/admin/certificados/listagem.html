@@ -12,21 +12,6 @@
     <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
     <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
 
-    <section class="certificate-overview" aria-label="Modelo do certificado e resumo">
-        <article class="certificate-preview-panel">
-            <div class="section-heading">
-                <h2>Modelo do certificado</h2>
-                <a class="link-action" th:href="@{/admin/certificados/modelo}" target="_blank" rel="noopener">Abrir modelo</a>
-            </div>
-            <div class="certificate-preview-shell">
-                <iframe title="Preview do modelo do certificado"
-                        th:src="@{/admin/certificados/modelo(preview=true)}"
-                        src="/admin/certificados/modelo?preview=true"></iframe>
-            </div>
-        </article>
-
-    </section>
-
     <section class="events-section" aria-labelledby="pending-certificates-title">
         <div class="section-heading">
             <h2 id="pending-certificates-title">Eventos aguardando emissão</h2>
@@ -71,6 +56,8 @@
                             </svg>
                             <span th:text="${(evento.horarioInicio != null ? evento.horarioInicio : '--:--') + ' - ' + (evento.horarioFim != null ? evento.horarioFim : '--:--')}">08:00 - 12:00</span>
                         </span>
+                        <a class="event-footer-action"
+                           th:href="@{/admin/eventos/concluir/{id}(id=${evento.id})}">Concluir evento</a>
                     </div>
                 </article>
             </div>
@@ -84,8 +71,23 @@
         </div>
 
         <div class="empty-state" th:if="${eventosAguardandoCertificado == null or #lists.isEmpty(eventosAguardandoCertificado)}">
-            <p>Nenhum evento encerrado aguardando emissão.</p>
+            <p>Nenhum evento em andamento aguardando emissão.</p>
         </div>
+    </section>
+
+    <section class="certificate-overview" aria-label="Modelo do certificado e resumo">
+        <article class="certificate-preview-panel">
+            <div class="section-heading">
+                <h2>Modelo do certificado</h2>
+                <a class="link-action" th:href="@{/admin/certificados/modelo}" target="_blank" rel="noopener">Abrir modelo</a>
+            </div>
+            <div class="certificate-preview-shell">
+                <iframe title="Preview do modelo do certificado"
+                        th:src="@{/admin/certificados/modelo(preview=true)}"
+                        src="/admin/certificados/modelo?preview=true"></iframe>
+            </div>
+        </article>
+
     </section>
 
     <section class="latest-certificates" aria-labelledby="latest-certificates-title">

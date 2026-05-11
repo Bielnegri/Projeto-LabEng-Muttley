@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +43,10 @@ public class MedalhaService {
 
     public List<Medalha> procurarTodos(){
         return medalhaRepository.findAll(Sort.by("nome").ascending());
+    }
+
+    public List<MedalhaRepository.MedalhasPorParticipante> procurarTotaisPorParticipante(int limite) {
+        return medalhaRepository.findTotaisPorParticipante(PageRequest.of(0, limite));
     }
 
     public void apagarPorId (Long id) {

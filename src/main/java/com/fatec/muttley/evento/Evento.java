@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fatec.muttley.disciplina.Disciplina;
+import com.fatec.muttley.evento.enums.ModalidadeEventoEnum;
+import com.fatec.muttley.evento.enums.StatusEventoEnum;
 import com.fatec.muttley.local.Local;
 import com.fatec.muttley.participacao.Participacao;
 import com.fatec.muttley.patrocinador.Patrocinador;
@@ -18,6 +20,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 public class Evento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +30,12 @@ public class Evento {
     private Date data;
     private String horarioInicio;
     private String horarioFim;
-    private String modalidade;
+
+    @Enumerated(EnumType.STRING)
+    private ModalidadeEventoEnum modalidade;
+
+    @Enumerated(EnumType.STRING)
+    private StatusEventoEnum status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_disciplina")
@@ -41,11 +49,16 @@ public class Evento {
     @JoinColumn(name = "id_local")
     private Local local;
 
+    @Column(name = "qr_code_url")
+    private String qrCodeUrl;
+    private String descricao;
+
     @OneToMany(mappedBy = "evento")
     private List<Participacao> participacoes = new ArrayList<>();
 
     public Evento(AtualizacaoEvento dados, Disciplina disciplina, Patrocinador patrocinador, Local local) {
         this.tema = dados.tema();
+        this.descricao = dados.descricao();
         this.data = dados.data();
         this.horarioInicio = dados.horarioInicio();
         this.horarioFim = dados.horarioFim();
@@ -58,6 +71,8 @@ public class Evento {
     public void atualizarInformacoes(AtualizacaoEvento dados, Disciplina disciplina, Patrocinador patrocinador, Local local) {
         if (dados.tema() != null)
             this.tema = dados.tema();
+        if (dados.descricao() != null)
+            this.descricao = dados.descricao();
         if (dados.data() != null)
             this.data = dados.data();
         if (dados.horarioInicio() != null)

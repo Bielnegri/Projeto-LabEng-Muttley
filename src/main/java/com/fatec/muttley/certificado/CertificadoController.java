@@ -20,9 +20,9 @@ public class CertificadoController {
     @GetMapping
     public String carregaPaginaCertificados(Model model) {
         model.addAttribute("listaCertificados", certificadoService.procurarTodos());
-        model.addAttribute("eventosAguardandoCertificado", eventoService.procurarEventosEncerradosAguardandoCertificado());
+        model.addAttribute("eventosAguardandoCertificado", eventoService.procurarEventosAguardandoEmissaoCertificado());
         model.addAttribute("ultimosCertificados", certificadoService.procurarUltimosEmitidos());
-        return "certificado/listagem";
+        return "admin/certificados/listagem";
     }
 
     @GetMapping("/modelo")
@@ -35,6 +35,6 @@ public class CertificadoController {
         model.addAttribute("predicado", "realizado pela FATEC Zona Leste.");
         model.addAttribute("duracao", "2 (duas) horas.");
         model.addAttribute("data", "São Paulo, 30 de março de 2026");
-        return "certificado/modelo";
+        return "public/certificados/modelo";
     }
 }

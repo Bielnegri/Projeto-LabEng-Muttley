@@ -1,5 +1,6 @@
 package com.fatec.muttley.participacao;
 
+import com.fatec.muttley.email.EmailService;
 import com.fatec.muttley.evento.EventoService;
 import com.fatec.muttley.pessoa.PessoaService;
 import jakarta.persistence.EntityNotFoundException;
@@ -27,6 +28,9 @@ public class ParticipacaoController {
 
     @Autowired
     private EventoService eventoService;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/listagem")
     public String carregaPaginaListagem(Model model) {
@@ -78,6 +82,9 @@ public class ParticipacaoController {
         }
         try {
             Participacao participacaoSalvo = participacaoService.salvarOuAtualizar(dto);
+            if (dto.id() == null) {
+                emailService.enviarConfirmacaoCadastro(participacaoSalvo);
+            }
             String mensagem = dto.id() != null
                     ? "Participação '" + participacaoSalvo.getInscricao() + "' foi alterada com sucesso."
                     : "Participação '" + participacaoSalvo.getInscricao() + "' criada com sucesso.";

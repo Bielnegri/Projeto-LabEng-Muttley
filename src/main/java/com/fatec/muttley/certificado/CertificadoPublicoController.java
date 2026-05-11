@@ -43,7 +43,7 @@ public class CertificadoPublicoController {
         Certificado certificado = buscarCertificado(codigo);
         model.addAttribute("certificado", certificado);
         model.addAttribute("linkedinUrl", montarUrlLinkedIn(certificado, request));
-        return "certificado/publico";
+        return "public/certificados/publico";
     }
 
     @GetMapping("/certificados/{codigo}/preview")
@@ -51,7 +51,7 @@ public class CertificadoPublicoController {
         Certificado certificado = buscarCertificado(codigo);
         preencherModelo(certificado, model);
         model.addAttribute("preview", true);
-        return "certificado/modelo";
+        return "public/certificados/modelo";
     }
 
     @GetMapping("/certificados/{codigo}/download")
@@ -95,7 +95,7 @@ public class CertificadoPublicoController {
     public ResponseEntity<byte[]> baixar(Model model) throws IOException {
         Context context = new Context();
         context.setVariables(model.asMap());
-        String htmlProcessado = templateEngine.process("certificado/modeloPdf", context);
+        String htmlProcessado = templateEngine.process("public/certificados/modeloPdf", context);
 
         byte[] pdfBytes = pdfService.generatePdfFromHtml(htmlProcessado);
 
