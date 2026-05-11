@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Java-21-orange?style=flat-square" />
-  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" />
+  <img src="https://img.shields.io/badge/License-Proprietary-red?style=flat-square" />
   <img src="https://img.shields.io/github/last-commit/Bielnegri/Projeto-LabEng-Muttley?color=blue&style=flat-square" />
   <img src="https://img.shields.io/github/commit-activity/m/Bielnegri/Projeto-LabEng-Muttley?color=yellow&style=flat-square" />
   <img src="https://img.shields.io/badge/status-Fase%20Inicial%20de%20Desenvolvimento-red?style=flat-square" />
@@ -104,11 +104,11 @@ Este projeto está sendo construído com dedicação por desenvolvedores comprom
 
 | Nome                 | Função no Projeto                                                         | GitHub                                                       |
 |----------------------|---------------------------------------------------------------------------|--------------------------------------------------------------|
-| **André Lamego**     | Desenvolvimetno backend, frontend, integrações, testes e otimização       | [github.com/andrelamego](https://github.com/andrelamego)     |
+| **André Lamego**     | Desenvolvimento backend, frontend, integrações, testes e otimização       | [github.com/andrelamego](https://github.com/andrelamego)     |
 | **Bruno Hiroshi**    | Desenvolvimento backend, frontend, APIs para e-mail e QR codes            | [github.com/Bruno-Hiroshi](https://github.com/Bruno-Hiroshi) |
-| **Gabriel de Negri** | Desenvolvimetno backend, frontend, arquitetura e projeção, geração de pdf | [github.com/Bielnegri](https://github.com/Bielnegri)         |
-| **João Pedro Leme**  | Desenvolvimetno backend, frontend, arquitetura, testes e diagramação      | [github.com/jplhfernandez](https://github.com/jplhfernandez) |
+| **Gabriel de Negri** | Desenvolvimento backend, frontend, arquitetura e projeção, geração de pdf | [github.com/Bielnegri](https://github.com/Bielnegri)         |
+| **João Pedro Leme**  | Desenvolvimento backend, frontend, arquitetura, testes e diagramação      | [github.com/jplhfernandez](https://github.com/jplhfernandez) |
 
 ## 📄 Licença
-Este projeto está licenciado sob os termos da **MIT License**.  
+Este projeto está licenciado sob os termos de uma **Licença Proprietária**.  
 Consulte o arquivo [LICENSE](./LICENSE) para mais informações.
