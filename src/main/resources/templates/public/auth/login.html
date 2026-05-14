@@ -13,7 +13,7 @@
             <h1 id="login-title">Entrar no Muttley</h1>
         </div>
 
-        <form class="event-form auth-form" data-auth-form>
+        <form class="event-form auth-form" data-auth-form  th:action="@{/public/auth/login/entrar}" method="POST">
             <label class="field">
                 <span>Email</span>
                 <input type="email" name="email" autocomplete="email" placeholder="seu.email@exemplo.com" required>

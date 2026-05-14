@@ -13,7 +13,7 @@
             <h1 id="register-title">Criar cadastro</h1>
         </div>
 
-        <form class="event-form auth-form register-form" data-auth-form>
+        <form class="event-form auth-form register-form" data-auth-form th:action="@{/public/auth/register/salvar}" method="POST">
             <div class="form-grid">
                 <label class="field">
                     <span>Nome</span>
@@ -47,7 +47,7 @@
 
                 <label class="field description-field">
                     <span>Especialização</span>
-                    <select name="especializacao" data-specialty-select required>
+                    <select name="especializacao" id="especializacao" data-specialty-select required onchange="alterarCampos()">
                         <option value="aluno" selected>Aluno</option>
                         <option value="professor">Professor</option>
                         <option value="palestrante">Palestrante</option>
@@ -58,80 +58,80 @@
             </div>
 
             <div class="specialty-fields">
-                <fieldset class="specialty-panel" data-specialty-panel="aluno">
+                <fieldset class="specialty-panel" data-specialty-panel="aluno" id="fieldsetAluno">
                     <legend>Dados de aluno</legend>
                     <div class="form-grid">
                         <label class="field">
                             <span>Instituição</span>
-                            <input type="text" name="alunoInstituicao" placeholder="FATEC Zona Leste" required>
+                            <input type="text" name="alunoInstituicao" placeholder="FATEC Zona Leste">
                         </label>
                         <label class="field">
                             <span>Matrícula</span>
-                            <input type="text" name="matricula" placeholder="Número de matrícula" required>
+                            <input type="text" name="matricula" placeholder="Número de matrícula">
                         </label>
                     </div>
                 </fieldset>
 
-                <fieldset class="specialty-panel" data-specialty-panel="professor" hidden>
+                <fieldset class="specialty-panel" data-specialty-panel="professor" id="fieldsetProfessor" style="display: none">
                     <legend>Dados de professor</legend>
                     <div class="form-grid">
                         <label class="field">
                             <span>Área de formação</span>
-                            <input type="text" name="areaFormacao" placeholder="Ex: Engenharia de Software" required disabled>
+                            <input type="text" name="areaFormacao" placeholder="Ex: Engenharia de Software">
                         </label>
                         <label class="field">
                             <span>Titulação</span>
-                            <input type="text" name="titulacao" placeholder="Ex: Mestre, Doutor" required disabled>
+                            <input type="text" name="titulacao" placeholder="Ex: Mestre, Doutor">
                         </label>
                     </div>
                 </fieldset>
 
-                <fieldset class="specialty-panel" data-specialty-panel="palestrante" hidden>
+                <fieldset class="specialty-panel" data-specialty-panel="palestrante" id="fieldsetPalestrante" style="display: none">
                     <legend>Dados de palestrante</legend>
                     <div class="form-grid">
                         <label class="field">
                             <span>Empresa atual</span>
-                            <input type="text" name="empresaAtual" placeholder="Empresa ou instituição" required disabled>
+                            <input type="text" name="empresaAtual" placeholder="Empresa ou instituição">
                         </label>
                         <label class="field">
                             <span>Cargo</span>
-                            <input type="text" name="palestranteCargo" placeholder="Cargo atual" required disabled>
+                            <input type="text" name="palestranteCargo" placeholder="Cargo atual">
                         </label>
                         <label class="field description-field">
                             <span>Resumo profissional</span>
-                            <textarea name="resumoProfissional" placeholder="Resumo da atuação profissional" required disabled></textarea>
+                            <textarea name="resumoProfissional" placeholder="Resumo da atuação profissional"></textarea>
                         </label>
                     </div>
                 </fieldset>
 
-                <fieldset class="specialty-panel" data-specialty-panel="organizador" hidden>
+                <fieldset class="specialty-panel" data-specialty-panel="organizador" id="fieldsetOrganizador" style="display: none">
                     <legend>Dados de organizador</legend>
                     <div class="form-grid">
                         <label class="field">
                             <span>Instituição</span>
-                            <input type="text" name="organizadorInstituicao" placeholder="Instituição vinculada" required disabled>
+                            <input type="text" name="organizadorInstituicao" placeholder="Instituição vinculada">
                         </label>
                         <label class="field">
                             <span>Cargo</span>
-                            <input type="text" name="organizadorCargo" placeholder="Cargo na organização" required disabled>
+                            <input type="text" name="organizadorCargo" placeholder="Cargo na organização">
                         </label>
                     </div>
                 </fieldset>
 
-                <fieldset class="specialty-panel" data-specialty-panel="colaborador" hidden>
+                <fieldset class="specialty-panel" data-specialty-panel="colaborador" id="fieldsetColaborador" style="display: none">
                     <legend>Dados de colaborador</legend>
                     <div class="form-grid">
                         <label class="field">
                             <span>Função</span>
-                            <input type="text" name="funcao" placeholder="Função no evento" required disabled>
+                            <input type="text" name="funcao" placeholder="Função no evento">
                         </label>
                         <label class="field">
                             <span>Disponibilidade</span>
-                            <input type="text" name="disponibilidade" placeholder="Ex: Manhã, tarde, noite" required disabled>
+                            <input type="text" name="disponibilidade" placeholder="Ex: Manhã, tarde, noite">
                         </label>
                         <label class="field description-field">
                             <span>Tipo</span>
-                            <input type="text" name="tipo" placeholder="Ex: Apoio, monitoria, recepção" required disabled>
+                            <input type="text" name="tipo" placeholder="Ex: Apoio, monitoria, recepção">
                         </label>
                     </div>
                 </fieldset>
@@ -146,6 +146,54 @@
         </form>
     </section>
 </main>
+<script language="javascript">
+    function alterarCampos(){
+        const selecao = document.getElementById("especializacao").value;
+        const fieldsetAluno = document.getElementById("fieldsetAluno");
+        const fieldsetProfessor = document.getElementById("fieldsetProfessor");
+        const fieldsetPalestrante = document.getElementById("fieldsetPalestrante");
+        const fieldsetOrganizador = document.getElementById("fieldsetOrganizador");
+        const fieldsetColaborador = document.getElementById("fieldsetColaborador");
 
+        const inputsAluno = fieldsetAluno.querySelectorAll("input")
+        const inputsProfessor = fieldsetProfessor.querySelectorAll("input")
+        const inputsPalestrante = fieldsetPalestrante.querySelectorAll("input")
+        const inputsOrganizador = fieldsetOrganizador.querySelectorAll("input")
+        const inputsColaborador = fieldsetColaborador.querySelectorAll("input")
+
+        fieldsetAluno.style.display = "none"
+        fieldsetProfessor.style.display = "none"
+        fieldsetPalestrante.style.display = "none"
+        fieldsetOrganizador.style.display = "none"
+        fieldsetColaborador.style.display = "none"
+
+        inputsAluno.forEach(input => input.required = false);
+        inputsProfessor.forEach(input => input.required = false);
+        inputsPalestrante.forEach(input => input.required = false);
+        inputsOrganizador.forEach(input => input.required = false);
+        inputsColaborador.forEach(input => input.required = false);
+
+        if(selecao === "aluno"){
+            fieldsetAluno.style.display = "block";
+            inputsAluno.forEach(input => input.required = true);
+        }
+        else if(selecao === "professor"){
+            fieldsetProfessor.style.display = "block";
+            inputsProfessor.forEach(input => input.required = true);
+        }
+        else if(selecao === "palestrante"){
+            fieldsetPalestrante.style.display = "block";
+            inputsPalestrante.forEach(input => input.required = true);
+        }
+        else if(selecao === "organizador"){
+            fieldsetOrganizador.style.display = "block";
+            inputsOrganizador.forEach(input => input.required = true);
+        }
+        else if(selecao === "colaborador"){
+            fieldsetColaborador.style.display = "block";
+            inputsColaborador.forEach(input => input.required = true);
+        }
+    }
+</script>
 </body>
 </html>
