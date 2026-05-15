@@ -42,5 +42,9 @@ public class PessoaService {
     public Optional<Pessoa> procurarPorId(Long id) {
         return pessoaRepository.findById(id);
     }
+
+    public Optional<Pessoa> procurarPorCpf(String cpf) {
+        return pessoaRepository.findByCpf(cpf);
+    }
 }
 

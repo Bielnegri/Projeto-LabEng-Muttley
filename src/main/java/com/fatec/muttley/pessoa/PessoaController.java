@@ -85,7 +85,7 @@ public class PessoaController {
             dto = pessoaMapper.toAtualizacaoDto(pessoa);
         } else {
             // criação: DTO vazio
-            dto = new AtualizacaoPessoa(null, "", "", "", "");
+            dto = new AtualizacaoPessoa(null, "", "", "", "", "");
         }
         model.addAttribute("pessoa", dto);
         return "pessoa/formulario";
