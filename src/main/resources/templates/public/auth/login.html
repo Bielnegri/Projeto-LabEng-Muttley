@@ -8,6 +8,9 @@
     </section>
 
     <section class="auth-panel" aria-labelledby="login-title">
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+        <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
         <div class="auth-heading">
             <span class="auth-kicker">Acesso</span>
             <h1 id="login-title">Entrar no Muttley</h1>
@@ -15,8 +18,8 @@
 
         <form class="event-form auth-form" data-auth-form  th:action="@{/public/auth/login/entrar}" method="POST">
             <label class="field">
-                <span>Email</span>
-                <input type="email" name="email" autocomplete="email" placeholder="seu.email@exemplo.com" required>
+                <span>CPF</span>
+                <input type="text" name="cpf" id="cpf" placeholder="000.000.000-00" required>
             </label>
 
             <label class="field">
@@ -38,6 +41,20 @@
         </form>
     </section>
 </main>
+<script>
+    const inputCpf = document.getElementById('cpf');
 
+    inputCpf.addEventListener('input', () => {
+        let value = inputCpf.value;
+
+        value = value.replace(/\D/g, '');
+
+        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+        value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+
+        inputCpf.value = value;
+    });
+</script>
 </body>
 </html>

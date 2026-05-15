@@ -15,6 +15,9 @@ public record AtualizacaoPessoa(
         String telefone,
 
         @NotBlank(message = "CPF é obrigatório")
-        @ValidCpf
-        String cpf
+        @ValidCpf(formatted = true)
+        String cpf,
+
+        @NotBlank(message = "Senha é obrigatório")
+        String senha
 ) {}
