@@ -5,6 +5,17 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+<<<<<<< Updated upstream
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/admin/disciplinas")
+=======
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,9 +29,43 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin/disciplinas")
+>>>>>>> Stashed changes
 public class DisciplinaController {
+
     @Autowired
     private DisciplinaService disciplinaService;
+<<<<<<< Updated upstream
+
+    @Autowired
+    private DisciplinaMapper disciplinaMapper;
+
+    @GetMapping
+    public ResponseEntity<List<Disciplina>> listarTodas() {
+        return ResponseEntity.ok(disciplinaService.procurarTodas());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AtualizacaoDisciplina> buscarPorId(@PathVariable Long id) {
+        Disciplina disciplina = disciplinaService.procurarPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Disciplina não encontrada."));
+        return ResponseEntity.ok(disciplinaMapper.toAtualizacaoDto(disciplina));
+    }
+
+    @PostMapping
+    public ResponseEntity<Map<String, String>> criar(@RequestBody @Valid AtualizacaoDisciplina dto) {
+        Disciplina disciplinaSalva = disciplinaService.salvarOuAtualizar(dto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("message", "Disciplina '" + disciplinaSalva.getNome() + "' criada com sucesso."));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String, String>> atualizar(@PathVariable Long id,
+                                                         @RequestBody @Valid AtualizacaoDisciplina dto) {
+        disciplinaService.procurarPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Disciplina não encontrada."));
+        Disciplina disciplinaSalva = disciplinaService.salvarOuAtualizar(dto);
+        return ResponseEntity.ok(Map.of("message", "Disciplina '" + disciplinaSalva.getNome() + "' atualizada com sucesso."));
+=======
 
     @Autowired
     private ProfessorService professorService;
@@ -86,10 +131,18 @@ public class DisciplinaController {
             redirectAttributes.addFlashAttribute("erro", exception.getMessage());
             return "redirect:/admin/disciplinas/formulario" + (dto.id() != null ? "?id=" + dto.id() : "");
         }
+>>>>>>> Stashed changes
     }
 
-    @GetMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     @Transactional
+<<<<<<< Updated upstream
+    public ResponseEntity<Map<String, String>> deletar(@PathVariable Long id) {
+        disciplinaService.procurarPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Disciplina não encontrada."));
+        disciplinaService.apagarPorId(id);
+        return ResponseEntity.ok(Map.of("message", "Disciplina " + id + " deletada com sucesso."));
+=======
     public String deletarDisciplina(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         try {
             disciplinaService.apagarPorId(id);
@@ -98,5 +151,6 @@ public class DisciplinaController {
             redirectAttributes.addFlashAttribute("erro", exception.getMessage());
         }
         return "redirect:/admin/disciplinas";
+>>>>>>> Stashed changes
     }
 }

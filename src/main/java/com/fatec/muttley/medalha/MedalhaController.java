@@ -1,24 +1,55 @@
 package com.fatec.muttley.medalha;
 
+<<<<<<< Updated upstream
+=======
 import com.fatec.muttley.participacao.Participacao;
 import com.fatec.muttley.participacao.ParticipacaoService;
+>>>>>>> Stashed changes
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+<<<<<<< Updated upstream
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/admin/medalhas")
+=======
 @Controller
 @RequestMapping("/admin/medalhas")
+>>>>>>> Stashed changes
 public class MedalhaController {
+
     @Autowired
     private MedalhaService medalhaService;
 
     @Autowired
+<<<<<<< Updated upstream
+    private MedalhaMapper medalhaMapper;
+
+    @GetMapping
+    public ResponseEntity<List<Medalha>> listarTodos() {
+        return ResponseEntity.ok(medalhaService.procurarTodos());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AtualizacaoMedalha> buscarPorId(@PathVariable Long id) {
+        Medalha medalha = medalhaService.procurarPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Medalha não encontrada."));
+        return ResponseEntity.ok(medalhaMapper.toAtualizacaoDto(medalha));
+    }
+
+    @PostMapping
+    public ResponseEntity<Map<String, String>> criar(@RequestBody @Valid AtualizacaoMedalha dto) {
+        Medalha medalhaSalva = medalhaService.salvarOuAtualizar(dto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("message", "Medalha '" + medalhaSalva.getNome() + "' criada com sucesso!"));
+=======
     private ParticipacaoService participacaoService;
 
     @Autowired
@@ -84,10 +115,27 @@ public class MedalhaController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/admin/medalhas/formulario" + (dto.id() != null ? "?id=" + dto.id() : "");
         }
+>>>>>>> Stashed changes
     }
 
-    @GetMapping("/delete/{id}")
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String, String>> atualizar(@PathVariable Long id,
+                                                         @RequestBody @Valid AtualizacaoMedalha dto) {
+        medalhaService.procurarPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Medalha não encontrada."));
+        Medalha medalhaSalva = medalhaService.salvarOuAtualizar(dto);
+        return ResponseEntity.ok(Map.of("message", "Medalha '" + medalhaSalva.getNome() + "' atualizada com sucesso!"));
+    }
+
+    @DeleteMapping("/{id}")
     @Transactional
+<<<<<<< Updated upstream
+    public ResponseEntity<Map<String, String>> deletar(@PathVariable Long id) {
+        medalhaService.procurarPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Medalha não encontrada."));
+        medalhaService.apagarPorId(id);
+        return ResponseEntity.ok(Map.of("message", "Medalha " + id + " foi apagada!"));
+=======
     public String deletarMedalha(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             medalhaService.apagarPorId(id);
@@ -105,5 +153,6 @@ public class MedalhaController {
                 ? participacaoService.procurarPorId(dto.participacaoId()).orElse(null)
                 : null;
         model.addAttribute("participacaoSelecionada", participacaoSelecionada);
+>>>>>>> Stashed changes
     }
 }
