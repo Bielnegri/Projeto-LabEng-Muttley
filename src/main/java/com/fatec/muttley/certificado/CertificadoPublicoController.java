@@ -26,10 +26,6 @@ import java.sql.Date;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-<<<<<<< Updated upstream
-import java.util.Map;
-=======
->>>>>>> Stashed changes
 
 @Controller
 public class CertificadoPublicoController {
@@ -42,30 +38,6 @@ public class CertificadoPublicoController {
     @Autowired
     private TemplateEngine templateEngine;
 
-<<<<<<< Updated upstream
-    @GetMapping("/api/certificados/{codigo}")
-    public ResponseEntity<Map<String, Object>> dadosCertificadoPublico(
-            @PathVariable String codigo,
-            HttpServletRequest request) {
-        Certificado certificado = buscarCertificado(codigo);
-        return ResponseEntity.ok(Map.of(
-                "certificado", certificado,
-                "linkedinUrl", montarUrlLinkedIn(certificado, request)
-        ));
-    }
-
-    @GetMapping("/api/certificados/{codigo}/preview")
-    public ResponseEntity<Map<String, Object>> dadosPreview(@PathVariable String codigo) {
-        Certificado certificado = buscarCertificado(codigo);
-        return ResponseEntity.ok(preencherModelo(certificado));
-    }
-
-    @GetMapping("/api/certificados/{codigo}/download")
-    public ResponseEntity<byte[]> download(
-            @PathVariable String codigo,
-            Model model,
-            HttpServletResponse response) throws IOException {
-=======
     @GetMapping("/certificados/{codigo}")
     public String exibirPaginaPublica(@PathVariable("codigo") String codigo, Model model, HttpServletRequest request) {
         Certificado certificado = buscarCertificado(codigo);
@@ -84,7 +56,6 @@ public class CertificadoPublicoController {
 
     @GetMapping("/certificados/{codigo}/download")
     public ResponseEntity<byte[]> exibirDownload(@PathVariable("codigo") String codigo, Model model, HttpServletResponse response) throws IOException{
->>>>>>> Stashed changes
         Certificado certificado = buscarCertificado(codigo);
         preencherModelo(certificado, model);
         return baixar(model);
@@ -121,11 +92,7 @@ public class CertificadoPublicoController {
         return builder.build().encode().toUriString();
     }
 
-<<<<<<< Updated upstream
-    private ResponseEntity<byte[]> baixar(Model model) throws IOException {
-=======
     public ResponseEntity<byte[]> baixar(Model model) throws IOException {
->>>>>>> Stashed changes
         Context context = new Context();
         context.setVariables(model.asMap());
         String htmlProcessado = templateEngine.process("public/certificados/modeloPdf", context);
@@ -148,30 +115,11 @@ public class CertificadoPublicoController {
         return "Certificado - " + evento.getTema();
     }
 
-<<<<<<< Updated upstream
-    private Map<String, Object> preencherModelo(Certificado certificado) {
-=======
     private void preencherModelo(Certificado certificado, Model model) {
->>>>>>> Stashed changes
         Participacao participacao = certificado.getParticipacao();
         Evento evento = participacao != null ? participacao.getEvento() : null;
         Pessoa pessoa = participacao != null ? participacao.getPessoa() : null;
 
-<<<<<<< Updated upstream
-        return Map.of(
-                "pessoa", participacao != null && participacao.getTipo() != null ? participacao.getTipo() : "participante",
-                "nome", pessoa != null ? pessoa.getNome() : "Participante",
-                "preambulo", "Por participar do evento ",
-                "evento", evento != null ? evento.getTema() : "Evento",
-                "predicado", montarPredicado(evento),
-                "duracao", calcularDuracao(evento),
-                "data", formatarDataEmissao(certificado.getDataEmissao())
-        );
-    }
-
-    private void preencherModelo(Certificado certificado, Model model) {
-        preencherModelo(certificado).forEach(model::addAttribute);
-=======
         model.addAttribute("pessoa", participacao != null && participacao.getTipo() != null ? participacao.getTipo() : "participante");
         model.addAttribute("nome", pessoa != null ? pessoa.getNome() : "Participante");
         model.addAttribute("preambulo", "Por participar do evento ");
@@ -179,7 +127,6 @@ public class CertificadoPublicoController {
         model.addAttribute("predicado", montarPredicado(evento));
         model.addAttribute("duracao", calcularDuracao(evento));
         model.addAttribute("data", formatarDataEmissao(certificado.getDataEmissao()));
->>>>>>> Stashed changes
     }
 
     private String montarPredicado(Evento evento) {

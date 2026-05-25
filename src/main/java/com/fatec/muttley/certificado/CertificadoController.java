@@ -2,15 +2,6 @@ package com.fatec.muttley.certificado;
 
 import com.fatec.muttley.evento.EventoService;
 import org.springframework.beans.factory.annotation.Autowired;
-<<<<<<< Updated upstream
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
-
-@RestController
-@RequestMapping("/api/admin/certificados")
-=======
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/admin/certificados")
->>>>>>> Stashed changes
 public class CertificadoController {
-
     @Autowired
     private CertificadoService certificadoService;
 
@@ -29,16 +18,6 @@ public class CertificadoController {
     private EventoService eventoService;
 
     @GetMapping
-<<<<<<< Updated upstream
-    public ResponseEntity<Map<String, Object>> listarDados() {
-        return ResponseEntity.ok(Map.of(
-                "certificados", certificadoService.procurarTodos(),
-                "eventosAguardandoCertificado", eventoService.procurarEventosAguardandoEmissaoCertificado(),
-                "ultimosCertificados", certificadoService.procurarUltimosEmitidos()
-        ));
-    }
-}
-=======
     public String carregaPaginaCertificados(Model model) {
         model.addAttribute("listaCertificados", certificadoService.procurarTodos());
         model.addAttribute("eventosAguardandoCertificado", eventoService.procurarEventosAguardandoEmissaoCertificado());
@@ -59,4 +38,3 @@ public class CertificadoController {
         return "public/certificados/modelo";
     }
 }
->>>>>>> Stashed changes

@@ -6,18 +6,20 @@ import com.fatec.muttley.evento.EventoService;
 import com.fatec.muttley.medalha.MedalhaRepository;
 import com.fatec.muttley.medalha.MedalhaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.fatec.muttley.email.GmailService;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@RestController
-@RequestMapping("/api/admin")
+@Controller
+@RequestMapping("/admin")
 public class AdminController {
 
     @Autowired
@@ -30,11 +32,13 @@ public class AdminController {
     private MedalhaService medalhaService;
 
     @GetMapping("/inicio")
-    public ResponseEntity<Map<String, Object>> carregarEstatisticasAdmin() {
-        Map<String, Object> response = new HashMap<>();
+    public String carregarPaginaInicialAdmin(Model model) {
+        model.addAttribute("proximosEventos", eventoService.procurarTodosOrdenarPorInicio());
+        popularEstatisticas(model);
+        return "admin/inicio";
+    }
 
-        response.put("proximosEventos", eventoService.procurarTodosOrdenarPorInicio());
-
+    private void popularEstatisticas(Model model) {
         List<CertificadoRepository.CertificadosPorEvento> certificadosPorEvento =
                 certificadoService.procurarTotaisPorEvento(8);
         long maiorTotalCertificadosPorEvento = certificadosPorEvento.stream()
@@ -55,32 +59,57 @@ public class AdminController {
         long certificadosUltimos30Dias = certificadoService.contarEmitidosDesde(inicioUltimos30Dias);
         long certificadosPeriodoAnterior = certificadoService.contarEmitidosEntre(inicioPeriodoAnterior, inicioUltimos30Dias);
 
-        response.put("certificadosPorEvento", certificadosPorEvento.stream()
-                .map(item -> new BarraEstatistica(item.getEventoTema(), item.getTotal(), percentual(item.getTotal(), maiorTotalCertificadosPorEvento)))
+        model.addAttribute("certificadosPorEvento", certificadosPorEvento.stream()
+                .map(item -> new BarraEstatistica(
+                        item.getEventoTema(),
+                        item.getTotal(),
+                        percentual(item.getTotal(), maiorTotalCertificadosPorEvento)
+                ))
                 .toList());
-
-        response.put("medalhasPorParticipante", medalhasPorParticipante.stream()
-                .map(item -> new BarraEstatistica(item.getParticipanteNome(), item.getTotal(), percentual(item.getTotal(), maiorTotalMedalhas)))
+        model.addAttribute("medalhasPorParticipante", medalhasPorParticipante.stream()
+                .map(item -> new BarraEstatistica(
+                        item.getParticipanteNome(),
+                        item.getTotal(),
+                        percentual(item.getTotal(), maiorTotalMedalhas)
+                ))
                 .toList());
-
-        response.put("certificadosUltimos30Dias", certificadosUltimos30Dias);
-        response.put("variacaoCertificadosUltimos30Dias", calcularVariacaoPercentual(certificadosUltimos30Dias, certificadosPeriodoAnterior));
-        response.put("eventosAtivos", eventoService.contarEventosAtivos());
-        response.put("eventosAtivosNaSemana", eventoService.contarEventosAtivosNoPeriodo(hoje, hoje.plusDays(7)));
-
-        return ResponseEntity.ok(response);
+        model.addAttribute("certificadosUltimos30Dias", certificadosUltimos30Dias);
+        model.addAttribute("variacaoCertificadosUltimos30Dias",
+                calcularVariacaoPercentual(certificadosUltimos30Dias, certificadosPeriodoAnterior));
+        model.addAttribute("eventosAtivos", eventoService.contarEventosAtivos());
+        model.addAttribute("eventosAtivosNaSemana", eventoService.contarEventosAtivosNoPeriodo(hoje, hoje.plusDays(7)));
     }
 
     private int percentual(long valor, long maiorValor) {
-        if (maiorValor <= 0) return 0;
+        if (maiorValor <= 0) {
+            return 0;
+        }
         return Math.max(6, Math.round((valor * 100f) / maiorValor));
     }
 
     private long calcularVariacaoPercentual(long valorAtual, long valorAnterior) {
-        if (valorAnterior == 0) return valorAtual > 0 ? 100 : 0;
+        if (valorAnterior == 0) {
+            return valorAtual > 0 ? 100 : 0;
+        }
         return Math.round(((valorAtual - valorAnterior) * 100f) / valorAnterior);
     }
 
     public record BarraEstatistica(String rotulo, long total, int percentual) {
     }
 }
+
+//    @PostMapping("/testeEmail")
+//    public String testeEmail(RedirectAttributes redirectAttributes) {
+//        try {
+//            GmailService.enviarEmail(
+//                    "gabrielbnegri@gmail.com",
+//                    "Envio automatico do Muttley",
+//                    "ATENÇÃO, ESTE EMAIL FOI ENVIADO AUTOMATICAMENTE"
+//            );
+//            redirectAttributes.addFlashAttribute("sucesso", "E-mail enviado!");
+//        } catch (Exception e) {
+//            redirectAttributes.addFlashAttribute("erro", "Erro: " + e.getMessage());
+//        }
+//        return "redirect:/admin/inicio";
+//    }
+//}

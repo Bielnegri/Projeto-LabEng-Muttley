@@ -6,57 +6,75 @@ import com.fatec.muttley.pessoa.PessoaService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/auth")
+@Controller
 public class AuthController {
 
     @Autowired
     private PessoaService pessoaService;
 
-    public record LoginRequest(String cpf, String senha) {}
+    @GetMapping("/login")
+    public String carregarLogin() {
+        return "public/auth/login";
+    }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> cadastrarUsuario(@RequestBody @Valid AtualizacaoPessoa dto) {
+    @GetMapping("/register")
+    public String carregarCadastro() {
+        return "public/auth/register";
+    }
+
+    @PostMapping("/public/auth/register/salvar")
+    public String cadastrarUsuario(@ModelAttribute("pessoa") @Valid AtualizacaoPessoa dto,
+                                   RedirectAttributes redirectAttributes){
         try {
-            if (pessoaService.procurarPorCpf(dto.cpf()).isPresent()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("message", "Usuário já cadastrado com esse CPF."));
+            if(pessoaService.procurarPorCpf(dto.cpf()).isPresent()){
+                String mensagem = "Usuário já cadastrado com esse CPF.";
+                redirectAttributes.addFlashAttribute("message", mensagem);
+                return "redirect:/register";
             }
             Pessoa pessoaSalva = pessoaService.salvarOuAtualizar(dto);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(Map.of("message", "Usuário '" + pessoaSalva.getNome() + "' cadastrado com sucesso."));
+            String mensagem ="Usuário '" + pessoaSalva.getNome() + "' cadastrado com sucesso.";
+            redirectAttributes.addFlashAttribute("message", mensagem);
+            return "redirect:/login";
         } catch (EntityNotFoundException exception) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", exception.getMessage()));
+            redirectAttributes.addFlashAttribute("erro", exception.getMessage());
+            return "redirect:/register";
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> validarCredenciais(@RequestBody LoginRequest loginRequest) {
+    @PostMapping("/public/auth/login/entrar")
+    public String validarCredenciais(@ModelAttribute("cpf") String cpf, @ModelAttribute("senha") String senha,
+                                     RedirectAttributes redirectAttributes){
         try {
-            Optional<Pessoa> pessoaOptional = pessoaService.procurarPorCpf(loginRequest.cpf());
+            Optional<Pessoa> pessoaOptional = pessoaService.procurarPorCpf(cpf);
 
-            if (pessoaOptional.isEmpty() || !Objects.equals(loginRequest.senha(), pessoaOptional.get().getSenha())) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(Map.of("message", "CPF ou senha incorretos"));
+            if (pessoaOptional.isEmpty()) {
+                redirectAttributes.addFlashAttribute("message", "CPF ou senha incorretos");
+                return "redirect:/login";
             }
 
-            return ResponseEntity.ok(Map.of(
-                    "message", "Login efetuado com sucesso",
-                    "usuario", pessoaOptional.get().getNome()
-            ));
+            Pessoa pessoaSalva = pessoaOptional.get();
+
+            if (!Objects.equals(senha, pessoaSalva.getSenha())) {
+                redirectAttributes.addFlashAttribute("message", "CPF ou senha incorretos");
+                return "redirect:/login";
+            }
+
+            //TODO URL correta pós login
+            redirectAttributes.addFlashAttribute("message", "Login efetuado com sucesso");
+            return "redirect:/login";
 
         } catch (EntityNotFoundException exception) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", exception.getMessage()));
+            redirectAttributes.addFlashAttribute("erro", exception.getMessage());
+            return "redirect:/login";
         }
     }
 }
