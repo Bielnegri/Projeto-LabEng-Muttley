@@ -1,42 +1,32 @@
 package com.fatec.muttley.evento;
 
 import com.fatec.muttley.certificado.CertificadoService;
-import com.fatec.muttley.disciplina.DisciplinaService;
-import com.fatec.muttley.email.EmailService;
-import com.fatec.muttley.evento.enums.ModalidadeEventoEnum;
 import com.fatec.muttley.evento.enums.StatusEventoEnum;
-import com.fatec.muttley.local.LocalService;
 import com.fatec.muttley.participacao.Participacao;
 import com.fatec.muttley.participacao.ParticipacaoService;
-import com.fatec.muttley.patrocinador.PatrocinadorService;
 import com.fatec.muttley.qrcode.QrCodeService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Controller
+@RestController
 public class EventoController {
 
     @Autowired
@@ -46,238 +36,158 @@ public class EventoController {
     private EventoMapper eventoMapper;
 
     @Autowired
-    private DisciplinaService disciplinaService;
-
-    @Autowired
-    private PatrocinadorService patrocinadorService;
-
-    @Autowired
-    private LocalService localService;
-
-    @Autowired
     private ParticipacaoService participacaoService;
 
     @Autowired
     private QrCodeService qrCodeService;
 
     @Autowired
-    private EmailService emailService;
-
-    @Autowired
     private CertificadoService certificadoService;
 
-    @GetMapping("/eventos/{id_evento}")
-    public String carregarPaginaEvento(@PathVariable("id_evento") Long idEvento, Model model) {
-        Evento evento = eventoService.procurarPorId(idEvento)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento nÃ£o encontrado."));
-
-        model.addAttribute("evento", evento);
-        model.addAttribute("inscricoesEncerradas", inscricoesEncerradas(evento));
-        return "user/evento/detalhe";
+    @GetMapping("/api/eventos/{id}")
+    public ResponseEntity<Map<String, Object>> buscarEventoPublico(@PathVariable Long id) {
+        Evento evento = eventoService.procurarPorId(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento não encontrado."));
+        return ResponseEntity.ok(Map.of(
+                "evento", evento,
+                "inscricoesEncerradas", inscricoesEncerradas(evento)
+        ));
     }
 
-    @GetMapping("/admin/eventos")
-    public String carregarEventos(
+    @GetMapping("/api/admin/eventos")
+    public ResponseEntity<Page<Evento>> listarEventos(
             @RequestParam(defaultValue = "") String busca,
             @RequestParam(defaultValue = "data") String ordenar,
             @RequestParam(required = false) StatusEventoEnum status,
             @RequestParam(defaultValue = "0") int pagina,
-            @RequestParam(defaultValue = "10") int tamanho,
-            Model model) {
+            @RequestParam(defaultValue = "10") int tamanho) {
 
         Sort sort = ordenar.equals("tema")
                 ? Sort.by("tema").ascending()
                 : Sort.by("data").ascending().and(Sort.by("horarioInicio").ascending());
 
         Pageable pageable = PageRequest.of(pagina, tamanho, sort);
-        Page<Evento> paginaEventos = eventoService.procurarProximosFiltrados(busca, status, pageable);
+        return ResponseEntity.ok(eventoService.procurarProximosFiltrados(busca, status, pageable));
+    }
 
-        model.addAttribute("paginaEventos", paginaEventos);
-        model.addAttribute("busca", busca);
-        model.addAttribute("ordenar", ordenar);
-        model.addAttribute("statusSelecionado", status);
-        model.addAttribute("statusEventos", List.of(
-                StatusEventoEnum.CRIADO,
-                StatusEventoEnum.EM_ANDAMENTO,
-                StatusEventoEnum.FINALIZADO
+    @GetMapping("/api/admin/eventos/{id}")
+    public ResponseEntity<AtualizacaoEvento> buscarPorId(@PathVariable Long id) {
+        Evento evento = eventoService.procurarPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+        return ResponseEntity.ok(eventoMapper.toAtualizacaoDto(evento));
+    }
+
+    @PostMapping("/api/admin/eventos")
+    public ResponseEntity<Map<String, Object>> criar(@RequestBody @Valid AtualizacaoEvento dto,
+                                                     HttpServletRequest request) {
+        Evento eventoSalvo = eventoService.salvarOuAtualizar(dto);
+
+        String baseUrl = request.getScheme() + "://" + request.getServerName()
+                + (request.getServerPort() != 80 && request.getServerPort() != 443
+                ? ":" + request.getServerPort() : "");
+
+        String qrCodeUrl = qrCodeService.gerarUrlQrCode(baseUrl, eventoSalvo.getId(), eventoSalvo.getTema());
+        eventoSalvo.setQrCodeUrl(qrCodeUrl);
+        eventoService.salvarEntidade(eventoSalvo);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "message", "Evento '" + eventoSalvo.getTema() + "' criado com sucesso.",
+                "id", eventoSalvo.getId()
         ));
-        model.addAttribute("tamanho", tamanho);
-        return "admin/eventos/eventos";
     }
 
-    @GetMapping("/admin/novoEvento")
-    public String carregarFormularioEvento(@RequestParam(required = false) Long id, Model model,
-                                           RedirectAttributes redirectAttributes) {
-        AtualizacaoEvento dto;
-        boolean eventoFinalizado = false;
-        if (id != null) {
-            try {
-                Evento evento = eventoService.procurarPorId(id)
-                        .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
-                dto = eventoMapper.toAtualizacaoDto(evento);
-                eventoFinalizado = evento.getStatus() == StatusEventoEnum.FINALIZADO;
-            } catch (EntityNotFoundException e) {
-                redirectAttributes.addFlashAttribute("erro", e.getMessage());
-                return "redirect:/admin/novoEvento";
-            }
-        } else {
-            dto = new AtualizacaoEvento(null, "", "", null, "", "", null, null, null, null, null);
-        }
-        popularFormulario(model, dto, eventoFinalizado);
-        return "admin/eventos/formEvento";
+    @PutMapping("/api/admin/eventos/{id}")
+    public ResponseEntity<Map<String, String>> atualizar(@PathVariable Long id,
+                                                         @RequestBody @Valid AtualizacaoEvento dto) {
+        eventoService.procurarPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+        Evento eventoSalvo = eventoService.salvarOuAtualizar(dto);
+        return ResponseEntity.ok(Map.of("message", "Evento '" + eventoSalvo.getTema() + "' atualizado com sucesso."));
     }
 
-    @GetMapping("/admin/eventos/{id}/qrcode")
+    @DeleteMapping("/api/admin/eventos/{id}")
+    @Transactional
+    public ResponseEntity<Map<String, String>> cancelar(@PathVariable Long id) {
+        eventoService.procurarPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+        eventoService.cancelarEvento(id);
+        return ResponseEntity.ok(Map.of("message", "Evento cancelado com sucesso."));
+    }
+
+    @GetMapping("/api/admin/eventos/{id}/qrcode")
     public ResponseEntity<byte[]> baixarQrCode(@PathVariable Long id) {
+        Evento evento = eventoService.procurarPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+
+        if (evento.getQrCodeUrl() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
         try {
-            Evento evento = eventoService.procurarPorId(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
-
-            if (evento.getQrCodeUrl() == null) {
-                return ResponseEntity.notFound().build();
-            }
-
             byte[] imagem = qrCodeService.baixarQrCode(evento.getQrCodeUrl());
-
             String nomeArquivo = "qrcode-" + evento.getTema()
                     .replaceAll("\\s+", "-").toLowerCase() + ".png";
-
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nomeArquivo + "\"")
                     .contentType(MediaType.IMAGE_PNG)
                     .body(imagem);
-
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @PostMapping("/admin/salvar")
-    public String salvar(@ModelAttribute("evento") @Valid AtualizacaoEvento dto,
-                         BindingResult result,
-                         RedirectAttributes redirectAttributes,
-                         HttpServletRequest request,
-                         Model model) {
-        if (result.hasErrors()) {
-            popularFormulario(model, dto, false);
-            return "admin/eventos/formEvento";
+    @GetMapping("/api/admin/eventos/{id}/participacoes")
+    public ResponseEntity<Map<String, Object>> dadosConclusao(@PathVariable Long id) {
+        Evento evento = eventoService.procurarPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+
+        if (evento.getStatus() != StatusEventoEnum.EM_ANDAMENTO) {
+            throw new IllegalStateException("A lista de presença só pode ser consultada para eventos EM_ANDAMENTO.");
         }
-        try {
-            Evento eventoSalvo = eventoService.salvarOuAtualizar(dto);
 
-            if (dto.id() == null) {
-                String baseUrl = request.getScheme() + "://" + request.getServerName()
-                        + (request.getServerPort() != 80 && request.getServerPort() != 443
-                        ? ":" + request.getServerPort() : "");
-
-                String qrCodeUrl = qrCodeService.gerarUrlQrCode(
-                        baseUrl,
-                        eventoSalvo.getId(),
-                        eventoSalvo.getTema()
-                );
-
-                eventoSalvo.setQrCodeUrl(qrCodeUrl);
-                eventoService.salvarEntidade(eventoSalvo);
-            }
-
-            String mensagem = dto.id() != null
-                    ? "Evento '" + eventoSalvo.getTema() + "' atualizado com sucesso."
-                    : "Evento '" + eventoSalvo.getTema() + "' criado com sucesso.";
-            redirectAttributes.addFlashAttribute("message", mensagem);
-        } catch (EntityNotFoundException | IllegalArgumentException | IllegalStateException e) {
-            redirectAttributes.addFlashAttribute("erro", e.getMessage());
-            String suffix = dto.id() != null ? "?id=" + dto.id() : "";
-            return "redirect:/admin/novoEvento" + suffix;
-        }
-        return "redirect:/admin/eventos";
+        return ResponseEntity.ok(Map.of(
+                "evento", evento,
+                "participacoes", participacaoService.procurarPorEvento(id)
+        ));
     }
 
-    @GetMapping("/admin/deletar/{id}")
+    @PostMapping("/api/admin/eventos/{id}/concluir")
     @Transactional
-    public String deletarEvento(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
-        try {
-            eventoService.cancelarEvento(id);
-            redirectAttributes.addFlashAttribute("message", "Evento cancelado com sucesso.");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+    public ResponseEntity<Map<String, String>> concluirEvento(
+            @PathVariable Long id,
+            @RequestBody(required = false) List<Long> presentes) {
+
+        Evento evento = eventoService.procurarPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+
+        if (evento.getStatus() != StatusEventoEnum.EM_ANDAMENTO) {
+            throw new IllegalStateException("O evento só pode ser concluído quando estiver EM_ANDAMENTO.");
         }
-        return "redirect:/admin/eventos";
-    }
 
-    @GetMapping("/admin/eventos/concluir/{id}")
-    @Transactional
-    public String concluirEvento(@PathVariable("id") Long id,
-                                 Model model,
-                                 RedirectAttributes redirectAttributes) {
-        try {
-            Evento evento = eventoService.procurarPorId(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
-            if (evento.getStatus() != StatusEventoEnum.EM_ANDAMENTO) {
-                redirectAttributes.addFlashAttribute("erro", "A lista de presença só pode ser concluída para eventos EM_ANDAMENTO.");
-                return "redirect:/admin/eventos";
-            }
-            model.addAttribute("evento", evento);
-            model.addAttribute("participacoes", participacaoService.procurarPorEvento(id));
-            return "admin/eventos/concluirEvento";
-        } catch (EntityNotFoundException e) {
-            redirectAttributes.addFlashAttribute("erro", e.getMessage());
-            return "redirect:/admin/eventos";
-        }
-    }
+        Set<Long> participacoesDoEvento = participacaoService.procurarPorEvento(id).stream()
+                .map(Participacao::getId)
+                .collect(Collectors.toSet());
 
-    @PostMapping("/admin/eventos/gerarCertificados/{id}")
-    @Transactional
-    public String gerarCertificados(@PathVariable("id") Long id,
-                                    @RequestParam(name = "presentes", required = false) List<Long> presentes,
-                                    RedirectAttributes redirectAttributes) {
-        try {
-            Evento evento = eventoService.procurarPorId(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
-            if (evento.getStatus() != StatusEventoEnum.EM_ANDAMENTO) {
-                throw new IllegalStateException("O evento só pode ser concluído quando estiver EM_ANDAMENTO.");
-            }
+        List<Long> presentesValidos = (presentes == null ? List.<Long>of() : presentes).stream()
+                .filter(participacoesDoEvento::contains)
+                .toList();
 
-            Set<Long> participacoesDoEvento = participacaoService.procurarPorEvento(id).stream()
-                    .map(Participacao::getId)
-                    .collect(Collectors.toSet());
-            List<Long> presentesValidos = (presentes == null ? List.<Long>of() : presentes).stream()
-                    .filter(participacoesDoEvento::contains)
-                    .toList();
+        certificadoService.gerarCertificadosParaParticipacoes(presentesValidos);
+        eventoService.concluirEvento(id);
 
-            certificadoService.gerarCertificadosParaParticipacoes(presentesValidos);
-            eventoService.concluirEvento(id);
-            redirectAttributes.addFlashAttribute("message", "Evento concluído e certificados gerados com sucesso.");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("erro", e.getMessage());
-            return "redirect:/admin/eventos/concluir/" + id;
-        }
-        return "redirect:/admin/eventos";
-    }
-
-    private void popularFormulario(Model model, AtualizacaoEvento dto, boolean eventoFinalizado) {
-        model.addAttribute("evento", dto);
-        model.addAttribute("eventoFinalizado", eventoFinalizado);
-        model.addAttribute("modalidadesEvento", ModalidadeEventoEnum.values());
-        model.addAttribute("statusEmAndamento", StatusEventoEnum.EM_ANDAMENTO);
-        model.addAttribute("disciplinas", disciplinaService.procurarTodas());
-        model.addAttribute("patrocinadores", patrocinadorService.procurarTodos());
-        model.addAttribute("locais", localService.procurarTodos());
-        model.addAttribute("participacoes", dto.id() != null
-                ? participacaoService.procurarPorEvento(dto.id())
-                : java.util.List.of());
+        return ResponseEntity.ok(Map.of("message", "Evento concluído e certificados gerados com sucesso."));
     }
 
     private boolean inscricoesEncerradas(Evento evento) {
         if (evento.getData() == null || evento.getHorarioInicio() == null || evento.getHorarioInicio().isBlank()) {
             return false;
         }
-
         try {
-            LocalDateTime inicioEvento = LocalDateTime.of(
+            java.time.LocalDateTime inicioEvento = java.time.LocalDateTime.of(
                     evento.getData().toLocalDate(),
-                    LocalTime.parse(evento.getHorarioInicio())
+                    java.time.LocalTime.parse(evento.getHorarioInicio())
             );
-            return !inicioEvento.isAfter(LocalDateTime.now());
+            return !inicioEvento.isAfter(java.time.LocalDateTime.now());
         } catch (RuntimeException exception) {
             return false;
         }
