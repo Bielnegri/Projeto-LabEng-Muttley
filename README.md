@@ -107,7 +107,7 @@ Este projeto está sendo construído com dedicação por desenvolvedores comprom
 | **André Lamego**     | Desenvolvimento backend, frontend, integrações, testes e otimização       | [github.com/andrelamego](https://github.com/andrelamego)     |
 | **Bruno Hiroshi**    | Desenvolvimento backend, frontend, APIs para e-mail e QR codes            | [github.com/Bruno-Hiroshi](https://github.com/Bruno-Hiroshi) |
 | **Gabriel de Negri** | Desenvolvimento backend, frontend, arquitetura e projeção, geração de pdf | [github.com/Bielnegri](https://github.com/Bielnegri)         |
-| **João Pedro Leme**  | Desenvolvimento backend, frontend, arquitetura, testes e diagramação      | [github.com/jplhfernandez](https://github.com/jplhfernandez) |
+| **João Pedro Leme Hernandez Fernandez**  | Desenvolvimento backend, frontend, arquitetura, testes e diagramação      | [github.com/jplhfernandez](https://github.com/jplhfernandez) |
 
 ## 📄 Licença
 Este projeto está licenciado sob os termos de uma **Licença Proprietária**.  
