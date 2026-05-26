@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/api/admin")
 public class PessoaController {
 
     @Autowired
@@ -40,51 +41,51 @@ public class PessoaController {
     @Autowired
     private ColaboradorService colaboradorService;
 
-    @GetMapping("/api/admin/alunos")
+    @GetMapping("/alunos")
     public ResponseEntity<List<?>> listarAlunos() {
         return ResponseEntity.ok(alunoService.procurarTodos());
     }
 
-    @GetMapping("/api/admin/professores")
+    @GetMapping("/professores")
     public ResponseEntity<List<?>> listarProfessores() {
         return ResponseEntity.ok(professorService.procurarTodos());
     }
 
-    @GetMapping("/api/admin/palestrantes")
+    @GetMapping("/palestrantes")
     public ResponseEntity<List<?>> listarPalestrantes() {
         return ResponseEntity.ok(palestranteService.procurarTodos());
     }
 
-    @GetMapping("/api/admin/organizadores")
+    @GetMapping("/organizadores")
     public ResponseEntity<List<?>> listarOrganizadores() {
         return ResponseEntity.ok(organizadorService.procurarTodos());
     }
 
-    @GetMapping("/api/admin/colaboradores")
+    @GetMapping("/colaboradores")
     public ResponseEntity<List<?>> listarColaboradores() {
         return ResponseEntity.ok(colaboradorService.procurarTodos());
     }
 
-    @GetMapping("/api/pessoas")
+    @GetMapping("/pessoas")
     public ResponseEntity<List<Pessoa>> listarTodos() {
         return ResponseEntity.ok(pessoaService.procurarTodos());
     }
 
-    @GetMapping("/api/pessoas/{id}")
+    @GetMapping("/pessoas/{id}")
     public ResponseEntity<AtualizacaoPessoa> buscarPorId(@PathVariable Long id) {
         Pessoa pessoa = pessoaService.procurarPorId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada."));
         return ResponseEntity.ok(pessoaMapper.toAtualizacaoDto(pessoa));
     }
 
-    @PostMapping("/api/pessoas")
+    @PostMapping("/pessoas")
     public ResponseEntity<Map<String, String>> criar(@RequestBody @Valid AtualizacaoPessoa dto) {
         Pessoa pessoaSalva = pessoaService.salvarOuAtualizar(dto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("message", "Pessoa '" + pessoaSalva.getNome() + "' criada com sucesso!"));
     }
 
-    @PutMapping("/api/pessoas/{id}")
+    @PutMapping("/pessoas/{id}")
     public ResponseEntity<Map<String, String>> atualizar(@PathVariable Long id,
                                                          @RequestBody @Valid AtualizacaoPessoa dto) {
         pessoaService.procurarPorId(id)
@@ -93,7 +94,7 @@ public class PessoaController {
         return ResponseEntity.ok(Map.of("message", "Pessoa '" + pessoaSalva.getNome() + "' atualizada com sucesso!"));
     }
 
-    @DeleteMapping("/api/pessoas/{id}")
+    @DeleteMapping("/pessoas/{id}")
     @Transactional
     public ResponseEntity<Map<String, String>> deletar(@PathVariable Long id) {
         pessoaService.procurarPorId(id)
