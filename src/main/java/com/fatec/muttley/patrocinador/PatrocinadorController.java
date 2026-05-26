@@ -4,14 +4,15 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@Controller
-@RequestMapping("/patrocinador")
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/admin/patrocinadores")
 public class PatrocinadorController {
 
     @Autowired
@@ -20,70 +21,40 @@ public class PatrocinadorController {
     @Autowired
     private PatrocinadorMapper patrocinadorMapper;
 
-    @GetMapping("/listagem")
-    public String carregaPaginaListagem(Model model) {
-        model.addAttribute("listaPatrocinadors", patrocinadorService.procurarTodos());
-        return "patrocinador/listagem";
+    @GetMapping
+    public ResponseEntity<List<Patrocinador>> listarTodos() {
+        return ResponseEntity.ok(patrocinadorService.procurarTodos());
     }
 
-    @GetMapping("/formulario")
-    public String mostraFormulario(@RequestParam(required = false) Long id, Model model) {
-        AtualizacaoPatrocinador dto;
-        if (id != null) {
-            Patrocinador patrocinador = patrocinadorService.procurarPorId(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Patrocinador não encontrado."));
-            dto = patrocinadorMapper.toAtualizacaoDto(patrocinador);
-        } else {
-            dto = new AtualizacaoPatrocinador(null, "", "", 0, "", "", "");
-        }
-        model.addAttribute("patrocinador", dto);
-        return "patrocinador/formulario";
+    @GetMapping("/{id}")
+    public ResponseEntity<AtualizacaoPatrocinador> buscarPorId(@PathVariable Long id) {
+        Patrocinador patrocinador = patrocinadorService.procurarPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Patrocinador não encontrado."));
+        return ResponseEntity.ok(patrocinadorMapper.toAtualizacaoDto(patrocinador));
     }
 
-    @GetMapping("/formulario/{id}")
-    public String carregaFormularioPorId(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
-        try {
-            Patrocinador patrocinador = patrocinadorService.procurarPorId(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Patrocinador não encontrado."));
-            AtualizacaoPatrocinador dto = patrocinadorMapper.toAtualizacaoDto(patrocinador);
-            model.addAttribute("patrocinador", dto);
-            return "patrocinador/formulario";
-        } catch (EntityNotFoundException exception) {
-            redirectAttributes.addFlashAttribute("erro", exception.getMessage());
-            return "redirect:/patrocinador/formulario";
-        }
+    @PostMapping
+    public ResponseEntity<Map<String, String>> criar(@RequestBody @Valid AtualizacaoPatrocinador dto) {
+        Patrocinador patrocinadorSalvo = patrocinadorService.salvarOuAtualizar(dto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("message", "Patrocinador '" + patrocinadorSalvo.getNome() + "' criado com sucesso."));
     }
 
-    @PostMapping("/salvar")
-    public String salvar(@ModelAttribute("patrocinador") @Valid AtualizacaoPatrocinador dto,
-                         BindingResult result,
-                         RedirectAttributes redirectAttributes,
-                         Model model) {
-        if (result.hasErrors()) {
-            return "patrocinador/formulario";
-        }
-        try {
-            Patrocinador patrocinadorSalvo = patrocinadorService.salvarOuAtualizar(dto);
-            String mensagem = dto.id() != null
-                    ? "Patrocinador '" + patrocinadorSalvo.getNome() + "' atualizado com sucesso."
-                    : "Patrocinador '" + patrocinadorSalvo.getNome() + "' criado com sucesso.";
-            redirectAttributes.addFlashAttribute("message", mensagem);
-            return "redirect:/patrocinador/listagem";
-        } catch (EntityNotFoundException exception) {
-            redirectAttributes.addFlashAttribute("erro", exception.getMessage());
-            return "redirect:/patrocinador/formulario" + (dto.id() != null ? "?id=" + dto.id() : "");
-        }
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String, String>> atualizar(@PathVariable Long id,
+                                                         @RequestBody @Valid AtualizacaoPatrocinador dto) {
+        patrocinadorService.procurarPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Patrocinador não encontrado."));
+        Patrocinador patrocinadorSalvo = patrocinadorService.salvarOuAtualizar(dto);
+        return ResponseEntity.ok(Map.of("message", "Patrocinador '" + patrocinadorSalvo.getNome() + "' atualizado com sucesso."));
     }
 
-    @GetMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     @Transactional
-    public String deletarPatrocinador(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
-        try {
-            patrocinadorService.apagarPorId(id);
-            redirectAttributes.addFlashAttribute("message", "Patrocinador: " + id + " cancelado com sucesso.");
-        } catch (Exception exception) {
-            redirectAttributes.addFlashAttribute("erro", exception.getMessage());
-        }
-        return "redirect:/patrocinador/listagem";
+    public ResponseEntity<Map<String, String>> deletar(@PathVariable Long id) {
+        patrocinadorService.procurarPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Patrocinador não encontrado."));
+        patrocinadorService.apagarPorId(id);
+        return ResponseEntity.ok(Map.of("message", "Patrocinador " + id + " deletado com sucesso."));
     }
 }

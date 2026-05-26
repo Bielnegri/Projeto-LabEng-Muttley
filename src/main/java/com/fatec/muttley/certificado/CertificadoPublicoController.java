@@ -2,7 +2,7 @@ package com.fatec.muttley.certificado;
 
 import com.fatec.muttley.evento.Evento;
 import com.fatec.muttley.participacao.Participacao;
-import com.fatec.muttley.pdf.PdfService;
+import com.fatec.muttley.pdf.PdfClient;
 import com.fatec.muttley.pessoa.Pessoa;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,7 +34,7 @@ public class CertificadoPublicoController {
     private CertificadoService certificadoService;
 
     @Autowired
-    private PdfService pdfService;
+    private PdfClient pdfClient;
 
     @Autowired
     private TemplateEngine templateEngine;
@@ -102,7 +102,7 @@ public class CertificadoPublicoController {
         context.setVariables(model.asMap());
         String htmlProcessado = templateEngine.process("public/certificados/modeloPdf", context);
 
-        byte[] pdfBytes = pdfService.generatePdfFromHtml(htmlProcessado);
+        byte[] pdfBytes = pdfClient.gerarPdf(htmlProcessado);
 
         System.out.println("PDF gerado com sucesso!");
 

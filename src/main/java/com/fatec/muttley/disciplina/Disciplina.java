@@ -1,5 +1,7 @@
 package com.fatec.muttley.disciplina;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fatec.muttley.evento.Evento;
 import com.fatec.muttley.professor.Professor;
 
@@ -42,9 +44,11 @@ public class Disciplina {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_professor")
+    @JsonManagedReference
     private Professor professor;
 
     @OneToMany(mappedBy = "disciplina")
+    @JsonBackReference
     private List<Evento> eventos = new ArrayList<>();
 
     public Disciplina(AtualizacaoDisciplina dados, Professor professor) {

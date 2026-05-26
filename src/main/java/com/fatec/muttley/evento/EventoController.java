@@ -146,7 +146,6 @@ public class EventoController {
         }
 
         return ResponseEntity.ok(Map.of(
-                "evento", evento,
                 "participacoes", participacaoService.procurarPorEvento(id)
         ));
     }
