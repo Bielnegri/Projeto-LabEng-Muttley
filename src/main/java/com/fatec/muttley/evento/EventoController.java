@@ -1,6 +1,7 @@
 package com.fatec.muttley.evento;
 
 import com.fatec.muttley.certificado.CertificadoService;
+import com.fatec.muttley.email.EmailProducer;
 import com.fatec.muttley.evento.enums.StatusEventoEnum;
 import com.fatec.muttley.participacao.Participacao;
 import com.fatec.muttley.participacao.ParticipacaoService;
@@ -43,6 +44,9 @@ public class EventoController {
 
     @Autowired
     private CertificadoService certificadoService;
+
+    @Autowired
+    private EmailProducer emailProducer;
 
     @GetMapping("/api/eventos/{id}")
     public ResponseEntity<Map<String, Object>> buscarEventoPublico(@PathVariable Long id) {
@@ -108,9 +112,14 @@ public class EventoController {
     @DeleteMapping("/api/admin/eventos/{id}")
     @Transactional
     public ResponseEntity<Map<String, String>> cancelar(@PathVariable Long id) {
-        eventoService.procurarPorId(id)
+        Evento evento = eventoService.procurarPorId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+
+        List<Participacao> inscritos = participacaoService.procurarPorEvento(id);
+
         eventoService.cancelarEvento(id);
+
+        emailProducer.publicarEventoCancelado(evento, inscritos);
         return ResponseEntity.ok(Map.of("message", "Evento cancelado com sucesso."));
     }
 
@@ -174,6 +183,9 @@ public class EventoController {
 
         certificadoService.gerarCertificadosParaParticipacoes(presentesValidos);
         eventoService.concluirEvento(id);
+
+        List<Participacao> inscritos = participacaoService.procurarPorEvento(id);
+        emailProducer.publicarEventoConcluido(evento, inscritos);
 
         return ResponseEntity.ok(Map.of("message", "Evento concluído e certificados gerados com sucesso."));
     }

@@ -1,6 +1,6 @@
 package com.fatec.muttley.participacao;
 
-import com.fatec.muttley.email.EmailService;
+import com.fatec.muttley.email.EmailProducer;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -23,7 +23,7 @@ public class ParticipacaoController {
     private ParticipacaoMapper participacaoMapper;
 
     @Autowired
-    private EmailService emailService;
+    private EmailProducer emailProducer;
 
     @GetMapping
     public ResponseEntity<List<Participacao>> listarTodos() {
@@ -40,7 +40,7 @@ public class ParticipacaoController {
     @PostMapping
     public ResponseEntity<Map<String, String>> criar(@RequestBody @Valid AtualizacaoParticipacao dto) {
         Participacao participacaoSalva = participacaoService.salvarOuAtualizar(dto);
-        emailService.enviarConfirmacaoCadastro(participacaoSalva);
+        emailProducer.publicarConfirmacaoCadastro(participacaoSalva);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("message", "Participação '" + participacaoSalva.getInscricao() + "' criada com sucesso."));
     }
