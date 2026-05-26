@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/patrocinadores")
+@RequestMapping("/api/admin/patrocinadores")
 public class PatrocinadorController {
 
     @Autowired
