@@ -55,6 +55,7 @@ public class Pessoa {
     private Colaborador colaborador;
 
     @OneToMany(mappedBy = "pessoa")
+    @JsonManagedReference
     private List<Participacao> participacoes = new ArrayList<>();
 
     public Pessoa(AtualizacaoPessoa dados){

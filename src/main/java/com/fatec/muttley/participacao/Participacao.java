@@ -1,5 +1,7 @@
 package com.fatec.muttley.participacao;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fatec.muttley.evento.Evento;
 import com.fatec.muttley.pessoa.Pessoa;
 import jakarta.persistence.*;
@@ -22,10 +24,12 @@ public class Participacao {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_evento", nullable = false)
+    @JsonBackReference
     private Evento evento;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_pessoa", nullable = false)
+    @JsonBackReference
     private Pessoa pessoa;
 
     public Participacao(AtualizacaoParticipacao dados, Pessoa pessoa, Evento evento){

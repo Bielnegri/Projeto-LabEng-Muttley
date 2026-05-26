@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fatec.muttley.disciplina.Disciplina;
 import com.fatec.muttley.evento.enums.ModalidadeEventoEnum;
 import com.fatec.muttley.evento.enums.StatusEventoEnum;
@@ -54,6 +56,7 @@ public class Evento {
     private String descricao;
 
     @OneToMany(mappedBy = "evento")
+    @JsonManagedReference
     private List<Participacao> participacoes = new ArrayList<>();
 
     public Evento(AtualizacaoEvento dados, Disciplina disciplina, Patrocinador patrocinador, Local local) {
