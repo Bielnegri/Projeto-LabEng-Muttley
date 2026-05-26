@@ -24,5 +24,7 @@ public record AtualizacaoEndereco(
         @NotBlank(message = "Complemento é obrigatório")
         String complemento
 ) {
-
+        public AtualizacaoEndereco withId(Long id) {
+                return new AtualizacaoEndereco(id, this.estado(), this.cidade(), this.bairro(), this.logradouro(), this.numero(), this.complemento());
+        }
 }

@@ -101,6 +101,7 @@ public class EventoController {
                                                          @RequestBody @Valid AtualizacaoEvento dto) {
         eventoService.procurarPorId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+        dto = dto.withId(id);
         Evento eventoSalvo = eventoService.salvarOuAtualizar(dto);
         return ResponseEntity.ok(Map.of("message", "Evento '" + eventoSalvo.getTema() + "' atualizado com sucesso."));
     }

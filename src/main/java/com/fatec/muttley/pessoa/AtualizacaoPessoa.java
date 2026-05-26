@@ -20,4 +20,8 @@ public record AtualizacaoPessoa(
 
         @NotBlank(message = "Senha é obrigatório")
         String senha
-) {}
+) {
+        public AtualizacaoPessoa withId(Long id) {
+                return new AtualizacaoPessoa(id, this.nome(), this.email(), this.telefone(), this.cpf(), this.senha());
+        }
+}

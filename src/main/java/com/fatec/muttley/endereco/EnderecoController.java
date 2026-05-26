@@ -45,6 +45,7 @@ public class EnderecoController {
                                                          @RequestBody @Valid AtualizacaoEndereco dto) {
         enderecoService.procurarPorId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Endereco não encontrado."));
+        dto = dto.withId(id);
         Endereco enderecoSalvo = enderecoService.salvarOuAtualizar(dto);
         return ResponseEntity.ok(Map.of("message", "Endereço '" + enderecoSalvo.getLogradouro() + "' atualizado com sucesso!"));
     }

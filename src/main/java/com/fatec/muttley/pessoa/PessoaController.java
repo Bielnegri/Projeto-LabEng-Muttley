@@ -90,6 +90,7 @@ public class PessoaController {
                                                          @RequestBody @Valid AtualizacaoPessoa dto) {
         pessoaService.procurarPorId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada."));
+        dto = dto.withId(id);
         Pessoa pessoaSalva = pessoaService.salvarOuAtualizar(dto);
         return ResponseEntity.ok(Map.of("message", "Pessoa '" + pessoaSalva.getNome() + "' atualizada com sucesso!"));
     }

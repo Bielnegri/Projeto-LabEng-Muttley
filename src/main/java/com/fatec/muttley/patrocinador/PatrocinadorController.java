@@ -45,6 +45,7 @@ public class PatrocinadorController {
                                                          @RequestBody @Valid AtualizacaoPatrocinador dto) {
         patrocinadorService.procurarPorId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Patrocinador não encontrado."));
+        dto = dto.withId(id);
         Patrocinador patrocinadorSalvo = patrocinadorService.salvarOuAtualizar(dto);
         return ResponseEntity.ok(Map.of("message", "Patrocinador '" + patrocinadorSalvo.getNome() + "' atualizado com sucesso."));
     }

@@ -18,5 +18,7 @@ public record AtualizacaoLocal(
         @NotNull(message = "Endereço é obrigatório")
         Long enderecoId
 ) {
-
+        public AtualizacaoLocal withId(Long id) {
+                return new AtualizacaoLocal(id, this.nome(), this.descricao(), this.capacidade(), this.enderecoId());
+        }
 }

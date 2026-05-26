@@ -9,11 +9,11 @@ public record AtualizacaoPatrocinador(
         @NotBlank(message = "Nome é obrigatório")
         String nome,
 
-        @NotNull(message = "CNPJ é obrigatório")
+        @NotBlank(message = "CNPJ é obrigatório")
         String cnpj,
 
         @NotNull(message = "Valor do patrocínio é obrigatório")
-        double valorPatrocinio,
+        Double valorPatrocinio,
 
         @NotBlank(message = "Email é obrigatório")
         String email,
@@ -24,5 +24,7 @@ public record AtualizacaoPatrocinador(
         @NotBlank(message = "Site é obrigatório")
         String site
 ) {
-
+        public AtualizacaoPatrocinador withId(Long id) {
+                return new AtualizacaoPatrocinador(id, this.nome(), this.cnpj(), this.valorPatrocinio(), this.email(), this.telefone(), this.site());
+        }
 }
