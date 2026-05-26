@@ -41,6 +41,7 @@ public class Evento {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_disciplina")
+    @JsonManagedReference
     private Disciplina disciplina;
 
     @ManyToOne(fetch = FetchType.LAZY)
