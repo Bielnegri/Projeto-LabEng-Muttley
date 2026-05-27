@@ -102,12 +102,12 @@ Este projeto está sendo construído com dedicação por desenvolvedores comprom
 
 ### Autores
 
-| Nome                 | Função no Projeto                                                         | GitHub                                                       |
-|----------------------|---------------------------------------------------------------------------|--------------------------------------------------------------|
-| **André Lamego**     | Desenvolvimento backend, frontend, integrações, testes e otimização       | [github.com/andrelamego](https://github.com/andrelamego)     |
-| **Bruno Hiroshi**    | Desenvolvimento backend, frontend, APIs para e-mail e QR codes            | [github.com/Bruno-Hiroshi](https://github.com/Bruno-Hiroshi) |
-| **Gabriel de Negri** | Desenvolvimento backend, frontend, arquitetura e projeção, geração de pdf | [github.com/Bielnegri](https://github.com/Bielnegri)         |
-| **João Pedro Leme Hernandez Fernandez**  | Desenvolvimento backend, frontend, arquitetura, testes e diagramação      | [github.com/jplhfernandez](https://github.com/jplhfernandez) |
+| Nome                 | Função no Projeto                                                         | GitHub                                                       | LinkedIn     
+|----------------------|---------------------------------------------------------------------------|--------------------------------------------------------------|--------------------------------------|
+| **André Lamego**     | Desenvolvimento backend, frontend, integrações, testes e otimização       | [github.com/andrelamego](https://github.com/andrelamego)     |[linkedin.com/andre-oliveira-lamego/](https://www.linkedin.com/in/andre-oliveira-lamego/) |
+| **Bruno Hiroshi**    | Desenvolvimento backend, frontend, APIs para e-mail e QR codes            | [github.com/Bruno-Hiroshi](https://github.com/Bruno-Hiroshi) |[linkedin.com/brunovigeta/](https://www.linkedin.com/in/brunovigeta/) |
+| **Gabriel de Negri** | Desenvolvimento backend, frontend, arquitetura e projeção, geração de pdf | [github.com/Bielnegri](https://github.com/Bielnegri)         |[linkedin.com/gabriel-benedito-de-negri/](https://www.linkedin.com/in/gabriel-benedito-de-negri/) |
+| **João Pedro Leme Hernandez Fernandez**  | Desenvolvimento backend, frontend, arquitetura, testes e diagramação      | [github.com/jplhfernandez](https://github.com/jplhfernandez) | [linkedin.com/joaopedrolemehernandezfernandez/](https://www.linkedin.com/in/joaopedrolemehernandezfernandez/) |
 
 ## 📄 Licença
 Este projeto está licenciado sob os termos de uma **Licença Proprietária**.  
