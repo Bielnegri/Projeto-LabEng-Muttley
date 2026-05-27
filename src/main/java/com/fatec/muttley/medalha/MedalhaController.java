@@ -45,6 +45,7 @@ public class MedalhaController {
                                                          @RequestBody @Valid AtualizacaoMedalha dto) {
         medalhaService.procurarPorId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Medalha não encontrada."));
+        dto = dto.withId(id);
         Medalha medalhaSalva = medalhaService.salvarOuAtualizar(dto);
         return ResponseEntity.ok(Map.of("message", "Medalha '" + medalhaSalva.getNome() + "' atualizada com sucesso!"));
     }

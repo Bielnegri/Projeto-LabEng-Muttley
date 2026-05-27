@@ -14,5 +14,9 @@ public record AtualizacaoMedalha (
 
         @NotNull(message = "Participação é obrigatório")
         Long participacaoId
-) {}
+) {
+        public AtualizacaoMedalha withId(Long id) {
+                return new AtualizacaoMedalha(id, this.nome(), this.descricao(), this.participacaoId());
+        }
+}
 

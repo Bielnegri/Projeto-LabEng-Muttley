@@ -45,6 +45,7 @@ public class DisciplinaController {
                                                          @RequestBody @Valid AtualizacaoDisciplina dto) {
         disciplinaService.procurarPorId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Disciplina não encontrada."));
+        dto = dto.withId(id);
         Disciplina disciplinaSalva = disciplinaService.salvarOuAtualizar(dto);
         return ResponseEntity.ok(Map.of("message", "Disciplina '" + disciplinaSalva.getNome() + "' atualizada com sucesso."));
     }

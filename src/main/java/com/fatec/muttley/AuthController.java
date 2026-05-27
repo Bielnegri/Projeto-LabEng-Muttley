@@ -23,7 +23,25 @@ public class AuthController {
 
     public record LoginRequest(String cpf, String senha) {}
 
-    @PostMapping("/register")
+    @GetMapping("/login")
+    public ResponseEntity<Map<String, String>> carregarLogin() {
+        return ResponseEntity.ok(Map.of(
+                "status", "Endpoint de autenticação ativo",
+                "metodo", "POST",
+                "payload_esperado", "LoginRequest(cpf, senha)"
+        ));
+    }
+
+    @GetMapping("/register")
+    public ResponseEntity<Map<String, String>> carregarCadastro() {
+        return ResponseEntity.ok(Map.of(
+                "status", "Endpoint de registro ativo",
+                "metodo", "POST",
+                "payload_esperado", "AtualizacaoPessoa"
+        ));
+    }
+
+    @PostMapping("/register/salvar")
     public ResponseEntity<?> cadastrarUsuario(@RequestBody @Valid AtualizacaoPessoa dto) {
         try {
             if (pessoaService.procurarPorCpf(dto.cpf()).isPresent()) {
@@ -39,19 +57,26 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/login")
+    @PostMapping("/login/entrar")
     public ResponseEntity<?> validarCredenciais(@RequestBody LoginRequest loginRequest) {
         try {
             Optional<Pessoa> pessoaOptional = pessoaService.procurarPorCpf(loginRequest.cpf());
 
-            if (pessoaOptional.isEmpty() || !Objects.equals(loginRequest.senha(), pessoaOptional.get().getSenha())) {
+            if (pessoaOptional.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("message", "CPF ou senha incorretos"));
+            }
+
+            Pessoa pessoaSalva = pessoaOptional.get();
+
+            if (!Objects.equals(loginRequest.senha(), pessoaSalva.getSenha())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(Map.of("message", "CPF ou senha incorretos"));
             }
 
             return ResponseEntity.ok(Map.of(
                     "message", "Login efetuado com sucesso",
-                    "usuario", pessoaOptional.get().getNome()
+                    "usuario", pessoaSalva.getNome()
             ));
 
         } catch (EntityNotFoundException exception) {

@@ -50,6 +50,7 @@ public class ParticipacaoController {
                                                          @RequestBody @Valid AtualizacaoParticipacao dto) {
         participacaoService.procurarPorId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Participação não encontrada."));
+        dto = dto.withId(id);
         Participacao participacaoSalva = participacaoService.salvarOuAtualizar(dto);
         return ResponseEntity.ok(Map.of("message", "Participação '" + participacaoSalva.getInscricao() + "' alterada com sucesso."));
     }

@@ -39,4 +39,7 @@ public record AtualizacaoEvento(
         @NotNull(message = "Local e obrigatorio")
         Long localId
 ) {
+        public AtualizacaoEvento withId(Long id) {
+                return new AtualizacaoEvento(id, this.tema(), this.descricao(), this.data(), this.horarioInicio(), this.horarioFim(), this.modalidade(), this.status(), this.disciplinaId(), this.patrocinadorId(), this.localId());
+        }
 }

@@ -15,4 +15,8 @@ public record AtualizacaoDisciplina(
         String turno,
 
         Long id_professor
-) {}
+) {
+        public AtualizacaoDisciplina withId(Long id) {
+                return new AtualizacaoDisciplina(id, this.nome(), this.descricao(), this.turno(), this.id_professor());
+        }
+}

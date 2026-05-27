@@ -45,6 +45,7 @@ public class LocalController {
                                                          @RequestBody @Valid AtualizacaoLocal dto) {
         localService.procurarPorId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Local não encontrado."));
+        dto = dto.withId(id);
         Local localSalvo = localService.salvarOuAtualizar(dto);
         return ResponseEntity.ok(Map.of("message", "Local '" + localSalvo.getNome() + "' atualizado com sucesso!"));
     }

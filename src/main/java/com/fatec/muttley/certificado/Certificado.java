@@ -1,5 +1,6 @@
 package com.fatec.muttley.certificado;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fatec.muttley.participacao.Participacao;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -54,6 +55,7 @@ public class Certificado {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_participacao")
+    @JsonManagedReference
     private Participacao participacao;
 
     public Certificado(AtualizacaoCertificado dados, Participacao participacao) {
