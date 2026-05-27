@@ -22,8 +22,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -74,7 +74,7 @@ public class CertificadoPublicoController {
     private String montarUrlLinkedIn(Certificado certificado, HttpServletRequest request) {
         Participacao participacao = certificado.getParticipacao();
         Evento evento = participacao != null ? participacao.getEvento() : null;
-        Date dataEmissao = certificado.getDataEmissao() != null ? certificado.getDataEmissao() : evento != null ? evento.getData() : null;
+        LocalDate dataEmissao = certificado.getDataEmissao() != null ? certificado.getDataEmissao() : evento != null ? evento.getData() : null;
         String codigo = certificado.getCodigoValidacao();
         String urlCertificado = ServletUriComponentsBuilder.fromRequestUri(request)
                 .replacePath("/certificados/" + codigo)
@@ -90,8 +90,8 @@ public class CertificadoPublicoController {
                 .queryParam("certUrl", urlCertificado);
 
         if (dataEmissao != null) {
-            builder.queryParam("issueYear", dataEmissao.toLocalDate().getYear());
-            builder.queryParam("issueMonth", dataEmissao.toLocalDate().getMonthValue());
+            builder.queryParam("issueYear", dataEmissao.getYear());
+            builder.queryParam("issueMonth", dataEmissao.getMonthValue());
         }
 
         return builder.build().encode().toUriString();
@@ -144,7 +144,7 @@ public class CertificadoPublicoController {
         if (evento == null || evento.getData() == null) {
             return "promovido pela FATEC Zona Leste.";
         }
-        return "realizado no dia " + evento.getData().toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+        return "realizado no dia " + evento.getData().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                 + ", promovido pela FATEC Zona Leste.";
     }
 
@@ -172,10 +172,10 @@ public class CertificadoPublicoController {
         }
     }
 
-    private String formatarDataEmissao(Date dataEmissao) {
+    private String formatarDataEmissao(LocalDate dataEmissao) {
         if (dataEmissao == null) {
             return "São Paulo";
         }
-        return "São Paulo, " + dataEmissao.toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        return "São Paulo, " + dataEmissao.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 }

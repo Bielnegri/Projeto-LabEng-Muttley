@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -40,7 +40,7 @@ public class Certificado {
     private Long id;
 
     @Column(name = "data_emissao")
-    private Date dataEmissao;
+    private LocalDate dataEmissao;
 
     private String assinatura;
 
@@ -64,7 +64,7 @@ public class Certificado {
         this.participacao = participacao;
     }
 
-    public Certificado(Long id, Date dataEmissao, String assinatura, Participacao participacao) {
+    public Certificado(Long id, LocalDate dataEmissao, String assinatura, Participacao participacao) {
         this.id = id;
         this.dataEmissao = dataEmissao;
         this.assinatura = assinatura;

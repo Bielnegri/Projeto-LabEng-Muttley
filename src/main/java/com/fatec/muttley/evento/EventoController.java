@@ -142,9 +142,9 @@ public class EventoController {
         Evento evento = eventoService.procurarPorId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
 
-        if (evento.getStatus() != StatusEventoEnum.EM_ANDAMENTO) {
-            throw new IllegalStateException("A lista de presença só pode ser consultada para eventos EM_ANDAMENTO.");
-        }
+//        if (evento.getStatus() != StatusEventoEnum.EM_ANDAMENTO) {
+//            throw new IllegalStateException("A lista de presença só pode ser consultada para eventos EM_ANDAMENTO.");
+//        }
 
         return ResponseEntity.ok(Map.of(
                 "participacoes", participacaoService.procurarPorEvento(id)
@@ -184,7 +184,7 @@ public class EventoController {
         }
         try {
             java.time.LocalDateTime inicioEvento = java.time.LocalDateTime.of(
-                    evento.getData().toLocalDate(),
+                    evento.getData(),
                     java.time.LocalTime.parse(evento.getHorarioInicio())
             );
             return !inicioEvento.isAfter(java.time.LocalDateTime.now());

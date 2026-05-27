@@ -5,7 +5,7 @@ import com.fatec.muttley.evento.enums.StatusEventoEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 public record AtualizacaoEvento(
         Long id,
@@ -17,7 +17,7 @@ public record AtualizacaoEvento(
         String descricao,
 
         @NotNull(message = "Data e obrigatoria")
-        Date data,
+        LocalDate data,
 
         @NotBlank(message = "Horario de inicio e obrigatorio")
         String horarioInicio,

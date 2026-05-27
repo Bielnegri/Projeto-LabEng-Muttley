@@ -183,7 +183,7 @@ public class MockDataInitializer {
             medalhaRepository.save(new Medalha(null, "Inovação", "Proposta criativa aplicada ao desafio", participacoes.get(34)));
 
             for (int i = 0; i < Math.min(12, participacoes.size()); i++) {
-                certificadoRepository.save(new Certificado(null, Date.valueOf(LocalDate.now().minusDays(i)), "Coordenação FATEC", participacoes.get(i)));
+                certificadoRepository.save(new Certificado(null, LocalDate.now().minusDays(i), "Coordenação FATEC", participacoes.get(i)));
             }
         };
     }
@@ -199,7 +199,7 @@ public class MockDataInitializer {
 
     private Evento criarEvento(String tema, int dias, String inicio, String fim, ModalidadeEventoEnum modalidade,
                                Disciplina disciplina, Patrocinador patrocinador, Local local) {
-        return new Evento(0, tema, Date.valueOf(LocalDate.now().plusDays(dias)), inicio, fim, modalidade, StatusEventoEnum.CRIADO,
+        return new Evento(0, tema, LocalDate.now().plusDays(dias), inicio, fim, modalidade, StatusEventoEnum.CRIADO,
                 disciplina, patrocinador, local, null, "Evento academico sobre " + tema.toLowerCase() + ".", new ArrayList<>());
     }
 }

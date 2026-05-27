@@ -1,6 +1,6 @@
 package com.fatec.muttley.evento;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class Evento {
     @Column(name = "id_evento")
     private long id;
     private String tema;
-    private Date data;
+    private LocalDate data;
     private String horarioInicio;
     private String horarioFim;
 

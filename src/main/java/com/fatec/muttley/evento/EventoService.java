@@ -171,7 +171,7 @@ public class EventoService {
 
         try {
             LocalDateTime inicioEvento = LocalDateTime.of(
-                    evento.getData().toLocalDate(),
+                    evento.getData(),
                     LocalTime.parse(evento.getHorarioInicio(), DateTimeFormatter.ofPattern("HH:mm"))
             );
             return !inicioEvento.isAfter(LocalDateTime.now());

@@ -1,5 +1,6 @@
 package com.fatec.muttley.pessoa;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fatec.muttley.aluno.Aluno;
 import com.fatec.muttley.colaborador.Colaborador;
@@ -55,7 +56,7 @@ public class Pessoa {
     private Colaborador colaborador;
 
     @OneToMany(mappedBy = "pessoa")
-    @JsonManagedReference
+    @JsonBackReference
     private List<Participacao> participacoes = new ArrayList<>();
 
     public Pessoa(AtualizacaoPessoa dados){

@@ -96,7 +96,7 @@ public class CertificadoService {
                     .orElseThrow(() -> new EntityNotFoundException("Participação não encontrada com ID: " + participacaoId));
 
             Certificado certificado = new Certificado();
-            certificado.setDataEmissao(Date.valueOf(LocalDate.now()));
+            certificado.setDataEmissao(LocalDate.now());
             certificado.setAssinatura("Coordenação FATEC");
             certificado.setParticipacao(participacao);
             preencherDadosPublicos(certificado);
