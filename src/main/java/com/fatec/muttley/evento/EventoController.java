@@ -4,7 +4,9 @@ import com.fatec.muttley.certificado.CertificadoService;
 import com.fatec.muttley.evento.enums.StatusEventoEnum;
 import com.fatec.muttley.participacao.Participacao;
 import com.fatec.muttley.participacao.ParticipacaoService;
-import com.fatec.muttley.qrcode.QrCodeService;
+import com.fatec.muttley.qrcode.QrCodeClient;
+import com.fatec.muttley.qrcode.QrCodeProducer;
+import com.fatec.muttley.qrcode.QrCodeResponseConsumer;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -39,7 +41,10 @@ public class EventoController {
     private ParticipacaoService participacaoService;
 
     @Autowired
-    private QrCodeService qrCodeService;
+    private QrCodeProducer qrCodeProducer;
+
+    @Autowired
+    private QrCodeClient qrCodeClient;
 
     @Autowired
     private CertificadoService certificadoService;
@@ -86,9 +91,7 @@ public class EventoController {
                 + (request.getServerPort() != 80 && request.getServerPort() != 443
                 ? ":" + request.getServerPort() : "");
 
-        String qrCodeUrl = qrCodeService.gerarUrlQrCode(baseUrl, eventoSalvo.getId(), eventoSalvo.getTema());
-        eventoSalvo.setQrCodeUrl(qrCodeUrl);
-        eventoService.salvarEntidade(eventoSalvo);
+        qrCodeProducer.publicarGeracaoQrCode(eventoSalvo, baseUrl);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "message", "Evento '" + eventoSalvo.getTema() + "' criado com sucesso.",
@@ -125,7 +128,7 @@ public class EventoController {
         }
 
         try {
-            byte[] imagem = qrCodeService.baixarQrCode(evento.getQrCodeUrl());
+            byte[] imagem = qrCodeClient.baixarQrCode(evento.getQrCodeUrl());
             String nomeArquivo = "qrcode-" + evento.getTema()
                     .replaceAll("\\s+", "-").toLowerCase() + ".png";
             return ResponseEntity.ok()
