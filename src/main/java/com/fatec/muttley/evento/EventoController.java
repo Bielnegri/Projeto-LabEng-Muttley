@@ -1,10 +1,13 @@
 package com.fatec.muttley.evento;
 
 import com.fatec.muttley.certificado.CertificadoService;
+import com.fatec.muttley.email.EmailProducer;
 import com.fatec.muttley.evento.enums.StatusEventoEnum;
 import com.fatec.muttley.participacao.Participacao;
 import com.fatec.muttley.participacao.ParticipacaoService;
-import com.fatec.muttley.qrcode.QrCodeService;
+import com.fatec.muttley.qrcode.QrCodeClient;
+import com.fatec.muttley.qrcode.QrCodeProducer;
+import com.fatec.muttley.qrcode.QrCodeResponseConsumer;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -39,10 +42,16 @@ public class EventoController {
     private ParticipacaoService participacaoService;
 
     @Autowired
-    private QrCodeService qrCodeService;
+    private QrCodeProducer qrCodeProducer;
+
+    @Autowired
+    private QrCodeClient qrCodeClient;
 
     @Autowired
     private CertificadoService certificadoService;
+
+    @Autowired
+    private EmailProducer emailProducer;
 
     @GetMapping("/api/eventos/{id}")
     public ResponseEntity<Map<String, Object>> buscarEventoPublico(@PathVariable Long id) {
@@ -86,9 +95,7 @@ public class EventoController {
                 + (request.getServerPort() != 80 && request.getServerPort() != 443
                 ? ":" + request.getServerPort() : "");
 
-        String qrCodeUrl = qrCodeService.gerarUrlQrCode(baseUrl, eventoSalvo.getId(), eventoSalvo.getTema());
-        eventoSalvo.setQrCodeUrl(qrCodeUrl);
-        eventoService.salvarEntidade(eventoSalvo);
+        qrCodeProducer.publicarGeracaoQrCode(eventoSalvo, baseUrl);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "message", "Evento '" + eventoSalvo.getTema() + "' criado com sucesso.",
@@ -109,9 +116,14 @@ public class EventoController {
     @DeleteMapping("/api/admin/eventos/{id}")
     @Transactional
     public ResponseEntity<Map<String, String>> cancelar(@PathVariable Long id) {
-        eventoService.procurarPorId(id)
+        Evento evento = eventoService.procurarPorId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+
+        List<Participacao> inscritos = participacaoService.procurarPorEvento(id);
+
         eventoService.cancelarEvento(id);
+
+        emailProducer.publicarEventoCancelado(evento, inscritos);
         return ResponseEntity.ok(Map.of("message", "Evento cancelado com sucesso."));
     }
 
@@ -125,7 +137,7 @@ public class EventoController {
         }
 
         try {
-            byte[] imagem = qrCodeService.baixarQrCode(evento.getQrCodeUrl());
+            byte[] imagem = qrCodeClient.baixarQrCode(evento.getQrCodeUrl());
             String nomeArquivo = "qrcode-" + evento.getTema()
                     .replaceAll("\\s+", "-").toLowerCase() + ".png";
             return ResponseEntity.ok()
@@ -174,6 +186,9 @@ public class EventoController {
 
         certificadoService.gerarCertificadosParaParticipacoes(presentesValidos);
         eventoService.concluirEvento(id);
+
+        List<Participacao> inscritos = participacaoService.procurarPorEvento(id);
+        emailProducer.publicarEventoConcluido(evento, inscritos);
 
         return ResponseEntity.ok(Map.of("message", "Evento concluído e certificados gerados com sucesso."));
     }

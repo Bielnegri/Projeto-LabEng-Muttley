@@ -144,6 +144,13 @@ public class EventoService {
         );
     }
 
+    public void salvarQrCodeUrl(Long eventoId, String qrCodeUrl) {
+        Evento evento = eventoRepository.findById(eventoId)
+                .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+        evento.setQrCodeUrl(qrCodeUrl);
+        eventoRepository.save(evento);
+    }
+
     private List<StatusEventoEnum> statusesAtivos() {
         return List.of(StatusEventoEnum.CRIADO, StatusEventoEnum.EM_ANDAMENTO);
     }
@@ -178,9 +185,5 @@ public class EventoService {
         } catch (RuntimeException exception) {
             return false;
         }
-    }
-
-    public Evento salvarEntidade(Evento evento) {
-        return eventoRepository.save(evento);
     }
 }
