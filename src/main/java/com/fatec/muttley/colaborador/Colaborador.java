@@ -1,6 +1,7 @@
 package com.fatec.muttley.colaborador;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fatec.muttley.pessoa.Pessoa;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,7 @@ public class Colaborador {
     @OneToOne
     @MapsId
     @JoinColumn(name = "id_pessoa")
-    @JsonBackReference
+    @JsonManagedReference
     private Pessoa pessoa;
 
     public Colaborador(AtualizacaoColaborador dados){
