@@ -86,7 +86,8 @@ public class CertificadoService {
     }
 
     @Transactional
-    public void gerarCertificadosParaParticipacoes(List<Long> participacaoIds) {
+    public List<Certificado> gerarCertificadosParaParticipacoes(List<Long> participacaoIds) {
+        List<Certificado> certificadosGerados = new java.util.ArrayList<>();
         for (Long participacaoId : participacaoIds) {
             if (participacaoId == null || certificadoRepository.existsByParticipacaoId(participacaoId)) {
                 continue;
@@ -100,8 +101,9 @@ public class CertificadoService {
             certificado.setAssinatura("Coordenação FATEC");
             certificado.setParticipacao(participacao);
             preencherDadosPublicos(certificado);
-            certificadoRepository.save(certificado);
+            certificadosGerados.add(certificadoRepository.save(certificado));
         }
+        return certificadosGerados;
     }
 
     private void preencherDadosPublicos(Certificado certificado) {

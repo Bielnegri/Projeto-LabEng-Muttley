@@ -1,5 +1,6 @@
 package com.fatec.muttley.evento;
 
+import com.fatec.muttley.certificado.Certificado;
 import com.fatec.muttley.certificado.CertificadoService;
 import com.fatec.muttley.email.EmailProducer;
 import com.fatec.muttley.evento.enums.StatusEventoEnum;
@@ -165,7 +166,7 @@ public class EventoController {
 
     @PostMapping("/api/admin/eventos/{id}/concluir")
     @Transactional
-    public ResponseEntity<Map<String, String>> concluirEvento(
+    public ResponseEntity<Map<String, Object>> concluirEvento(
             @PathVariable Long id,
             @RequestBody(required = false) List<Long> presentes) {
 
@@ -184,13 +185,19 @@ public class EventoController {
                 .filter(participacoesDoEvento::contains)
                 .toList();
 
-        certificadoService.gerarCertificadosParaParticipacoes(presentesValidos);
+        List<Certificado> certificadosGerados = certificadoService.gerarCertificadosParaParticipacoes(presentesValidos);
         eventoService.concluirEvento(id);
 
         List<Participacao> inscritos = participacaoService.procurarPorEvento(id);
         emailProducer.publicarEventoConcluido(evento, inscritos);
 
-        return ResponseEntity.ok(Map.of("message", "Evento concluído e certificados gerados com sucesso."));
+        return ResponseEntity.ok(Map.of(
+                "message", "Evento concluido e certificados gerados com sucesso.",
+                "certificadosGerados", certificadosGerados.size(),
+                "codigosValidacao", certificadosGerados.stream()
+                        .map(Certificado::getCodigoValidacao)
+                        .toList()
+        ));
     }
 
     private boolean inscricoesEncerradas(Evento evento) {
