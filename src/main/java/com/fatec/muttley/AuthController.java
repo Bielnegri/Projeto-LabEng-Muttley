@@ -3,16 +3,22 @@ package com.fatec.muttley;
 import com.fatec.muttley.pessoa.AtualizacaoPessoa;
 import com.fatec.muttley.pessoa.Pessoa;
 import com.fatec.muttley.pessoa.PessoaService;
+import com.fatec.muttley.pessoa.Role;
+import com.fatec.muttley.security.JwtService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import java.util.Map;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -21,67 +27,83 @@ public class AuthController {
     @Autowired
     private PessoaService pessoaService;
 
-    public record LoginRequest(String cpf, String senha) {}
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    @GetMapping("/login")
-    public ResponseEntity<Map<String, String>> carregarLogin() {
-        return ResponseEntity.ok(Map.of(
-                "status", "Endpoint de autenticação ativo",
-                "metodo", "POST",
-                "payload_esperado", "LoginRequest(cpf, senha)"
-        ));
+    @Autowired
+    private JwtService jwtService;
+
+    public record LoginRequest(
+            @NotBlank(message = "Email e obrigatorio")
+            @Email(message = "Email invalido")
+            String email,
+
+            @NotBlank(message = "Senha e obrigatoria")
+            String senha
+    ) {
     }
 
-    @GetMapping("/register")
-    public ResponseEntity<Map<String, String>> carregarCadastro() {
-        return ResponseEntity.ok(Map.of(
-                "status", "Endpoint de registro ativo",
-                "metodo", "POST",
-                "payload_esperado", "AtualizacaoPessoa"
-        ));
+    public record UsuarioResponse(Long id, String nome, String email, Role role) {
     }
 
-    @PostMapping("/register/salvar")
+    public record LoginResponse(String accessToken, String tokenType, long expiresIn, UsuarioResponse usuario) {
+    }
+
+    @PostMapping("/register")
     public ResponseEntity<?> cadastrarUsuario(@RequestBody @Valid AtualizacaoPessoa dto) {
         try {
-            if (pessoaService.procurarPorCpf(dto.cpf()).isPresent()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("message", "Usuário já cadastrado com esse CPF."));
+            if (pessoaService.existePorEmail(dto.email())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(Map.of("message", "Usuario ja cadastrado com esse email."));
             }
+
+            boolean criarAdmin = !pessoaService.existeAdmin();
             Pessoa pessoaSalva = pessoaService.salvarOuAtualizar(dto);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(Map.of("message", "Usuário '" + pessoaSalva.getNome() + "' cadastrado com sucesso."));
+            pessoaSalva.setRole(criarAdmin ? Role.ADMIN : Role.USER);
+            pessoaSalva = pessoaService.salvar(pessoaSalva);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(usuarioResponse(pessoaSalva));
         } catch (EntityNotFoundException exception) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", exception.getMessage()));
         }
     }
 
-    @PostMapping("/login/entrar")
-    public ResponseEntity<?> validarCredenciais(@RequestBody LoginRequest loginRequest) {
+    @PostMapping("/login")
+    public ResponseEntity<?> validarCredenciais(@RequestBody @Valid LoginRequest loginRequest) {
         try {
-            Optional<Pessoa> pessoaOptional = pessoaService.procurarPorCpf(loginRequest.cpf());
+            Optional<Pessoa> pessoaOptional = pessoaService.procurarPorEmail(loginRequest.email());
 
             if (pessoaOptional.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(Map.of("message", "CPF ou senha incorretos"));
+                        .body(Map.of("message", "Email ou senha invalidos"));
             }
 
             Pessoa pessoaSalva = pessoaOptional.get();
 
-            if (!Objects.equals(loginRequest.senha(), pessoaSalva.getSenha())) {
+            if (!passwordEncoder.matches(loginRequest.senha(), pessoaSalva.getSenha())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(Map.of("message", "CPF ou senha incorretos"));
+                        .body(Map.of("message", "Email ou senha invalidos"));
             }
 
-            return ResponseEntity.ok(Map.of(
-                    "message", "Login efetuado com sucesso",
-                    "usuario", pessoaSalva.getNome()
-            ));
+            if (pessoaSalva.getRole() == null) {
+                pessoaSalva.setRole(Role.USER);
+                pessoaSalva = pessoaService.salvar(pessoaSalva);
+            }
 
+            return ResponseEntity.ok(new LoginResponse(
+                    jwtService.gerarToken(pessoaSalva),
+                    "Bearer",
+                    jwtService.getExpirationSeconds(),
+                    usuarioResponse(pessoaSalva)
+            ));
         } catch (EntityNotFoundException exception) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", exception.getMessage()));
         }
+    }
+
+    private UsuarioResponse usuarioResponse(Pessoa pessoa) {
+        return new UsuarioResponse(pessoa.getId(), pessoa.getNome(), pessoa.getEmail(), pessoa.getRole());
     }
 }

@@ -28,11 +28,13 @@ import com.fatec.muttley.patrocinador.Patrocinador;
 import com.fatec.muttley.patrocinador.PatrocinadorRepository;
 import com.fatec.muttley.pessoa.Pessoa;
 import com.fatec.muttley.pessoa.PessoaRepository;
+import com.fatec.muttley.pessoa.Role;
 import com.fatec.muttley.professor.Professor;
 import com.fatec.muttley.professor.ProfessorRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -41,6 +43,12 @@ import java.util.List;
 
 @Configuration
 public class MockDataInitializer {
+
+    private final PasswordEncoder passwordEncoder;
+
+    public MockDataInitializer(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Bean
     CommandLineRunner loadMockData(
@@ -86,6 +94,9 @@ public class MockDataInitializer {
                     pessoaRepository.save(criarPessoa("Talita Gomes", "talita.gomes@email.com", "(11) 99999-1019", "121.121.121-12")),
                     pessoaRepository.save(criarPessoa("Vitor Campos", "vitor.campos@email.com", "(11) 99999-1020", "232.232.232-23"))
             );
+
+            pessoas.get(0).setRole(Role.ADMIN);
+            pessoaRepository.save(pessoas.get(0));
 
             alunoRepository.save(new Aluno(null, "FATEC Zona Leste", "2026001", pessoas.get(0)));
             alunoRepository.save(new Aluno(null, "FATEC Zona Leste", "2026002", pessoas.get(1)));
@@ -194,6 +205,8 @@ public class MockDataInitializer {
         pessoa.setEmail(email);
         pessoa.setTelefone(telefone);
         pessoa.setCpf(cpf);
+        pessoa.setSenha(passwordEncoder.encode("123456"));
+        pessoa.setRole(Role.USER);
         return pessoa;
     }
 
