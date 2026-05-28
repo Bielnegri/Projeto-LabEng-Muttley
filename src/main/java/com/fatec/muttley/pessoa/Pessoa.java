@@ -1,6 +1,7 @@
 package com.fatec.muttley.pessoa;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fatec.muttley.aluno.Aluno;
 import com.fatec.muttley.colaborador.Colaborador;
@@ -29,30 +30,35 @@ public class Pessoa {
     private Long id;
 
     private String nome;
+    @Column(unique = true)
     private String email;
     private String telefone;
     private String cpf;
 
+    @JsonIgnore
     private String senha;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @OneToOne(mappedBy = "pessoa", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonBackReference
     private Aluno aluno;
 
     @OneToOne(mappedBy = "pessoa", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonBackReference
     private Professor professor;
 
     @OneToOne(mappedBy = "pessoa", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonBackReference
     private Palestrante palestrante;
 
     @OneToOne(mappedBy = "pessoa", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonBackReference
     private Organizador organizador;
 
     @OneToOne(mappedBy = "pessoa", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonBackReference
     private Colaborador colaborador;
 
     @OneToMany(mappedBy = "pessoa")
@@ -64,6 +70,7 @@ public class Pessoa {
         this.email = dados.email();
         this.telefone = dados.telefone();
         this.cpf = dados.cpf();
+        this.senha = dados.senha();
     }
 
     public void atualizarInformacoes(AtualizacaoPessoa dados) {
@@ -75,6 +82,8 @@ public class Pessoa {
             this.telefone = dados.telefone();
         if (dados.cpf() != null)
             this.cpf = dados.cpf();
+        if (dados.senha() != null && !dados.senha().isBlank())
+            this.senha = dados.senha();
     }
 
     public boolean isAluno(){
