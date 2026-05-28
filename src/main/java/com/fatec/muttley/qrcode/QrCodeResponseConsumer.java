@@ -4,6 +4,7 @@ import com.fatec.muttley.evento.EventoService;
 import com.fatec.muttley.qrcode.dto.QrCodeResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 @Component
