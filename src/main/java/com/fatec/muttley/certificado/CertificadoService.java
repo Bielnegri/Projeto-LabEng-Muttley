@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -86,7 +87,9 @@ public class CertificadoService {
     }
 
     @Transactional
-    public void gerarCertificadosParaParticipacoes(List<Long> participacaoIds) {
+    public List<Certificado> gerarCertificadosParaParticipacoes(List<Long> participacaoIds) {
+        List<Certificado> certificadosEmail = new ArrayList<Certificado>();
+
         for (Long participacaoId : participacaoIds) {
             if (participacaoId == null || certificadoRepository.existsByParticipacaoId(participacaoId)) {
                 continue;
@@ -101,7 +104,10 @@ public class CertificadoService {
             certificado.setParticipacao(participacao);
             preencherDadosPublicos(certificado);
             certificadoRepository.save(certificado);
+            certificadosEmail.add(certificado);
         }
+
+        return certificadosEmail;
     }
 
     private void preencherDadosPublicos(Certificado certificado) {

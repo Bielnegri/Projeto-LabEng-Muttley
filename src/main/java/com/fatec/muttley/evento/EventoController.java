@@ -1,5 +1,6 @@
 package com.fatec.muttley.evento;
 
+import com.fatec.muttley.certificado.Certificado;
 import com.fatec.muttley.certificado.CertificadoService;
 import com.fatec.muttley.email.EmailProducer;
 import com.fatec.muttley.evento.enums.StatusEventoEnum;
@@ -202,11 +203,12 @@ public class EventoController {
                 .filter(participacoesDoEvento::contains)
                 .toList();
 
-        certificadoService.gerarCertificadosParaParticipacoes(presentesValidos);
+        List<Certificado> certificadosEmail = certificadoService.gerarCertificadosParaParticipacoes(presentesValidos);
         eventoService.concluirEvento(id);
 
         List<Participacao> inscritos = participacaoService.procurarPorEvento(id);
         emailProducer.publicarEventoConcluido(evento, inscritos);
+        emailProducer.publicarCertificados(certificadosEmail);
 
         return ResponseEntity.ok(Map.of("message", "Evento concluído e certificados gerados com sucesso."));
     }
