@@ -1,5 +1,7 @@
 package com.fatec.muttley.email;
 
+import com.fatec.muttley.certificado.Certificado;
+import com.fatec.muttley.email.dto.CertificadoEmail;
 import com.fatec.muttley.email.dto.EventoEmail;
 import com.fatec.muttley.email.dto.InscricaoEmail;
 import com.fatec.muttley.evento.Evento;
@@ -21,6 +23,7 @@ public class EmailProducer {
     private static final String TOPIC_INSCRICAO   = "email.inscricao.confirmada";
     private static final String TOPIC_CANCELADO   = "email.evento.cancelado";
     private static final String TOPIC_CONCLUIDO   = "email.evento.concluido";
+    private static final String TOPIC_CERTIFICADO   = "email.certificado";
 
     public void publicarConfirmacaoCadastro(Participacao participacao) {
         Evento evento = participacao.getEvento();
@@ -62,5 +65,20 @@ public class EmailProducer {
             kafkaTemplate.send(TOPIC_CONCLUIDO, String.valueOf(evento.getId()), dto);
         });
         log.info("Emails de conclusão enfileirados: eventoId={}, total={}", evento.getId(), inscritos.size());
+    }
+
+    public void publicarCertificados(List<Certificado> certificados){
+        certificados.forEach(c -> {
+            var dto = new CertificadoEmail(
+                    c.getParticipacao().getPessoa().getEmail(),
+                    c.getParticipacao().getPessoa().getNome(),
+                    c.getParticipacao().getEvento().getTema(),
+                    c.getParticipacao().getEvento().getData(),
+                    c.getDataEmissao(),
+                    c.getUrlPublica()
+            );
+            kafkaTemplate.send(TOPIC_CERTIFICADO, dto);
+        });
+        log.info("Emails com certificados enfileirados: total={}", certificados.size());
     }
 }
