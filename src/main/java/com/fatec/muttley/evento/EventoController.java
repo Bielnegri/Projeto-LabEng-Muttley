@@ -3,11 +3,12 @@ package com.fatec.muttley.evento;
 import com.fatec.muttley.certificado.CertificadoService;
 import com.fatec.muttley.email.EmailProducer;
 import com.fatec.muttley.evento.enums.StatusEventoEnum;
+import com.fatec.muttley.participacao.AtualizacaoParticipacao;
+import com.fatec.muttley.participacao.AtualizacaoParticipacaoNovoEvento;
 import com.fatec.muttley.participacao.Participacao;
 import com.fatec.muttley.participacao.ParticipacaoService;
 import com.fatec.muttley.qrcode.QrCodeClient;
 import com.fatec.muttley.qrcode.QrCodeProducer;
-import com.fatec.muttley.qrcode.QrCodeResponseConsumer;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -86,10 +87,27 @@ public class EventoController {
         return ResponseEntity.ok(eventoMapper.toAtualizacaoDto(evento));
     }
 
-    @PostMapping("/api/admin/eventos")
-    public ResponseEntity<Map<String, Object>> criar(@RequestBody @Valid AtualizacaoEvento dto,
+    @PostMapping("/api/admin/eventos/criar")
+    public ResponseEntity<Map<String, Object>> criar(@RequestBody @Valid EventoComParticipacaoDTO dto,
                                                      HttpServletRequest request) {
-        Evento eventoSalvo = eventoService.salvarOuAtualizar(dto);
+        AtualizacaoEvento dtoEvento = dto.evento();
+        List<AtualizacaoParticipacaoNovoEvento> dtoNovasParticipacoes = dto.participacoes();
+
+        Evento eventoSalvo = eventoService.salvarOuAtualizar(dtoEvento);
+
+        if(dtoNovasParticipacoes != null) {
+            for (AtualizacaoParticipacaoNovoEvento participacao : dtoNovasParticipacoes) {
+                AtualizacaoParticipacao dtoParticipacao = new AtualizacaoParticipacao(
+                        participacao.id(),
+                        participacao.inscricao(),
+                        participacao.tipo(),
+                        participacao.pessoaId(),
+                        eventoSalvo.getId()
+                );
+
+                participacaoService.salvarOuAtualizar(dtoParticipacao);
+            }
+        }
 
         String baseUrl = request.getScheme() + "://" + request.getServerName()
                 + (request.getServerPort() != 80 && request.getServerPort() != 443
