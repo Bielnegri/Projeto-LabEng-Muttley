@@ -2,19 +2,11 @@ package com.fatec.muttley.disciplina;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fatec.muttley.disciplina.enums.TurnoDisciplinaEnum;
 import com.fatec.muttley.evento.Evento;
 import com.fatec.muttley.professor.Professor;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -40,7 +32,9 @@ public class Disciplina {
 
     private String nome;
     private String descricao;
-    private String turno;
+
+    @Enumerated(EnumType.STRING)
+    private TurnoDisciplinaEnum turno;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_professor")
