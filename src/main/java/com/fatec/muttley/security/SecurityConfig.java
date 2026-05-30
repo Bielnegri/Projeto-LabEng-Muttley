@@ -38,11 +38,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
+                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/inicio").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/eventos").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/eventos/{id}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/eventos/{id}/inscricoes").permitAll()
                         .requestMatchers("/api/certificados/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/**").authenticated()

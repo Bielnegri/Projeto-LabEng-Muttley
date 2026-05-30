@@ -122,6 +122,13 @@ public class EventoService {
                 .toList();
     }
 
+    public List<Evento> procurarDisponiveisParaInscricao() {
+        return eventoRepository.findByStatusOrderByDataAscHorarioInicioAsc(StatusEventoEnum.CRIADO).stream()
+                .map(this::atualizarStatusParaEmAndamentoSeNecessario)
+                .filter(evento -> evento.getStatus() == StatusEventoEnum.CRIADO)
+                .toList();
+    }
+
     public List<Evento> procurarEventosAguardandoEmissaoCertificado() {
         return eventoRepository.findEventosEncerrados(StatusEventoEnum.EM_ANDAMENTO, PageRequest.of(0, 10));
     }

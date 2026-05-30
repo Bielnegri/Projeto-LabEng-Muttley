@@ -54,6 +54,18 @@ public interface CertificadoRepository extends JpaRepository<Certificado, Long> 
             """)
     Optional<Certificado> findByCodigoValidacaoComDados(String codigoValidacao);
 
+    @Query("""
+            select certificado
+            from Certificado certificado
+            left join fetch certificado.participacao participacao
+            left join fetch participacao.evento evento
+            left join fetch evento.disciplina disciplina
+            left join fetch evento.local local
+            where participacao.pessoa.id = :pessoaId
+            order by certificado.dataEmissao desc, certificado.id desc
+            """)
+    List<Certificado> findByPessoaIdComDados(Long pessoaId);
+
     interface CertificadosPorEvento {
         Long getEventoId();
 

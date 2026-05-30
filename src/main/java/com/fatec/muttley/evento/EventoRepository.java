@@ -50,6 +50,8 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
             Pageable pageable
     );
 
+    List<Evento> findByStatusOrderByDataAscHorarioInicioAsc(StatusEventoEnum status);
+
     long countByStatusIn(List<StatusEventoEnum> statuses);
 
     @Query("""

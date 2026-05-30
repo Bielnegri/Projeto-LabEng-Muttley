@@ -6,7 +6,9 @@ import com.fatec.muttley.email.EmailProducer;
 import com.fatec.muttley.evento.enums.StatusEventoEnum;
 import com.fatec.muttley.participacao.AtualizacaoParticipacao;
 import com.fatec.muttley.participacao.AtualizacaoParticipacaoNovoEvento;
+import com.fatec.muttley.participacao.InscricaoPublicaRequest;
 import com.fatec.muttley.participacao.Participacao;
+import com.fatec.muttley.participacao.ParticipacaoComEventoResponse;
 import com.fatec.muttley.participacao.ParticipacaoService;
 import com.fatec.muttley.qrcode.QrCodeClient;
 import com.fatec.muttley.qrcode.QrCodeProducer;
@@ -55,13 +57,31 @@ public class EventoController {
     @Autowired
     private EmailProducer emailProducer;
 
+    @GetMapping("/api/eventos")
+    public ResponseEntity<List<EventoPublicoResponse>> listarEventosPublicos() {
+        List<EventoPublicoResponse> eventos = eventoService.procurarDisponiveisParaInscricao().stream()
+                .map(evento -> EventoPublicoResponse.from(evento, inscricoesEncerradas(evento)))
+                .toList();
+        return ResponseEntity.ok(eventos);
+    }
+
     @GetMapping("/api/eventos/{id}")
-    public ResponseEntity<Map<String, Object>> buscarEventoPublico(@PathVariable Long id) {
+    public ResponseEntity<EventoPublicoResponse> buscarEventoPublico(@PathVariable Long id) {
         Evento evento = eventoService.procurarPorId(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento não encontrado."));
-        return ResponseEntity.ok(Map.of(
-                "evento", evento,
-                "inscricoesEncerradas", inscricoesEncerradas(evento)
+        return ResponseEntity.ok(EventoPublicoResponse.from(evento, inscricoesEncerradas(evento)));
+    }
+
+    @PostMapping("/api/eventos/{id}/inscricoes")
+    public ResponseEntity<Map<String, Object>> registrarInscricaoPublica(
+            @PathVariable Long id,
+            @RequestBody @Valid InscricaoPublicaRequest dados) {
+        Participacao participacao = participacaoService.registrarInscricaoPublica(id, dados);
+        emailProducer.publicarConfirmacaoCadastro(participacao);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "message", "Inscricao realizada com sucesso.",
+                "participacaoId", participacao.getId(),
+                "inscricao", participacao.getInscricao()
         ));
     }
 
@@ -88,7 +108,7 @@ public class EventoController {
         return ResponseEntity.ok(eventoMapper.toAtualizacaoDto(evento));
     }
 
-    @PostMapping("/api/admin/eventos/criar")
+    @PostMapping("/api/admin/eventos")
     public ResponseEntity<Map<String, Object>> criar(@RequestBody @Valid EventoComParticipacaoDTO dto,
                                                      HttpServletRequest request) {
         AtualizacaoEvento dtoEvento = dto.evento();
@@ -124,11 +144,29 @@ public class EventoController {
 
     @PutMapping("/api/admin/eventos/{id}")
     public ResponseEntity<Map<String, String>> atualizar(@PathVariable Long id,
-                                                         @RequestBody @Valid AtualizacaoEvento dto) {
+                                                         @RequestBody @Valid EventoComParticipacaoDTO dto) {
         eventoService.procurarPorId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
-        dto = dto.withId(id);
-        Evento eventoSalvo = eventoService.salvarOuAtualizar(dto);
+
+        AtualizacaoEvento dtoEvento = dto.evento();
+        List<AtualizacaoParticipacaoNovoEvento> dtoNovasParticipacoes = dto.participacoes();
+
+        Evento eventoSalvo = eventoService.salvarOuAtualizar(dtoEvento);
+
+        if(dtoNovasParticipacoes != null) {
+            for (AtualizacaoParticipacaoNovoEvento participacao : dtoNovasParticipacoes) {
+                AtualizacaoParticipacao dtoParticipacao = new AtualizacaoParticipacao(
+                        participacao.id(),
+                        participacao.inscricao(),
+                        participacao.tipo(),
+                        participacao.pessoaId(),
+                        eventoSalvo.getId()
+                );
+
+                participacaoService.salvarOuAtualizar(dtoParticipacao);
+            }
+        }
+
         return ResponseEntity.ok(Map.of("message", "Evento '" + eventoSalvo.getTema() + "' atualizado com sucesso."));
     }
 
@@ -178,7 +216,9 @@ public class EventoController {
 //        }
 
         return ResponseEntity.ok(Map.of(
-                "participacoes", participacaoService.procurarPorEvento(id)
+                "participacoes", participacaoService.procurarPorEvento(id).stream()
+                        .map(ParticipacaoComEventoResponse::from)
+                        .toList()
         ));
     }
 
