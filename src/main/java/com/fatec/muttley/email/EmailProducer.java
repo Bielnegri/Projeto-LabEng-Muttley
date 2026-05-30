@@ -73,8 +73,8 @@ public class EmailProducer {
                     c.getParticipacao().getPessoa().getEmail(),
                     c.getParticipacao().getPessoa().getNome(),
                     c.getParticipacao().getEvento().getTema(),
-                    c.getParticipacao().getEvento().getData(),
-                    c.getDataEmissao(),
+                    c.getParticipacao().getEvento().getData().toString(),
+                    c.getDataEmissao().toString(),
                     c.getUrlPublica()
             );
             kafkaTemplate.send(TOPIC_CERTIFICADO, dto);
