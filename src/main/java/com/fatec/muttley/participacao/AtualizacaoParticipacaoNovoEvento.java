@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record AtualizacaoParticipacaoNovoEvento(
         Long id,
+
         @NotNull(message = "Inscrição é obrigatório")
         int inscricao,
 

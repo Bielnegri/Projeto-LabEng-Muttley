@@ -8,6 +8,7 @@ import com.fatec.muttley.colaborador.Colaborador;
 import com.fatec.muttley.colaborador.ColaboradorRepository;
 import com.fatec.muttley.disciplina.Disciplina;
 import com.fatec.muttley.disciplina.DisciplinaRepository;
+import com.fatec.muttley.disciplina.enums.TurnoDisciplinaEnum;
 import com.fatec.muttley.endereco.Endereco;
 import com.fatec.muttley.endereco.EnderecoRepository;
 import com.fatec.muttley.evento.Evento;
@@ -145,12 +146,12 @@ public class MockDataInitializer {
             Patrocinador patrocinador4 = patrocinadorRepository.save(new Patrocinador(null, "SecureLab", "31.654.987/0001-45", 9800.0, "contato@securelab.com", "(11) 4000-4000", "https://securelab.com"));
             Patrocinador patrocinador5 = patrocinadorRepository.save(new Patrocinador(null, "CloudBridge", "41.258.369/0001-76", 11000.0, "community@cloudbridge.com", "(11) 4000-5000", "https://cloudbridge.com"));
 
-            Disciplina disciplina1 = disciplinaRepository.save(new Disciplina(null, "Laboratório de Engenharia de Software", "Práticas e projeto aplicado", "Noturno", profSoftware, new ArrayList<>()));
-            Disciplina disciplina2 = disciplinaRepository.save(new Disciplina(null, "Arquitetura de Sistemas", "Modelagem e padrões arquiteturais", "Noturno", profSoftware, new ArrayList<>()));
-            Disciplina disciplina3 = disciplinaRepository.save(new Disciplina(null, "Banco de Dados", "Modelagem, SQL e performance", "Matutino", profDados, new ArrayList<>()));
-            Disciplina disciplina4 = disciplinaRepository.save(new Disciplina(null, "Inteligência Artificial", "Fundamentos e aplicações de IA", "Noturno", profDados, new ArrayList<>()));
-            Disciplina disciplina5 = disciplinaRepository.save(new Disciplina(null, "Segurança da Informação", "Boas práticas, riscos e defesa", "Vespertino", profRedes, new ArrayList<>()));
-            Disciplina disciplina6 = disciplinaRepository.save(new Disciplina(null, "Gestão de Produtos Digitais", "Descoberta, métricas e roadmap", "Noturno", profProduto, new ArrayList<>()));
+            Disciplina disciplina1 = disciplinaRepository.save(new Disciplina(null, "Laboratório de Engenharia de Software", "Práticas e projeto aplicado", TurnoDisciplinaEnum.NORTUNO, profSoftware, new ArrayList<>()));
+            Disciplina disciplina2 = disciplinaRepository.save(new Disciplina(null, "Arquitetura de Sistemas", "Modelagem e padrões arquiteturais", TurnoDisciplinaEnum.NORTUNO, profSoftware, new ArrayList<>()));
+            Disciplina disciplina3 = disciplinaRepository.save(new Disciplina(null, "Banco de Dados", "Modelagem, SQL e performance", TurnoDisciplinaEnum.MATUTINO, profDados, new ArrayList<>()));
+            Disciplina disciplina4 = disciplinaRepository.save(new Disciplina(null, "Inteligência Artificial", "Fundamentos e aplicações de IA", TurnoDisciplinaEnum.NORTUNO, profDados, new ArrayList<>()));
+            Disciplina disciplina5 = disciplinaRepository.save(new Disciplina(null, "Segurança da Informação", "Boas práticas, riscos e defesa", TurnoDisciplinaEnum.VESPERTINO, profRedes, new ArrayList<>()));
+            Disciplina disciplina6 = disciplinaRepository.save(new Disciplina(null, "Gestão de Produtos Digitais", "Descoberta, métricas e roadmap", TurnoDisciplinaEnum.NORTUNO, profProduto, new ArrayList<>()));
 
             List<Evento> eventos = List.of(
                     eventoRepository.save(criarEvento("Workshop de Testes Automatizados", 3, "19:00", "21:30", ModalidadeEventoEnum.PRESENCIAL, disciplina1, patrocinador1, local2)),
