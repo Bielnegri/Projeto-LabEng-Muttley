@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -56,6 +57,9 @@ public class EventoController {
 
     @Autowired
     private EmailProducer emailProducer;
+
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
 
     @GetMapping("/api/eventos")
     public ResponseEntity<List<EventoPublicoResponse>> listarEventosPublicos() {
@@ -109,8 +113,7 @@ public class EventoController {
     }
 
     @PostMapping("/api/admin/eventos")
-    public ResponseEntity<Map<String, Object>> criar(@RequestBody @Valid EventoComParticipacaoDTO dto,
-                                                     HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> criar(@RequestBody @Valid EventoComParticipacaoDTO dto) {
         AtualizacaoEvento dtoEvento = dto.evento();
         List<AtualizacaoParticipacaoNovoEvento> dtoNovasParticipacoes = dto.participacoes();
 
@@ -130,9 +133,7 @@ public class EventoController {
             }
         }
 
-        String baseUrl = request.getScheme() + "://" + request.getServerName()
-                + (request.getServerPort() != 80 && request.getServerPort() != 443
-                ? ":" + request.getServerPort() : "");
+        String baseUrl = frontendUrl;
 
         qrCodeProducer.publicarGeracaoQrCode(eventoSalvo, baseUrl);
 
@@ -248,7 +249,7 @@ public class EventoController {
 
         List<Participacao> inscritos = participacaoService.procurarPorEvento(id);
         emailProducer.publicarEventoConcluido(evento, inscritos);
-        emailProducer.publicarCertificados(certificadosEmail);
+        emailProducer.publicarCertificados(certificadosEmail, frontendUrl);
 
         return ResponseEntity.ok(Map.of("message", "Evento concluído e certificados gerados com sucesso."));
     }
