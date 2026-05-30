@@ -6,7 +6,7 @@ public record CertificadoEmail(
         String destinatario,
         String nome,
         String tema,
-        LocalDate dataEvento,
-        LocalDate dataEmissao,
+        String dataEvento,
+        String dataEmissao,
         String url
 ) {}
