@@ -2,13 +2,19 @@ package com.fatec.muttley.participacao;
 
 import com.fatec.muttley.evento.Evento;
 import com.fatec.muttley.evento.EventoService;
+import com.fatec.muttley.evento.enums.StatusEventoEnum;
 import com.fatec.muttley.pessoa.Pessoa;
 import com.fatec.muttley.pessoa.PessoaService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,7 +59,32 @@ public class ParticipacaoService {
     }
 
     public List<Participacao> procurarPorEvento(Long eventoId) {
-        return participacaoRepository.findByEventoIdOrderByInscricaoAsc(eventoId);
+        return participacaoRepository.findByEventoIdComDadosOrderByInscricaoAsc(eventoId);
+    }
+
+    public List<Participacao> procurarPorPessoa(Long pessoaId) {
+        return participacaoRepository.findByPessoaIdComDados(pessoaId);
+    }
+
+    public Participacao registrarInscricaoPublica(Long eventoId, InscricaoPublicaRequest dados) {
+        Evento evento = eventoService.procurarPorId(eventoId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento nao encontrado."));
+
+        if (evento.getStatus() != StatusEventoEnum.CRIADO || inscricoesEncerradas(evento)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Inscricoes encerradas para este evento.");
+        }
+
+        Pessoa pessoa = resolverPessoa(dados);
+        if (participacaoRepository.existsByEventoIdAndPessoaId(eventoId, pessoa.getId())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Pessoa ja inscrita neste evento.");
+        }
+
+        Participacao participacao = new Participacao();
+        participacao.setInscricao(participacaoRepository.findMaiorNumeroInscricao() + 1);
+        participacao.setTipo("Participante");
+        participacao.setPessoa(pessoa);
+        participacao.setEvento(evento);
+        return participacaoRepository.save(participacao);
     }
 
     public void apagarPorId(Long id) {
@@ -62,5 +93,55 @@ public class ParticipacaoService {
 
     public Optional<Participacao> procurarPorId(Long id) {
         return participacaoRepository.findById(id);
+    }
+
+    public Optional<Participacao> procurarPorIdComDados(Long id) {
+        return participacaoRepository.findByIdComDados(id);
+    }
+
+    private Pessoa resolverPessoa(InscricaoPublicaRequest dados) {
+        String cpf = normalizar(dados.cpf());
+        String email = normalizar(dados.email()).toLowerCase();
+        String nome = normalizar(dados.nomeCompleto());
+
+        Optional<Pessoa> pessoaPorCpf = pessoaService.procurarPorCpf(cpf);
+        Optional<Pessoa> pessoaPorEmail = pessoaService.procurarPorEmail(email);
+
+        if (pessoaPorCpf.isPresent() && pessoaPorEmail.isPresent()
+                && !pessoaPorCpf.get().getId().equals(pessoaPorEmail.get().getId())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "CPF e email pertencem a pessoas diferentes.");
+        }
+
+        Pessoa pessoa = pessoaPorCpf.or(() -> pessoaPorEmail).orElseGet(Pessoa::new);
+        if (pessoa.getNome() == null || pessoa.getNome().isBlank()) {
+            pessoa.setNome(nome);
+        }
+        if (pessoa.getCpf() == null || pessoa.getCpf().isBlank()) {
+            pessoa.setCpf(cpf);
+        }
+        if (pessoa.getEmail() == null || pessoa.getEmail().isBlank()) {
+            pessoa.setEmail(email);
+        }
+        return pessoaService.salvar(pessoa);
+    }
+
+    private String normalizar(String valor) {
+        return valor == null ? "" : valor.trim();
+    }
+
+    private boolean inscricoesEncerradas(Evento evento) {
+        if (evento.getData() == null || evento.getHorarioInicio() == null || evento.getHorarioInicio().isBlank()) {
+            return false;
+        }
+
+        try {
+            LocalDateTime inicioEvento = LocalDateTime.of(
+                    evento.getData(),
+                    LocalTime.parse(evento.getHorarioInicio(), DateTimeFormatter.ofPattern("HH:mm"))
+            );
+            return !inicioEvento.isAfter(LocalDateTime.now());
+        } catch (RuntimeException exception) {
+            return false;
+        }
     }
 }

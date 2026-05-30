@@ -45,6 +45,10 @@ public class MedalhaService {
         return medalhaRepository.findAll(Sort.by("nome").ascending());
     }
 
+    public List<Medalha> procurarPorPessoa(Long pessoaId) {
+        return medalhaRepository.findByPessoaIdComDados(pessoaId);
+    }
+
     public List<MedalhaRepository.MedalhasPorParticipante> procurarTotaisPorParticipante(int limite) {
         return medalhaRepository.findTotaisPorParticipante(PageRequest.of(0, limite));
     }

@@ -87,6 +87,13 @@ public class CertificadoService {
     }
 
     @Transactional
+    public List<Certificado> procurarPorPessoa(Long pessoaId) {
+        List<Certificado> certificados = certificadoRepository.findByPessoaIdComDados(pessoaId);
+        garantirDadosPublicos(certificados);
+        return certificados;
+    }
+
+    @Transactional
     public List<Certificado> gerarCertificadosParaParticipacoes(List<Long> participacaoIds) {
         List<Certificado> certificadosEmail = new ArrayList<Certificado>();
 

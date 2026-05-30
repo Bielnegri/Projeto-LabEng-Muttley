@@ -26,15 +26,18 @@ public class ParticipacaoController {
     private EmailProducer emailProducer;
 
     @GetMapping
-    public ResponseEntity<List<Participacao>> listarTodos() {
-        return ResponseEntity.ok(participacaoService.procurarTodos());
+    public ResponseEntity<List<ParticipacaoComEventoResponse>> listarTodos() {
+        List<ParticipacaoComEventoResponse> participacoes = participacaoService.procurarTodos().stream()
+                .map(ParticipacaoComEventoResponse::from)
+                .toList();
+        return ResponseEntity.ok(participacoes);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AtualizacaoParticipacao> buscarPorId(@PathVariable Long id) {
-        Participacao participacao = participacaoService.procurarPorId(id)
+    public ResponseEntity<ParticipacaoComEventoResponse> buscarPorId(@PathVariable Long id) {
+        Participacao participacao = participacaoService.procurarPorIdComDados(id)
                 .orElseThrow(() -> new EntityNotFoundException("Participação não encontrada."));
-        return ResponseEntity.ok(participacaoMapper.toAtualizacaoDto(participacao));
+        return ResponseEntity.ok(ParticipacaoComEventoResponse.from(participacao));
     }
 
     @PostMapping
