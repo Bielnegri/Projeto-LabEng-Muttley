@@ -5,7 +5,6 @@ import com.fatec.muttley.participacao.Participacao;
 import com.fatec.muttley.pdf.PdfClient;
 import com.fatec.muttley.pessoa.Pessoa;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -51,19 +50,17 @@ public class CertificadoPublicoController {
     }
 
     @GetMapping("/api/certificados/{codigo}/preview")
-    public ResponseEntity<Map<String, Object>> dadosPreview(@PathVariable String codigo) {
+    public ResponseEntity<byte[]> preview(@PathVariable String codigo, Model model) throws IOException {
         Certificado certificado = buscarCertificado(codigo);
-        return ResponseEntity.ok(preencherModelo(certificado));
+        preencherModelo(certificado, model);
+        return gerarPdf(model, "inline");
     }
 
     @GetMapping("/api/certificados/{codigo}/download")
-    public ResponseEntity<byte[]> download(
-            @PathVariable String codigo,
-            Model model,
-            HttpServletResponse response) throws IOException {
+    public ResponseEntity<byte[]> download(@PathVariable String codigo, Model model) throws IOException {
         Certificado certificado = buscarCertificado(codigo);
         preencherModelo(certificado, model);
-        return baixar(model);
+        return gerarPdf(model, "attachment");
     }
 
     private Certificado buscarCertificado(String codigo) {
@@ -97,7 +94,7 @@ public class CertificadoPublicoController {
         return builder.build().encode().toUriString();
     }
 
-    private ResponseEntity<byte[]> baixar(Model model) throws IOException {
+    private ResponseEntity<byte[]> gerarPdf(Model model, String disposition) throws IOException {
         Context context = new Context();
         context.setVariables(model.asMap());
         String htmlProcessado = templateEngine.process("public/certificados/modeloPdf", context);
@@ -107,7 +104,7 @@ public class CertificadoPublicoController {
         System.out.println("PDF gerado com sucesso!");
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"certificado.pdf\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, disposition + "; filename=\"certificado.pdf\"")
                 .contentType(MediaType.APPLICATION_PDF)
                 .contentLength(pdfBytes.length)
                 .body(pdfBytes);
