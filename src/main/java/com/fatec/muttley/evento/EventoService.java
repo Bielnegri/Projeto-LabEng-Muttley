@@ -1,5 +1,6 @@
 package com.fatec.muttley.evento;
 
+
 import com.fatec.muttley.disciplina.Disciplina;
 import com.fatec.muttley.disciplina.DisciplinaService;
 import com.fatec.muttley.evento.enums.StatusEventoEnum;
@@ -14,12 +15,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +42,19 @@ public class EventoService {
     private EventoMapper eventoMapper;
 
     public Evento salvarOuAtualizar(AtualizacaoEvento dto) {
+        if (dto.horarioInicio() != null && dto.horarioFim() != null) {
+            try {
+                LocalTime inicio = LocalTime.parse(dto.horarioInicio(), DateTimeFormatter.ofPattern("HH:mm"));
+                LocalTime fim = LocalTime.parse(dto.horarioFim(), DateTimeFormatter.ofPattern("HH:mm"));
+
+                if (!fim.isAfter(inicio)) {
+                    throw new IllegalArgumentException("O horário de fim (" + dto.horarioFim() + ") deve ser posterior ao horário de início (" + dto.horarioInicio() + ").");
+                }
+            } catch (DateTimeParseException e) {
+                throw new IllegalArgumentException("Formato de horário inválido. Use o padrão HH:mm.");
+            }
+        }
+
         if (dto.disciplinaId() == null)
             throw new EntityNotFoundException("Disciplina é obrigatória.");
         if (dto.patrocinadorId() == null)

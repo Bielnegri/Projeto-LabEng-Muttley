@@ -1,7 +1,9 @@
 package com.fatec.muttley.evento;
 
+import java.time.format.DateTimeParseException;
 import com.fatec.muttley.evento.enums.ModalidadeEventoEnum;
 import com.fatec.muttley.evento.enums.StatusEventoEnum;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -17,6 +19,7 @@ public record AtualizacaoEvento(
         String descricao,
 
         @NotNull(message = "Data e obrigatoria")
+        @FutureOrPresent(message = "A data do evento não pode estar no passado")
         LocalDate data,
 
         @NotBlank(message = "Horario de inicio e obrigatorio")
