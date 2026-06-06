@@ -31,7 +31,9 @@ public class QrCodeProducer {
                 evento.getTema(),
                 tipo
         );
-        kafkaTemplate.send(TOPIC, String.valueOf(evento.getId()), dto);
+
+        String chave = evento.getId() + "-" + tipo.name();
+        kafkaTemplate.send(TOPIC, chave, dto);
         log.info("QR Code enfileirado: eventoId={}, tipo={}", evento.getId(), tipo);
     }
 }
