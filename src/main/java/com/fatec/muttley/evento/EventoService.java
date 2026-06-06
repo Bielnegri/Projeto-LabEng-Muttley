@@ -165,10 +165,17 @@ public class EventoService {
         );
     }
 
-    public void salvarQrCodeUrl(Long eventoId, String qrCodeUrl) {
+    public void salvarQrCodeInscricaoUrl(Long eventoId, String qrCodeUrl) {
         Evento evento = eventoRepository.findById(eventoId)
                 .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
-        evento.setQrCodeUrl(qrCodeUrl);
+        evento.setQrCodeInscricaoUrl(qrCodeUrl);
+        eventoRepository.save(evento);
+    }
+
+    public void salvarQrCodeConfirmacaoUrl(Long eventoId, String url) {
+        Evento evento = procurarPorId(eventoId)
+                .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+        evento.setQrCodeConfirmacaoUrl(url);
         eventoRepository.save(evento);
     }
 

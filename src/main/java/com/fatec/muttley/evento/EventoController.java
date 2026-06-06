@@ -13,10 +13,10 @@ import com.fatec.muttley.participacao.ParticipacaoService;
 import com.fatec.muttley.qrcode.QrCodeClient;
 import com.fatec.muttley.qrcode.QrCodeProducer;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,12 +25,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -56,6 +55,9 @@ public class EventoController {
 
     @Autowired
     private EmailProducer emailProducer;
+
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
 
     @GetMapping("/api/eventos")
     public ResponseEntity<List<EventoPublicoResponse>> listarEventosPublicos() {
@@ -109,8 +111,7 @@ public class EventoController {
     }
 
     @PostMapping("/api/admin/eventos")
-    public ResponseEntity<Map<String, Object>> criar(@RequestBody @Valid EventoComParticipacaoDTO dto,
-                                                     HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> criar(@RequestBody @Valid EventoComParticipacaoDTO dto) {
         AtualizacaoEvento dtoEvento = dto.evento();
         List<AtualizacaoParticipacaoNovoEvento> dtoNovasParticipacoes = dto.participacoes();
 
@@ -130,11 +131,8 @@ public class EventoController {
             }
         }
 
-        String baseUrl = request.getScheme() + "://" + request.getServerName()
-                + (request.getServerPort() != 80 && request.getServerPort() != 443
-                ? ":" + request.getServerPort() : "");
-
-        qrCodeProducer.publicarGeracaoQrCode(eventoSalvo, baseUrl);
+        qrCodeProducer.publicarQrCodeInscricao(eventoSalvo, frontendUrl);
+        qrCodeProducer.publicarQrCodeConfirmacao(eventoSalvo, frontendUrl);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "message", "Evento '" + eventoSalvo.getTema() + "' criado com sucesso.",
@@ -184,18 +182,40 @@ public class EventoController {
         return ResponseEntity.ok(Map.of("message", "Evento cancelado com sucesso."));
     }
 
-    @GetMapping("/api/admin/eventos/{id}/qrcode")
-    public ResponseEntity<byte[]> baixarQrCode(@PathVariable Long id) {
+    @GetMapping("/api/admin/eventos/{id}/qrcode-inscricao")
+    public ResponseEntity<byte[]> baixarQrCodeInscricao(@PathVariable Long id) {
         Evento evento = eventoService.procurarPorId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
 
-        if (evento.getQrCodeUrl() == null) {
+        if (evento.getQrCodeInscricaoUrl() == null) {
             return ResponseEntity.notFound().build();
         }
 
         try {
-            byte[] imagem = qrCodeClient.baixarQrCode(evento.getQrCodeUrl());
-            String nomeArquivo = "qrcode-" + evento.getTema()
+            byte[] imagem = qrCodeClient.baixarQrCode(evento.getQrCodeInscricaoUrl());
+            String nomeArquivo = "qrcode-inscricao" + evento.getTema()
+                    .replaceAll("\\s+", "-").toLowerCase() + ".png";
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nomeArquivo + "\"")
+                    .contentType(MediaType.IMAGE_PNG)
+                    .body(imagem);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/api/admin/eventos/{id}/qrcode-confirmacao")
+    public ResponseEntity<byte[]> baixarQrCodeConfirmacao(@PathVariable Long id) {
+        Evento evento = eventoService.procurarPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+
+        if (evento.getQrCodeConfirmacaoUrl() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            byte[] imagem = qrCodeClient.baixarQrCode(evento.getQrCodeConfirmacaoUrl());
+            String nomeArquivo = "qrcode-confirmacao" + evento.getTema()
                     .replaceAll("\\s+", "-").toLowerCase() + ".png";
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nomeArquivo + "\"")
@@ -235,22 +255,43 @@ public class EventoController {
             throw new IllegalStateException("O evento só pode ser concluído quando estiver EM_ANDAMENTO.");
         }
 
-        Set<Long> participacoesDoEvento = participacaoService.procurarPorEvento(id).stream()
+        List<Participacao> participacoesDoEvento = participacaoService.procurarPorEvento(id);
+
+        Set<Long> participacoesValidas = participacoesDoEvento.stream()
                 .map(Participacao::getId)
                 .collect(Collectors.toSet());
 
-        List<Long> presentesValidos = (presentes == null ? List.<Long>of() : presentes).stream()
-                .filter(participacoesDoEvento::contains)
-                .toList();
+        if (presentes != null) {
+            presentes.stream()
+                    .filter(participacoesValidas::contains)
+                    .forEach(participacaoService::marcarPresente);
+        }
 
-        List<Certificado> certificadosEmail = certificadoService.gerarCertificadosParaParticipacoes(presentesValidos);
+        Set<Long> todosPresentes = participacaoService.procurarPorEvento(id).stream()
+                .filter(Participacao::isPresente)
+                .map(Participacao::getId)
+                .collect(Collectors.toSet());
+
+        List<Certificado> certificadosEmail = certificadoService
+                .gerarCertificadosParaParticipacoes(new ArrayList<>(todosPresentes));
+
         eventoService.concluirEvento(id);
 
         List<Participacao> inscritos = participacaoService.procurarPorEvento(id);
         emailProducer.publicarEventoConcluido(evento, inscritos);
-        emailProducer.publicarCertificados(certificadosEmail);
+        emailProducer.publicarCertificados(certificadosEmail, frontendUrl);
 
         return ResponseEntity.ok(Map.of("message", "Evento concluído e certificados gerados com sucesso."));
+    }
+
+    @PostMapping("/api/admin/eventos/{id}/confirmar-presenca")
+    public ResponseEntity<String> confirmarPresenca(
+            @PathVariable Long eventoId,
+            @AuthenticationPrincipal Jwt jwt) {
+
+        Long pessoaId = jwt.getClaim("userId");
+        participacaoService.confirmarPresenca(eventoId, pessoaId);
+        return ResponseEntity.ok("Presença confirmada com sucesso!");
     }
 
     private boolean inscricoesEncerradas(Evento evento) {

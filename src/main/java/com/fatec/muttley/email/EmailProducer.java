@@ -67,7 +67,7 @@ public class EmailProducer {
         log.info("Emails de conclusão enfileirados: eventoId={}, total={}", evento.getId(), inscritos.size());
     }
 
-    public void publicarCertificados(List<Certificado> certificados){
+    public void publicarCertificados(List<Certificado> certificados, String baseUrl){
         certificados.forEach(c -> {
             var dto = new CertificadoEmail(
                     c.getParticipacao().getPessoa().getEmail(),
@@ -75,6 +75,7 @@ public class EmailProducer {
                     c.getParticipacao().getEvento().getTema(),
                     c.getParticipacao().getEvento().getData().toString(),
                     c.getDataEmissao().toString(),
+                    baseUrl,
                     c.getUrlPublica()
             );
             kafkaTemplate.send(TOPIC_CERTIFICADO, dto);

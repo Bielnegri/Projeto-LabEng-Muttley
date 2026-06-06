@@ -3,6 +3,7 @@ package com.fatec.muttley.qrcode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fatec.muttley.evento.EventoService;
 import com.fatec.muttley.qrcode.dto.QrCodeResponse;
+import com.fatec.muttley.qrcode.dto.TipoQrCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -26,7 +27,12 @@ public class QrCodeResponseConsumer {
             return;
         }
 
-        log.info("QR Code recebido: eventoId={}", dto.eventoId());
-        eventoService.salvarQrCodeUrl(dto.eventoId(), dto.qrCodeUrl());
+        log.info("QR Code recebido: eventoId={}, tipo={}", dto.eventoId(), dto.tipo());
+
+        if (dto.tipo() == TipoQrCode.CONFIRMACAO) {
+            eventoService.salvarQrCodeConfirmacaoUrl(dto.eventoId(), dto.qrCodeUrl());
+        } else {
+            eventoService.salvarQrCodeInscricaoUrl(dto.eventoId(), dto.qrCodeUrl());
+        }
     }
 }
