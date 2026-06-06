@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -97,6 +98,37 @@ public class ParticipacaoService {
 
     public Optional<Participacao> procurarPorIdComDados(Long id) {
         return participacaoRepository.findByIdComDados(id);
+    }
+
+    @Transactional
+    public void confirmarPresenca(Long eventoId, Long pessoaId) {
+        if(participacaoRepository.existsByEventoIdAndPessoaId(eventoId, pessoaId)){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Você não está inscrito nesse evento."
+            );
+        }
+
+        Participacao participacao = participacaoRepository.findByEventoIdAndPessoaId(
+                eventoId, pessoaId).orElseThrow(
+
+        );
+
+        if (participacao.isPresente()) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, "Presença já confirmada anteriormente.");
+        }
+
+        participacao.setPresente(true);
+
+        participacaoRepository.save(participacao);
+    }
+
+    @Transactional
+    public void marcarPresente(Long participacaoId) {
+        participacaoRepository.findById(participacaoId).ifPresent(p -> {
+            p.setPresente(true);
+            participacaoRepository.save(p);
+        });
     }
 
     private Pessoa resolverPessoa(InscricaoPublicaRequest dados) {

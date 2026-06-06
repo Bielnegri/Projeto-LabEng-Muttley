@@ -52,4 +52,6 @@ public interface ParticipacaoRepository extends JpaRepository<Participacao, Long
 
     @Query("select coalesce(max(participacao.inscricao), 0) from Participacao participacao")
     int findMaiorNumeroInscricao();
+
+    Optional<Participacao> findByEventoIdAndPessoaId(Long eventoId, Long pessoaId);
 }
