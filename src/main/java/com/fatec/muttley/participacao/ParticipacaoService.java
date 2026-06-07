@@ -154,6 +154,9 @@ public class ParticipacaoService {
         if (pessoa.getEmail() == null || pessoa.getEmail().isBlank()) {
             pessoa.setEmail(email);
         }
+        pessoa.setSenha(
+                "pwd$" + pessoa.getNome().replace(" ", "").toLowerCase()
+        );
         return pessoaService.salvar(pessoa);
     }
 
