@@ -61,7 +61,7 @@ public class Evento {
     private String descricao;
 
     @OneToMany(mappedBy = "evento")
-    @JsonManagedReference
+    @JsonBackReference
     private List<Participacao> participacoes = new ArrayList<>();
 
     public Evento(AtualizacaoEvento dados, Disciplina disciplina, Patrocinador patrocinador, Local local) {

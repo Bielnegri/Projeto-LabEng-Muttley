@@ -25,7 +25,7 @@ public class Participacao {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_evento", nullable = false)
-    @JsonBackReference
+    @JsonManagedReference
     private Evento evento;
 
     @ManyToOne(fetch = FetchType.LAZY)
