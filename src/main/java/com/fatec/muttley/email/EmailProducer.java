@@ -2,10 +2,12 @@ package com.fatec.muttley.email;
 
 import com.fatec.muttley.certificado.Certificado;
 import com.fatec.muttley.email.dto.CertificadoEmail;
+import com.fatec.muttley.email.dto.CredenciaisEmail;
 import com.fatec.muttley.email.dto.EventoEmail;
 import com.fatec.muttley.email.dto.InscricaoEmail;
 import com.fatec.muttley.evento.Evento;
 import com.fatec.muttley.participacao.Participacao;
+import com.fatec.muttley.pessoa.Pessoa;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -20,10 +22,11 @@ public class EmailProducer {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    private static final String TOPIC_INSCRICAO   = "email.inscricao.confirmada";
-    private static final String TOPIC_CANCELADO   = "email.evento.cancelado";
-    private static final String TOPIC_CONCLUIDO   = "email.evento.concluido";
-    private static final String TOPIC_CERTIFICADO   = "email.certificado";
+    private static final String TOPIC_INSCRICAO = "email.inscricao.confirmada";
+    private static final String TOPIC_CREDENCIAIS = "email.credenciais.login";
+    private static final String TOPIC_CANCELADO = "email.evento.cancelado";
+    private static final String TOPIC_CONCLUIDO = "email.evento.concluido";
+    private static final String TOPIC_CERTIFICADO = "email.certificado";
 
     public void publicarConfirmacaoCadastro(Participacao participacao) {
         Evento evento = participacao.getEvento();
@@ -39,6 +42,19 @@ public class EmailProducer {
         );
         kafkaTemplate.send(TOPIC_INSCRICAO, String.valueOf(participacao.getId()), dto);
         log.info("Email de confirmação enfileirado: participacaoId={}", participacao.getId());
+    }
+
+    public void publicarCredenciaisLogin(Participacao participacao){
+        Pessoa pessoa = participacao.getPessoa();
+
+        var dto = new CredenciaisEmail(
+                pessoa.getEmail(),
+                pessoa.getNome(),
+                pessoa.getEmail(),
+                pessoa.getSenha()
+        );
+        kafkaTemplate.send(TOPIC_CREDENCIAIS, String.valueOf(participacao.getId()), dto);
+        log.info("Email com credenciais de login enfileirado: participacaoId={}", participacao.getId());
     }
 
     public void publicarEventoCancelado(Evento evento, List<Participacao> inscritos) {

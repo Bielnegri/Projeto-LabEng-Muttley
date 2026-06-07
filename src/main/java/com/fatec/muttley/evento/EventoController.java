@@ -80,6 +80,7 @@ public class EventoController {
             @RequestBody @Valid InscricaoPublicaRequest dados) {
         Participacao participacao = participacaoService.registrarInscricaoPublica(id, dados);
         emailProducer.publicarConfirmacaoCadastro(participacao);
+        emailProducer.publicarCredenciaisLogin(participacao);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "message", "Inscricao realizada com sucesso.",
                 "participacaoId", participacao.getId(),
