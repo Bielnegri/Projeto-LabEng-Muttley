@@ -21,6 +21,7 @@ public class Participacao {
     private long id;
     private int inscricao;
     private String tipo;
+    private boolean presente;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_evento", nullable = false)

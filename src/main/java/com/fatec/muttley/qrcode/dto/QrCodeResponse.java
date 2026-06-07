@@ -4,5 +4,6 @@ public record QrCodeResponse(
         Long eventoId,
         String qrCodeUrl,
         String status,
-        String errorMessage
+        String errorMessage,
+        TipoQrCode tipo
 ) {}

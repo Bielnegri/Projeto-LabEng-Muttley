@@ -2,6 +2,7 @@ package com.fatec.muttley.qrcode;
 
 import com.fatec.muttley.evento.Evento;
 import com.fatec.muttley.qrcode.dto.QrCodeRequest;
+import com.fatec.muttley.qrcode.dto.TipoQrCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -15,13 +16,24 @@ public class QrCodeProducer {
     private final KafkaTemplate<String, QrCodeRequest> kafkaTemplate;
     private static final String TOPIC = "qrcode.gerar.request";
 
-    public void publicarGeracaoQrCode(Evento evento, String baseUrl) {
+    public void publicarQrCodeInscricao(Evento evento, String baseUrl) {
+        publicar(evento, baseUrl, TipoQrCode.INSCRICAO);
+    }
+
+    public void publicarQrCodeConfirmacao(Evento evento, String baseUrl) {
+        publicar(evento, baseUrl, TipoQrCode.CONFIRMACAO);
+    }
+
+    public void publicar(Evento evento, String baseUrl, TipoQrCode tipo) {
         var dto = new QrCodeRequest(
                 evento.getId(),
                 baseUrl,
-                evento.getTema()
+                evento.getTema(),
+                tipo
         );
-        kafkaTemplate.send(TOPIC, String.valueOf(evento.getId()), dto);
-        log.info("QR Code enfileirado: eventoId={}", evento.getId());
+
+        String chave = evento.getId() + "-" + tipo.name();
+        kafkaTemplate.send(TOPIC, chave, dto);
+        log.info("QR Code enfileirado: eventoId={}, tipo={}", evento.getId(), tipo);
     }
 }

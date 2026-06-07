@@ -8,6 +8,7 @@ import com.fatec.muttley.colaborador.Colaborador;
 import com.fatec.muttley.colaborador.ColaboradorRepository;
 import com.fatec.muttley.disciplina.Disciplina;
 import com.fatec.muttley.disciplina.DisciplinaRepository;
+import com.fatec.muttley.disciplina.enums.TurnoDisciplinaEnum;
 import com.fatec.muttley.endereco.Endereco;
 import com.fatec.muttley.endereco.EnderecoRepository;
 import com.fatec.muttley.evento.Evento;
@@ -145,12 +146,12 @@ public class MockDataInitializer {
             Patrocinador patrocinador4 = patrocinadorRepository.save(new Patrocinador(null, "SecureLab", "31.654.987/0001-45", 9800.0, "contato@securelab.com", "(11) 4000-4000", "https://securelab.com"));
             Patrocinador patrocinador5 = patrocinadorRepository.save(new Patrocinador(null, "CloudBridge", "41.258.369/0001-76", 11000.0, "community@cloudbridge.com", "(11) 4000-5000", "https://cloudbridge.com"));
 
-            Disciplina disciplina1 = disciplinaRepository.save(new Disciplina(null, "Laboratório de Engenharia de Software", "Práticas e projeto aplicado", "Noturno", profSoftware, new ArrayList<>()));
-            Disciplina disciplina2 = disciplinaRepository.save(new Disciplina(null, "Arquitetura de Sistemas", "Modelagem e padrões arquiteturais", "Noturno", profSoftware, new ArrayList<>()));
-            Disciplina disciplina3 = disciplinaRepository.save(new Disciplina(null, "Banco de Dados", "Modelagem, SQL e performance", "Matutino", profDados, new ArrayList<>()));
-            Disciplina disciplina4 = disciplinaRepository.save(new Disciplina(null, "Inteligência Artificial", "Fundamentos e aplicações de IA", "Noturno", profDados, new ArrayList<>()));
-            Disciplina disciplina5 = disciplinaRepository.save(new Disciplina(null, "Segurança da Informação", "Boas práticas, riscos e defesa", "Vespertino", profRedes, new ArrayList<>()));
-            Disciplina disciplina6 = disciplinaRepository.save(new Disciplina(null, "Gestão de Produtos Digitais", "Descoberta, métricas e roadmap", "Noturno", profProduto, new ArrayList<>()));
+            Disciplina disciplina1 = disciplinaRepository.save(new Disciplina(null, "Laboratório de Engenharia de Software", "Práticas e projeto aplicado", TurnoDisciplinaEnum.NORTUNO, profSoftware, new ArrayList<>()));
+            Disciplina disciplina2 = disciplinaRepository.save(new Disciplina(null, "Arquitetura de Sistemas", "Modelagem e padrões arquiteturais", TurnoDisciplinaEnum.NORTUNO, profSoftware, new ArrayList<>()));
+            Disciplina disciplina3 = disciplinaRepository.save(new Disciplina(null, "Banco de Dados", "Modelagem, SQL e performance", TurnoDisciplinaEnum.MATUTINO, profDados, new ArrayList<>()));
+            Disciplina disciplina4 = disciplinaRepository.save(new Disciplina(null, "Inteligência Artificial", "Fundamentos e aplicações de IA", TurnoDisciplinaEnum.NORTUNO, profDados, new ArrayList<>()));
+            Disciplina disciplina5 = disciplinaRepository.save(new Disciplina(null, "Segurança da Informação", "Boas práticas, riscos e defesa", TurnoDisciplinaEnum.VESPERTINO, profRedes, new ArrayList<>()));
+            Disciplina disciplina6 = disciplinaRepository.save(new Disciplina(null, "Gestão de Produtos Digitais", "Descoberta, métricas e roadmap", TurnoDisciplinaEnum.NORTUNO, profProduto, new ArrayList<>()));
 
             List<Evento> eventos = List.of(
                     eventoRepository.save(criarEvento("Workshop de Testes Automatizados", 3, "19:00", "21:30", ModalidadeEventoEnum.PRESENCIAL, disciplina1, patrocinador1, local2)),
@@ -175,14 +176,14 @@ public class MockDataInitializer {
             int inscricao = 1001;
             for (int i = 0; i < eventos.size(); i++) {
                 Evento evento = eventos.get(i);
-                participacoes.add(participacaoRepository.save(new Participacao(0, inscricao++, "Aluno", evento, pessoas.get(i % 8))));
-                participacoes.add(participacaoRepository.save(new Participacao(0, inscricao++, "Aluno", evento, pessoas.get((i + 5) % 8))));
-                participacoes.add(participacaoRepository.save(new Participacao(0, inscricao++, "Palestrante", evento, pessoas.get(3 + (i % 5)))));
+                participacoes.add(participacaoRepository.save(new Participacao(0, inscricao++, "Aluno", false, evento, pessoas.get(i % 8))));
+                participacoes.add(participacaoRepository.save(new Participacao(0, inscricao++, "Aluno", false, evento, pessoas.get((i + 5) % 8))));
+                participacoes.add(participacaoRepository.save(new Participacao(0, inscricao++, "Palestrante", false, evento, pessoas.get(3 + (i % 5)))));
                 if (i % 2 == 0) {
-                    participacoes.add(participacaoRepository.save(new Participacao(0, inscricao++, "Organizador", evento, pessoas.get(4))));
+                    participacoes.add(participacaoRepository.save(new Participacao(0, inscricao++, "Organizador", false, evento, pessoas.get(4))));
                 }
                 if (i % 3 == 0) {
-                    participacoes.add(participacaoRepository.save(new Participacao(0, inscricao++, "Colaborador", evento, pessoas.get(10))));
+                    participacoes.add(participacaoRepository.save(new Participacao(0, inscricao++, "Colaborador", false, evento, pessoas.get(10))));
                 }
             }
 
@@ -213,6 +214,6 @@ public class MockDataInitializer {
     private Evento criarEvento(String tema, int dias, String inicio, String fim, ModalidadeEventoEnum modalidade,
                                Disciplina disciplina, Patrocinador patrocinador, Local local) {
         return new Evento(0, tema, LocalDate.now().plusDays(dias), inicio, fim, modalidade, StatusEventoEnum.CRIADO,
-                disciplina, patrocinador, local, null, "Evento academico sobre " + tema.toLowerCase() + ".", new ArrayList<>());
+                disciplina, patrocinador, local, null, null, "Evento academico sobre " + tema.toLowerCase() + ".", new ArrayList<>());
     }
 }

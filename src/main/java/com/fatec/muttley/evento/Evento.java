@@ -52,8 +52,12 @@ public class Evento {
     @JoinColumn(name = "id_local")
     private Local local;
 
-    @Column(name = "qr_code_url")
-    private String qrCodeUrl;
+    @Column(name = "qr_code_inscricao_url")
+    private String qrCodeInscricaoUrl;
+
+    @Column(name = "qr_code_confirmacao_url")
+    private String qrCodeConfirmacaoUrl;
+
     private String descricao;
 
     @OneToMany(mappedBy = "evento")
