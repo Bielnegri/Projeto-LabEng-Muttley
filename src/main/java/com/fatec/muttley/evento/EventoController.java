@@ -245,7 +245,7 @@ public class EventoController {
 
     @PostMapping("/api/admin/eventos/{id}/concluir")
     @Transactional
-    public ResponseEntity<Map<String, Object>> concluirEvento(
+    public ResponseEntity<Map<String, String>> concluirEvento(
             @PathVariable Long id,
             @RequestBody(required = false) List<Long> presentes) {
 
@@ -276,20 +276,13 @@ public class EventoController {
         List<Certificado> certificadosEmail = certificadoService
                 .gerarCertificadosParaParticipacoes(new ArrayList<>(todosPresentes));
 
-        List<Certificado> certificadosGerados = certificadoService.gerarCertificadosParaParticipacoes(presentesValidos);
         eventoService.concluirEvento(id);
 
         List<Participacao> inscritos = participacaoService.procurarPorEvento(id);
         emailProducer.publicarEventoConcluido(evento, inscritos);
         emailProducer.publicarCertificados(certificadosEmail, frontendUrl);
 
-        return ResponseEntity.ok(Map.of(
-                "message", "Evento concluido e certificados gerados com sucesso.",
-                "certificadosGerados", certificadosGerados.size(),
-                "codigosValidacao", certificadosGerados.stream()
-                        .map(Certificado::getCodigoValidacao)
-                        .toList()
-        ));
+        return ResponseEntity.ok(Map.of("message", "Evento concluído e certificados gerados com sucesso."));
     }
 
     @PostMapping("/api/admin/eventos/{id}/confirmar-presenca")
