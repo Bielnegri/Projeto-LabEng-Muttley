@@ -5,6 +5,7 @@ import com.fatec.muttley.evento.EventoService;
 import com.fatec.muttley.evento.enums.StatusEventoEnum;
 import com.fatec.muttley.pessoa.Pessoa;
 import com.fatec.muttley.pessoa.PessoaService;
+import com.fatec.muttley.pessoa.Role;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -154,9 +155,7 @@ public class ParticipacaoService {
         if (pessoa.getEmail() == null || pessoa.getEmail().isBlank()) {
             pessoa.setEmail(email);
         }
-        pessoa.setSenha(
-                "pwd$" + pessoa.getNome().replace(" ", "").toLowerCase()
-        );
+        pessoa.setRole(Role.USER);
         return pessoaService.salvar(pessoa);
     }
 

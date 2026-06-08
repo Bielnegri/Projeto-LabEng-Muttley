@@ -1,5 +1,6 @@
-package com.fatec.muttley;
+package com.fatec.muttley.auth;
 
+import com.fatec.muttley.auth.dto.RegisterInfo;
 import com.fatec.muttley.pessoa.AtualizacaoPessoa;
 import com.fatec.muttley.pessoa.Pessoa;
 import com.fatec.muttley.pessoa.PessoaService;
@@ -11,15 +12,16 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import java.util.Map;
 import java.util.Optional;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.oauth2.jwt.*;
+import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -32,6 +34,8 @@ public class AuthController {
 
     @Autowired
     private JwtService jwtService;
+
+    private final JwtDecoder jwtDecoder;
 
     public record LoginRequest(
             @NotBlank(message = "Email e obrigatorio")
@@ -67,6 +71,21 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", exception.getMessage()));
         }
+    }
+
+    @GetMapping("/auth/registration-info")
+    public RegisterInfo getInfo(@RequestParam String token) {
+        Jwt jwt = jwtDecoder.decode(token);
+
+        if (!"REGISTRATION".equals(jwt.getClaim("type"))) {
+            throw new RuntimeException("Token inválido para cadastro");
+        }
+
+        return new RegisterInfo(
+                jwt.getClaim("nome"),
+                jwt.getClaim("email"),
+                jwt.getClaim("cpf")
+        );
     }
 
     @PostMapping("/login")
