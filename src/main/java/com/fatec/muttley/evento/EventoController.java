@@ -285,7 +285,9 @@ public class EventoController {
         return ResponseEntity.ok(Map.of("message", "Evento concluído e certificados gerados com sucesso."));
     }
 
-    @PostMapping("/api/admin/eventos/{id}/confirmar-presenca")
+    //TODO arrumar interface para mostrar os confirmados no evento
+    //TODO exigir login antes de confirmar a presença
+    @PostMapping("/api/eventos/{eventoId}/confirmar-presenca")
     public ResponseEntity<String> confirmarPresenca(
             @PathVariable Long eventoId,
             @AuthenticationPrincipal Jwt jwt) {

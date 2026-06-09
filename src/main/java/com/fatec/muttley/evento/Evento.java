@@ -27,7 +27,7 @@ public class Evento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_evento")
-    private long id;
+    private Long id;
     private String tema;
     private LocalDate data;
     private String horarioInicio;

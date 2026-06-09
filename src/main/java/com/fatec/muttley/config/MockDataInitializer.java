@@ -176,14 +176,14 @@ public class MockDataInitializer {
             int inscricao = 1001;
             for (int i = 0; i < eventos.size(); i++) {
                 Evento evento = eventos.get(i);
-                participacoes.add(participacaoRepository.save(new Participacao(0, inscricao++, "Aluno", false, evento, pessoas.get(i % 8))));
-                participacoes.add(participacaoRepository.save(new Participacao(0, inscricao++, "Aluno", false, evento, pessoas.get((i + 5) % 8))));
-                participacoes.add(participacaoRepository.save(new Participacao(0, inscricao++, "Palestrante", false, evento, pessoas.get(3 + (i % 5)))));
+                participacoes.add(participacaoRepository.save(new Participacao(0L, inscricao++, "Aluno", false, evento, pessoas.get(i % 8))));
+                participacoes.add(participacaoRepository.save(new Participacao(0L, inscricao++, "Aluno", false, evento, pessoas.get((i + 5) % 8))));
+                participacoes.add(participacaoRepository.save(new Participacao(0L, inscricao++, "Palestrante", false, evento, pessoas.get(3 + (i % 5)))));
                 if (i % 2 == 0) {
-                    participacoes.add(participacaoRepository.save(new Participacao(0, inscricao++, "Organizador", false, evento, pessoas.get(4))));
+                    participacoes.add(participacaoRepository.save(new Participacao(0L, inscricao++, "Organizador", false, evento, pessoas.get(4))));
                 }
                 if (i % 3 == 0) {
-                    participacoes.add(participacaoRepository.save(new Participacao(0, inscricao++, "Colaborador", false, evento, pessoas.get(10))));
+                    participacoes.add(participacaoRepository.save(new Participacao(0L, inscricao++, "Colaborador", false, evento, pessoas.get(10))));
                 }
             }
 
@@ -213,7 +213,7 @@ public class MockDataInitializer {
 
     private Evento criarEvento(String tema, int dias, String inicio, String fim, ModalidadeEventoEnum modalidade,
                                Disciplina disciplina, Patrocinador patrocinador, Local local) {
-        return new Evento(0, tema, LocalDate.now().plusDays(dias), inicio, fim, modalidade, StatusEventoEnum.CRIADO,
+        return new Evento(0L, tema, LocalDate.now().plusDays(dias), inicio, fim, modalidade, StatusEventoEnum.CRIADO,
                 disciplina, patrocinador, local, null, null, "Evento academico sobre " + tema.toLowerCase() + ".", new ArrayList<>());
     }
 }

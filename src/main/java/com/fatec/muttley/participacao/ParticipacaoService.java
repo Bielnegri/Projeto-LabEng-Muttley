@@ -103,7 +103,7 @@ public class ParticipacaoService {
 
     @Transactional
     public void confirmarPresenca(Long eventoId, Long pessoaId) {
-        if(participacaoRepository.existsByEventoIdAndPessoaId(eventoId, pessoaId)){
+        if(!participacaoRepository.existsByEventoIdAndPessoaId(eventoId, pessoaId)){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Você não está inscrito nesse evento."
             );
