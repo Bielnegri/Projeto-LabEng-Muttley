@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.*;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -53,6 +54,17 @@ public class AuthController {
     public record LoginResponse(String accessToken, String tokenType, long expiresIn, UsuarioResponse usuario) {
     }
 
+    @GetMapping("/registration-info")
+    public RegisterInfo getInfo(@RequestParam String token) {
+        Jwt jwt = jwtDecoder.decode(token);
+
+        return new RegisterInfo(
+                jwt.getClaim("nome"),
+                jwt.getClaim("email"),
+                jwt.getClaim("cpf")
+        );
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> cadastrarUsuario(@RequestBody @Valid AtualizacaoPessoa dto) {
         try {
@@ -73,19 +85,26 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/auth/registration-info")
-    public RegisterInfo getInfo(@RequestParam String token) {
-        Jwt jwt = jwtDecoder.decode(token);
+    @PutMapping("/register")
+    public ResponseEntity<?> completarCadastro(@RequestBody @Valid AtualizacaoPessoa dto) {
+        try {
+            Pessoa pessoa = pessoaService.procurarPorEmail(dto.email())
+                    .orElseThrow(() -> new EntityNotFoundException("Usuario nao encontrado com esse email."));
 
-        if (!"REGISTRATION".equals(jwt.getClaim("type"))) {
-            throw new RuntimeException("Token inválido para cadastro");
+            if (StringUtils.hasText(pessoa.getSenha())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(Map.of("message", "Cadastro ja foi completado anteriormente."));
+            }
+
+            dto = dto.withId(pessoa.getId());
+
+            Pessoa pessoaSalva = pessoaService.salvarOuAtualizar(dto);
+
+            return ResponseEntity.ok(usuarioResponse(pessoaSalva));
+        } catch (EntityNotFoundException exception) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", exception.getMessage()));
         }
-
-        return new RegisterInfo(
-                jwt.getClaim("nome"),
-                jwt.getClaim("email"),
-                jwt.getClaim("cpf")
-        );
     }
 
     @PostMapping("/login")
