@@ -151,4 +151,12 @@ public class CertificadoService {
             }
         }
     }
+
+    public void atualizarCaminhoAssinatura(Long id, String caminhoDaImagem) {
+        Certificado certificado = certificadoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Certificado não encontrado com ID: " + id));
+
+        certificado.setCaminhoAssinaturaVisual(caminhoDaImagem);
+        certificadoRepository.save(certificado);
+    }
 }

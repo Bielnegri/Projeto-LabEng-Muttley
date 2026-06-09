@@ -58,6 +58,9 @@ public class Certificado {
     @JsonManagedReference
     private Participacao participacao;
 
+    @Column(name = "caminho_assinatura_visual")
+    private String caminhoAssinaturaVisual;
+
     public Certificado(AtualizacaoCertificado dados, Participacao participacao) {
         this.dataEmissao = dados.dataEmissao();
         this.assinatura = dados.assinatura();

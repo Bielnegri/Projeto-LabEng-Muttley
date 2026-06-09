@@ -17,7 +17,10 @@ public record AtualizacaoCertificado(
         String assinatura,
 
         @NotNull(message = "Participação é obrigatória")
-        Long participacaoId
+        Long participacaoId,
+
+        @NotNull(message = "Caminho da assinatura é obrigatório")
+        String caminhoAssinaturaVisual
 ) {
 
 }
