@@ -35,6 +35,34 @@ public class CertificadoController {
         ));
     }
 
+    @PostMapping("/evento/{eventoId}/upload-assinatura")
+    public ResponseEntity<?> salvarAssinaturaPorEvento(
+            @PathVariable Long eventoId,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            String diretorioUpload = "uploads/assinaturas/";
+            Path caminhoDiretorio = Paths.get(diretorioUpload);
+
+            if (!Files.exists(caminhoDiretorio)) {
+                Files.createDirectories(caminhoDiretorio);
+            }
+
+            String nomeArquivoUnico = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            Path caminhoArquivo = caminhoDiretorio.resolve(nomeArquivoUnico);
+
+            Files.copy(file.getInputStream(), caminhoArquivo, StandardCopyOption.REPLACE_EXISTING);
+
+            String caminhoFinal = diretorioUpload + nomeArquivoUnico;
+
+            certificadoService.atualizarAssinaturaPorEvento(eventoId, caminhoFinal);
+
+            return ResponseEntity.ok(Map.of("mensagem", "Assinatura vinculada a todos os certificados do evento!"));
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("erro", "Falha ao salvar: " + e.getMessage()));
+        }
+    }
+
     @PostMapping("/{id}/upload-assinatura")
     public ResponseEntity<?> salvarAssinaturaNaPasta(
             @PathVariable Long id,

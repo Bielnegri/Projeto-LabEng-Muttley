@@ -159,4 +159,12 @@ public class CertificadoService {
         certificado.setCaminhoAssinaturaVisual(caminhoDaImagem);
         certificadoRepository.save(certificado);
     }
+
+    public void atualizarAssinaturaPorEvento(Long eventoId, String caminhoDaImagem) {
+        List<Certificado> certificados = certificadoRepository.findByEventoId(eventoId);
+        for (Certificado cert : certificados) {
+            cert.setCaminhoAssinaturaVisual(caminhoDaImagem);
+        }
+        certificadoRepository.saveAll(certificados);
+    }
 }
