@@ -2,7 +2,7 @@ package com.fatec.muttley.email;
 
 import com.fatec.muttley.certificado.Certificado;
 import com.fatec.muttley.email.dto.CertificadoEmail;
-import com.fatec.muttley.email.dto.CredenciaisEmail;
+import com.fatec.muttley.email.dto.CadastroEmail;
 import com.fatec.muttley.email.dto.EventoEmail;
 import com.fatec.muttley.email.dto.InscricaoEmail;
 import com.fatec.muttley.evento.Evento;
@@ -28,7 +28,7 @@ public class EmailProducer {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     private static final String TOPIC_INSCRICAO = "email.inscricao.confirmada";
-    private static final String TOPIC_CREDENCIAIS = "email.credenciais.login";
+    private static final String TOPIC_CREDENCIAIS = "email.completar.cadastro";
     private static final String TOPIC_CANCELADO = "email.evento.cancelado";
     private static final String TOPIC_CONCLUIDO = "email.evento.concluido";
     private static final String TOPIC_CERTIFICADO = "email.certificado";
@@ -49,14 +49,13 @@ public class EmailProducer {
         log.info("Email de confirmação enfileirado: participacaoId={}", participacao.getId());
     }
 
-    public void publicarCredenciaisLogin(Participacao participacao, String baseUrl){
+    public void publicarCompletarCadastro(Participacao participacao, String baseUrl){
         Pessoa pessoa = participacao.getPessoa();
-        String token = jwtService.gerarTokenCadastro(pessoa);
 
-        var dto = new CredenciaisEmail(
+        var dto = new CadastroEmail(
                 pessoa.getEmail(),
                 pessoa.getNome(),
-                token,
+                String.valueOf(participacao.getPessoa().getId()),
                 baseUrl
         );
         kafkaTemplate.send(TOPIC_CREDENCIAIS, String.valueOf(participacao.getId()), dto);

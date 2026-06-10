@@ -80,7 +80,7 @@ public class EventoController {
             @RequestBody @Valid InscricaoPublicaRequest dados) {
         Participacao participacao = participacaoService.registrarInscricaoPublica(id, dados);
         emailProducer.publicarConfirmacaoCadastro(participacao);
-        emailProducer.publicarCredenciaisLogin(participacao, frontendUrl);
+        emailProducer.publicarCompletarCadastro(participacao, frontendUrl);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "message", "Inscricao realizada com sucesso.",
                 "participacaoId", participacao.getId(),
@@ -286,7 +286,7 @@ public class EventoController {
     }
 
     //TODO arrumar interface para mostrar os confirmados no evento
-    //TODO exigir login antes de confirmar a presença
+    //TROCAR A CONFIRMAÇÃO PARA SER POR CPF
     @PostMapping("/api/eventos/{eventoId}/confirmar-presenca")
     public ResponseEntity<String> confirmarPresenca(
             @PathVariable Long eventoId,

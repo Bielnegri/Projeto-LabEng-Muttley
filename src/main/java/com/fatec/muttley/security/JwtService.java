@@ -37,30 +37,6 @@ public class JwtService {
         return jwtEncoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();
     }
 
-    public String gerarTokenCadastro(Pessoa pessoa) {
-        Instant agora = Instant.now();
-
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .subject(pessoa.getEmail())
-                .issuedAt(agora)
-                .expiresAt(agora.plus(Duration.ofHours(24)))
-                .claim("userId", pessoa.getId())
-                .claim("role", pessoa.getRole().name())
-                .claim("type", "REGISTRATION")
-                .claim("nome", pessoa.getNome())
-                .claim("email", pessoa.getEmail())
-                .claim("cpf", pessoa.getCpf())
-                .build();
-
-        JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
-
-        String token = jwtEncoder.encode(
-                JwtEncoderParameters.from(header, claims)
-        ).getTokenValue();
-
-        return token;
-    }
-
     public long getExpirationSeconds() {
         return expiration.toSeconds();
     }

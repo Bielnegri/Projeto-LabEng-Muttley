@@ -1,6 +1,7 @@
 package com.fatec.muttley.pessoa;
 
 import com.fatec.muttley.aluno.AlunoService;
+import com.fatec.muttley.auth.dto.RegisterInfo;
 import com.fatec.muttley.colaborador.ColaboradorService;
 import com.fatec.muttley.organizador.OrganizadorService;
 import com.fatec.muttley.palestrante.PalestranteService;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 public class PessoaController {
 
     @Autowired
@@ -41,51 +42,51 @@ public class PessoaController {
     @Autowired
     private ColaboradorService colaboradorService;
 
-    @GetMapping("/alunos")
+    @GetMapping("/admin/alunos")
     public ResponseEntity<List<?>> listarAlunos() {
         return ResponseEntity.ok(alunoService.procurarTodos());
     }
 
-    @GetMapping("/professores")
+    @GetMapping("/admin/professores")
     public ResponseEntity<List<?>> listarProfessores() {
         return ResponseEntity.ok(professorService.procurarTodos());
     }
 
-    @GetMapping("/palestrantes")
+    @GetMapping("/admin/palestrantes")
     public ResponseEntity<List<?>> listarPalestrantes() {
         return ResponseEntity.ok(palestranteService.procurarTodos());
     }
 
-    @GetMapping("/organizadores")
+    @GetMapping("/admin/organizadores")
     public ResponseEntity<List<?>> listarOrganizadores() {
         return ResponseEntity.ok(organizadorService.procurarTodos());
     }
 
-    @GetMapping("/colaboradores")
+    @GetMapping("/admin/colaboradores")
     public ResponseEntity<List<?>> listarColaboradores() {
         return ResponseEntity.ok(colaboradorService.procurarTodos());
     }
 
-    @GetMapping("/pessoas")
+    @GetMapping("/admin/pessoas")
     public ResponseEntity<List<Pessoa>> listarTodos() {
         return ResponseEntity.ok(pessoaService.procurarTodos());
     }
 
-    @GetMapping("/pessoas/{id}")
+    @GetMapping("/admin/pessoas/{id}")
     public ResponseEntity<AtualizacaoPessoa> buscarPorId(@PathVariable Long id) {
         Pessoa pessoa = pessoaService.procurarPorId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada."));
         return ResponseEntity.ok(pessoaMapper.toAtualizacaoDto(pessoa));
     }
 
-    @PostMapping("/pessoas")
+    @PostMapping("/admin/pessoas")
     public ResponseEntity<Map<String, String>> criar(@RequestBody @Valid AtualizacaoPessoa dto) {
         Pessoa pessoaSalva = pessoaService.salvarOuAtualizar(dto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("message", "Pessoa '" + pessoaSalva.getNome() + "' criada com sucesso!"));
     }
 
-    @PutMapping("/pessoas/{id}")
+    @PutMapping("/admin/pessoas/{id}")
     public ResponseEntity<Map<String, String>> atualizar(@PathVariable Long id,
                                                          @RequestBody @Valid AtualizacaoPessoa dto) {
         pessoaService.procurarPorId(id)
@@ -95,12 +96,24 @@ public class PessoaController {
         return ResponseEntity.ok(Map.of("message", "Pessoa '" + pessoaSalva.getNome() + "' atualizada com sucesso!"));
     }
 
-    @DeleteMapping("/pessoas/{id}")
+    @DeleteMapping("/admin/pessoas/{id}")
     @Transactional
     public ResponseEntity<Map<String, String>> deletar(@PathVariable Long id) {
         pessoaService.procurarPorId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada."));
         pessoaService.apagarPorId(id);
         return ResponseEntity.ok(Map.of("message", "Pessoa " + id + " foi apagada!"));
+    }
+
+    @GetMapping("/pessoa/dados-cadastro/{id}")
+    public RegisterInfo getInfo(@PathVariable Long id) {
+        Pessoa pessoa = pessoaService.procurarPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada."));
+
+        return new RegisterInfo(
+                pessoa.getNome(),
+                pessoa.getEmail(),
+                pessoa.getCpf()
+        );
     }
 }

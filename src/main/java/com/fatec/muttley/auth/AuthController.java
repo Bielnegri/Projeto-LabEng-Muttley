@@ -54,17 +54,6 @@ public class AuthController {
     public record LoginResponse(String accessToken, String tokenType, long expiresIn, UsuarioResponse usuario) {
     }
 
-    @GetMapping("/registration-info")
-    public RegisterInfo getInfo(@RequestParam String token) {
-        Jwt jwt = jwtDecoder.decode(token);
-
-        return new RegisterInfo(
-                jwt.getClaim("nome"),
-                jwt.getClaim("email"),
-                jwt.getClaim("cpf")
-        );
-    }
-
     @PostMapping("/register")
     public ResponseEntity<?> cadastrarUsuario(@RequestBody @Valid AtualizacaoPessoa dto) {
         try {
