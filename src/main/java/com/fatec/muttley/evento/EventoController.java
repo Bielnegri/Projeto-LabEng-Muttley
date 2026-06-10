@@ -31,6 +31,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.web.multipart.MultipartFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 @RestController
 public class EventoController {
@@ -243,46 +248,65 @@ public class EventoController {
         ));
     }
 
-    @PostMapping("/api/admin/eventos/{id}/concluir")
+    @PostMapping(value = "/api/admin/eventos/{id}/concluir", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Transactional
     public ResponseEntity<Map<String, String>> concluirEvento(
             @PathVariable Long id,
-            @RequestBody(required = false) List<Long> presentes) {
+            @RequestParam(value = "presentes", required = false) List<Long> presentes,
+            @RequestParam(value = "file") MultipartFile file) {
 
-        Evento evento = eventoService.procurarPorId(id)
-                .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+        try {
+            Evento evento = eventoService.procurarPorId(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
 
-        if (evento.getStatus() != StatusEventoEnum.EM_ANDAMENTO) {
-            throw new IllegalStateException("O evento só pode ser concluído quando estiver EM_ANDAMENTO.");
+            if (evento.getStatus() != StatusEventoEnum.EM_ANDAMENTO) {
+                throw new IllegalStateException("O evento só pode ser concluído quando estiver EM_ANDAMENTO.");
+            }
+
+            // 1. SALVA A IMAGEM PRIMEIRO
+            String diretorioUpload = "uploads/assinaturas/";
+            Path caminhoDiretorio = Paths.get(diretorioUpload);
+            if (!Files.exists(caminhoDiretorio)) {
+                Files.createDirectories(caminhoDiretorio);
+            }
+            String nomeArquivoUnico = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            Path caminhoArquivo = caminhoDiretorio.resolve(nomeArquivoUnico);
+            Files.copy(file.getInputStream(), caminhoArquivo, StandardCopyOption.REPLACE_EXISTING);
+            String caminhoAssinatura = diretorioUpload + nomeArquivoUnico;
+
+            // 2. LÓGICA DE PRESENÇA DOS ALUNOS
+            List<Participacao> participacoesDoEvento = participacaoService.procurarPorEvento(id);
+            Set<Long> participacoesValidas = participacoesDoEvento.stream()
+                    .map(Participacao::getId)
+                    .collect(Collectors.toSet());
+
+            if (presentes != null) {
+                presentes.stream()
+                        .filter(participacoesValidas::contains)
+                        .forEach(participacaoService::marcarPresente);
+            }
+
+            Set<Long> todosPresentes = participacaoService.procurarPorEvento(id).stream()
+                    .filter(Participacao::isPresente)
+                    .map(Participacao::getId)
+                    .collect(Collectors.toSet());
+
+            // 3. GERA OS CERTIFICADOS PASSANDO A IMAGEM (Antes do email!)
+            List<Certificado> certificadosEmail = certificadoService
+                    .gerarCertificadosParaParticipacoes(new ArrayList<>(todosPresentes), caminhoAssinatura);
+
+            eventoService.concluirEvento(id);
+
+            // 4. MANDA OS EMAILS (Agora o PDF vai com a foto carregada!)
+            List<Participacao> inscritos = participacaoService.procurarPorEvento(id);
+            emailProducer.publicarEventoConcluido(evento, inscritos);
+            emailProducer.publicarCertificados(certificadosEmail, frontendUrl);
+
+            return ResponseEntity.ok(Map.of("message", "Evento concluído e certificados gerados com sucesso."));
+
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao concluir evento: " + e.getMessage());
         }
-
-        List<Participacao> participacoesDoEvento = participacaoService.procurarPorEvento(id);
-
-        Set<Long> participacoesValidas = participacoesDoEvento.stream()
-                .map(Participacao::getId)
-                .collect(Collectors.toSet());
-
-        if (presentes != null) {
-            presentes.stream()
-                    .filter(participacoesValidas::contains)
-                    .forEach(participacaoService::marcarPresente);
-        }
-
-        Set<Long> todosPresentes = participacaoService.procurarPorEvento(id).stream()
-                .filter(Participacao::isPresente)
-                .map(Participacao::getId)
-                .collect(Collectors.toSet());
-
-        List<Certificado> certificadosEmail = certificadoService
-                .gerarCertificadosParaParticipacoes(new ArrayList<>(todosPresentes));
-
-        eventoService.concluirEvento(id);
-
-        List<Participacao> inscritos = participacaoService.procurarPorEvento(id);
-        emailProducer.publicarEventoConcluido(evento, inscritos);
-        emailProducer.publicarCertificados(certificadosEmail, frontendUrl);
-
-        return ResponseEntity.ok(Map.of("message", "Evento concluído e certificados gerados com sucesso."));
     }
 
     @PostMapping("/api/admin/eventos/{id}/confirmar-presenca")

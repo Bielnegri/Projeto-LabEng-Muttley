@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragmentos/headModeloPdf :: head('Certificado')}">
+<head th:replace="~{fragmentos/headModeloPdf :: head('Certificado')}"></head>
 <body>
 <div class="certificado">
     <section class="section-titulo">
@@ -28,7 +28,14 @@
             <p th:text="${data}">São Paulo, 30 de março de 2026</p>
         </div>
     </section>
-    <section class="section-assinatura">
+
+    <section class="section-assinatura" style="text-align: center;">
+        <div style="height: 70px; margin-bottom: -15px;">
+            <img th:if="${assinaturaBase64 != null and assinaturaBase64 != ''}"
+                 th:src="'data:image/png;base64,' + ${assinaturaBase64}"
+                 style="max-height: 70px; width: auto; display: block; margin: 0 auto;"
+                 alt="Assinatura Digital" />
+        </div>
         <div>
             <hr class="linha-assinatura">
         </div>
