@@ -79,8 +79,12 @@ public class EventoController {
             @PathVariable Long id,
             @RequestBody @Valid InscricaoPublicaRequest dados) {
         Participacao participacao = participacaoService.registrarInscricaoPublica(id, dados);
-        emailProducer.publicarConfirmacaoCadastro(participacao);
-        emailProducer.publicarCompletarCadastro(participacao, frontendUrl);
+
+        emailProducer.publicarConfirmacaoInscricao(participacao);
+        if(participacao.getPessoa().getSenha() == null){
+            emailProducer.publicarCompletarCadastro(participacao, frontendUrl);
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "message", "Inscricao realizada com sucesso.",
                 "participacaoId", participacao.getId(),

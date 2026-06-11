@@ -33,7 +33,7 @@ public class EmailProducer {
     private static final String TOPIC_CONCLUIDO = "email.evento.concluido";
     private static final String TOPIC_CERTIFICADO = "email.certificado";
 
-    public void publicarConfirmacaoCadastro(Participacao participacao) {
+    public void publicarConfirmacaoInscricao(Participacao participacao) {
         Evento evento = participacao.getEvento();
         var dto = new InscricaoEmail(
                 participacao.getPessoa().getEmail(),
