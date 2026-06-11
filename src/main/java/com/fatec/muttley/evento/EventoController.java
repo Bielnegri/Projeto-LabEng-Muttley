@@ -12,6 +12,7 @@ import com.fatec.muttley.participacao.ParticipacaoComEventoResponse;
 import com.fatec.muttley.participacao.ParticipacaoService;
 import com.fatec.muttley.qrcode.QrCodeClient;
 import com.fatec.muttley.qrcode.QrCodeProducer;
+import io.github.andrelamego.brValidator.cpf.ValidCpf;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -290,14 +291,11 @@ public class EventoController {
     }
 
     //TODO arrumar interface para mostrar os confirmados no evento
-    //TROCAR A CONFIRMAÇÃO PARA SER POR CPF
-    @PostMapping("/api/eventos/{eventoId}/confirmar-presenca")
+    @PostMapping("/api/eventos/{eventoId}/confirmar-presenca/{cpf}")
     public ResponseEntity<String> confirmarPresenca(
-            @PathVariable Long eventoId,
-            @AuthenticationPrincipal Jwt jwt) {
+            @PathVariable Long eventoId, @PathVariable @ValidCpf String cpf) {
 
-        Long pessoaId = jwt.getClaim("userId");
-        participacaoService.confirmarPresenca(eventoId, pessoaId);
+        participacaoService.confirmarPresenca(eventoId, cpf);
         return ResponseEntity.ok("Presença confirmada com sucesso!");
     }
 

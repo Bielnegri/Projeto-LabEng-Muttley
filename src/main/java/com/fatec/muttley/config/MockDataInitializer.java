@@ -108,10 +108,10 @@ public class MockDataInitializer {
             alunoRepository.save(new Aluno(null, "FATEC Zona Leste", "2026007", pessoas.get(13)));
             alunoRepository.save(new Aluno(null, "FATEC Zona Leste", "2026008", pessoas.get(18)));
 
-            Professor profSoftware = professorRepository.save(new Professor(0, "Engenharia de Software", "Mestre", pessoas.get(2)));
-            Professor profDados = professorRepository.save(new Professor(0, "Banco de Dados e BI", "Doutora", pessoas.get(7)));
-            Professor profRedes = professorRepository.save(new Professor(0, "Redes e Segurança", "Especialista", pessoas.get(11)));
-            Professor profProduto = professorRepository.save(new Professor(0, "Gestão de Produto Digital", "Mestre", pessoas.get(16)));
+            Professor profSoftware = professorRepository.save(new Professor(null, "Engenharia de Software", "Mestre", pessoas.get(2)));
+            Professor profDados = professorRepository.save(new Professor(null, "Banco de Dados e BI", "Doutora", pessoas.get(7)));
+            Professor profRedes = professorRepository.save(new Professor(null, "Redes e Segurança", "Especialista", pessoas.get(11)));
+            Professor profProduto = professorRepository.save(new Professor(null, "Gestão de Produto Digital", "Mestre", pessoas.get(16)));
 
             palestranteRepository.save(new Palestrante(null, "Especialista em arquitetura cloud e DevOps", "TechCorp", "Arquiteta de Soluções", pessoas.get(3)));
             palestranteRepository.save(new Palestrante(null, "Pesquisadora em IA aplicada a negocios", "DataWay", "Cientista de Dados", pessoas.get(8)));
@@ -176,14 +176,14 @@ public class MockDataInitializer {
             int inscricao = 1001;
             for (int i = 0; i < eventos.size(); i++) {
                 Evento evento = eventos.get(i);
-                participacoes.add(participacaoRepository.save(new Participacao(0L, inscricao++, "Aluno", false, evento, pessoas.get(i % 8))));
-                participacoes.add(participacaoRepository.save(new Participacao(0L, inscricao++, "Aluno", false, evento, pessoas.get((i + 5) % 8))));
-                participacoes.add(participacaoRepository.save(new Participacao(0L, inscricao++, "Palestrante", false, evento, pessoas.get(3 + (i % 5)))));
+                participacoes.add(participacaoRepository.save(new Participacao(null, inscricao++, "Aluno", false, evento, pessoas.get(i % 8))));
+                participacoes.add(participacaoRepository.save(new Participacao(null, inscricao++, "Aluno", false, evento, pessoas.get((i + 5) % 8))));
+                participacoes.add(participacaoRepository.save(new Participacao(null, inscricao++, "Palestrante", false, evento, pessoas.get(3 + (i % 5)))));
                 if (i % 2 == 0) {
-                    participacoes.add(participacaoRepository.save(new Participacao(0L, inscricao++, "Organizador", false, evento, pessoas.get(4))));
+                    participacoes.add(participacaoRepository.save(new Participacao(null, inscricao++, "Organizador", false, evento, pessoas.get(4))));
                 }
                 if (i % 3 == 0) {
-                    participacoes.add(participacaoRepository.save(new Participacao(0L, inscricao++, "Colaborador", false, evento, pessoas.get(10))));
+                    participacoes.add(participacaoRepository.save(new Participacao(null, inscricao++, "Colaborador", false, evento, pessoas.get(10))));
                 }
             }
 
@@ -213,7 +213,7 @@ public class MockDataInitializer {
 
     private Evento criarEvento(String tema, int dias, String inicio, String fim, ModalidadeEventoEnum modalidade,
                                Disciplina disciplina, Patrocinador patrocinador, Local local) {
-        return new Evento(0L, tema, LocalDate.now().plusDays(dias), inicio, fim, modalidade, StatusEventoEnum.CRIADO,
+        return new Evento(null, tema, LocalDate.now().plusDays(dias), inicio, fim, modalidade, StatusEventoEnum.CRIADO,
                 disciplina, patrocinador, local, null, null, "Evento academico sobre " + tema.toLowerCase() + ".", new ArrayList<>());
     }
 }
