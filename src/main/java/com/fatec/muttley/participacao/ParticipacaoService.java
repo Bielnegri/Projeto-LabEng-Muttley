@@ -102,17 +102,16 @@ public class ParticipacaoService {
     }
 
     @Transactional
-    public void confirmarPresenca(Long eventoId, Long pessoaId) {
-        if(participacaoRepository.existsByEventoIdAndPessoaId(eventoId, pessoaId)){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Você não está inscrito nesse evento."
-            );
+    public void confirmarPresenca(Long eventoId, String cpf) {
+        Pessoa pessoa = pessoaService.procurarPorCpf(cpf)
+                .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada com o cpf: " + cpf));
+
+        if(!participacaoRepository.existsByEventoIdAndPessoaId(eventoId, pessoa.getId())){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Você não está inscrito nesse evento.");
         }
 
-        Participacao participacao = participacaoRepository.findByEventoIdAndPessoaId(
-                eventoId, pessoaId).orElseThrow(
-
-        );
+        Participacao participacao = participacaoRepository.findByEventoIdAndPessoaId(eventoId, pessoa.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Você não está inscrito nesse evento."));
 
         if (participacao.isPresente()) {
             throw new ResponseStatusException(

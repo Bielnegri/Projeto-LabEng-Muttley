@@ -43,7 +43,6 @@ public class ParticipacaoController {
     @PostMapping
     public ResponseEntity<Map<String, String>> criar(@RequestBody @Valid AtualizacaoParticipacao dto) {
         Participacao participacaoSalva = participacaoService.salvarOuAtualizar(dto);
-        emailProducer.publicarConfirmacaoCadastro(participacaoSalva);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("message", "Participação '" + participacaoSalva.getInscricao() + "' criada com sucesso."));
     }

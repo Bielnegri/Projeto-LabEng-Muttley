@@ -12,6 +12,7 @@ import com.fatec.muttley.participacao.ParticipacaoComEventoResponse;
 import com.fatec.muttley.participacao.ParticipacaoService;
 import com.fatec.muttley.qrcode.QrCodeClient;
 import com.fatec.muttley.qrcode.QrCodeProducer;
+import io.github.andrelamego.brValidator.cpf.ValidCpf;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -79,8 +80,12 @@ public class EventoController {
             @PathVariable Long id,
             @RequestBody @Valid InscricaoPublicaRequest dados) {
         Participacao participacao = participacaoService.registrarInscricaoPublica(id, dados);
-        emailProducer.publicarConfirmacaoCadastro(participacao);
-        emailProducer.publicarCredenciaisLogin(participacao, frontendUrl);
+
+        emailProducer.publicarConfirmacaoInscricao(participacao);
+        if(participacao.getPessoa().getSenha() == null){
+            emailProducer.publicarCompletarCadastro(participacao, frontendUrl);
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "message", "Inscricao realizada com sucesso.",
                 "participacaoId", participacao.getId(),
@@ -285,13 +290,12 @@ public class EventoController {
         return ResponseEntity.ok(Map.of("message", "Evento concluído e certificados gerados com sucesso."));
     }
 
-    @PostMapping("/api/admin/eventos/{id}/confirmar-presenca")
+    //TODO arrumar interface para mostrar os confirmados no evento
+    @PostMapping("/api/eventos/{eventoId}/confirmar-presenca/{cpf}")
     public ResponseEntity<String> confirmarPresenca(
-            @PathVariable Long eventoId,
-            @AuthenticationPrincipal Jwt jwt) {
+            @PathVariable Long eventoId, @PathVariable @ValidCpf String cpf) {
 
-        Long pessoaId = jwt.getClaim("userId");
-        participacaoService.confirmarPresenca(eventoId, pessoaId);
+        participacaoService.confirmarPresenca(eventoId, cpf);
         return ResponseEntity.ok("Presença confirmada com sucesso!");
     }
 

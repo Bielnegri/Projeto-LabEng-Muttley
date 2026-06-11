@@ -21,7 +21,7 @@ public class Professor {
     @Id
     //@GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "id_professor")
-    private long id;
+    private Long id;
     private String areaFormacao;
     private String titulacao;
 
