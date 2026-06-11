@@ -290,7 +290,6 @@ public class EventoController {
         return ResponseEntity.ok(Map.of("message", "Evento concluído e certificados gerados com sucesso."));
     }
 
-    //TODO arrumar interface para mostrar os confirmados no evento
     @PostMapping("/api/eventos/{eventoId}/confirmar-presenca/{cpf}")
     public ResponseEntity<String> confirmarPresenca(
             @PathVariable Long eventoId, @PathVariable @ValidCpf String cpf) {

@@ -4,6 +4,7 @@ public record ParticipacaoComEventoResponse(
         Long id,
         int inscricao,
         String tipo,
+        boolean presente,
         PessoaResumoParticipacaoResponse pessoa,
         EventoResumoParticipacaoResponse evento
 ) {
@@ -12,6 +13,7 @@ public record ParticipacaoComEventoResponse(
                 participacao.getId(),
                 participacao.getInscricao(),
                 participacao.getTipo(),
+                participacao.isPresente(),
                 PessoaResumoParticipacaoResponse.from(participacao.getPessoa()),
                 EventoResumoParticipacaoResponse.from(participacao.getEvento())
         );
