@@ -94,7 +94,7 @@ public class CertificadoService {
     }
 
     @Transactional
-    public List<Certificado> gerarCertificadosParaParticipacoes(List<Long> participacaoIds) {
+    public List<Certificado> gerarCertificadosParaParticipacoes(List<Long> participacaoIds, String caminhoAssinatura) {
         List<Certificado> certificadosEmail = new ArrayList<Certificado>();
 
         for (Long participacaoId : participacaoIds) {
@@ -109,12 +109,21 @@ public class CertificadoService {
             certificado.setDataEmissao(LocalDate.now());
             certificado.setAssinatura("Coordenação FATEC");
             certificado.setParticipacao(participacao);
+
+            // GRAVA A ASSINATURA NA RAIZ!
+            certificado.setCaminhoAssinaturaVisual(caminhoAssinatura);
+
             preencherDadosPublicos(certificado);
             certificadoRepository.save(certificado);
             certificadosEmail.add(certificado);
         }
 
         return certificadosEmail;
+    }
+
+    @Transactional
+    public List<Certificado> gerarCertificadosParaParticipacoes(List<Long> participacaoIds) {
+        return gerarCertificadosParaParticipacoes(participacaoIds, null);
     }
 
     private void preencherDadosPublicos(Certificado certificado) {
@@ -150,5 +159,21 @@ public class CertificadoService {
                 certificadoRepository.save(certificado);
             }
         }
+    }
+
+    public void atualizarCaminhoAssinatura(Long id, String caminhoDaImagem) {
+        Certificado certificado = certificadoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Certificado não encontrado com ID: " + id));
+
+        certificado.setCaminhoAssinaturaVisual(caminhoDaImagem);
+        certificadoRepository.save(certificado);
+    }
+
+    public void atualizarAssinaturaPorEvento(Long eventoId, String caminhoDaImagem) {
+        List<Certificado> certificados = certificadoRepository.findByEventoId(eventoId);
+        for (Certificado cert : certificados) {
+            cert.setCaminhoAssinaturaVisual(caminhoDaImagem);
+        }
+        certificadoRepository.saveAll(certificados);
     }
 }
