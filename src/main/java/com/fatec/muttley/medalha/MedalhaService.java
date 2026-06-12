@@ -49,6 +49,29 @@ public class MedalhaService {
         return medalhaRepository.findByPessoaIdComDados(pessoaId);
     }
 
+    public Medalha gerarMedalhaBronzePorPresenca(Participacao participacao) {
+        if (participacao == null || participacao.getId() == null || !participacao.isPresente()) {
+            throw new IllegalArgumentException("A participacao precisa estar confirmada para receber a medalha.");
+        }
+
+        if (medalhaRepository.existsByParticipacaoIdAndTipo(participacao.getId(), TipoMedalha.BRONZE)) {
+            return null;
+        }
+
+        Medalha medalha = new Medalha();
+        medalha.setNome("Participacao confirmada");
+        medalha.setDescricao("Medalha concedida pela presenca confirmada no evento.");
+        medalha.setTipo(TipoMedalha.BRONZE);
+        medalha.setParticipacao(participacao);
+        return medalhaRepository.save(medalha);
+    }
+
+    public void gerarMedalhasBronzePorPresenca(List<Participacao> participacoes) {
+        participacoes.stream()
+                .filter(Participacao::isPresente)
+                .forEach(this::gerarMedalhaBronzePorPresenca);
+    }
+
     public List<MedalhaRepository.MedalhasPorParticipante> procurarTotaisPorParticipante(int limite) {
         return medalhaRepository.findTotaisPorParticipante(PageRequest.of(0, limite));
     }
