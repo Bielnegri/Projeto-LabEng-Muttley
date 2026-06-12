@@ -46,6 +46,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/eventos").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/eventos/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/pessoa/dados-cadastro/{id}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/eventos/{eventoId}/confirmar-presenca/{cpf}").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/eventos/{id}/inscricoes").permitAll()
                         .requestMatchers("/api/certificados/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
