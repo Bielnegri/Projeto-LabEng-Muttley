@@ -19,6 +19,7 @@ import com.fatec.muttley.local.Local;
 import com.fatec.muttley.local.LocalRepository;
 import com.fatec.muttley.medalha.Medalha;
 import com.fatec.muttley.medalha.MedalhaRepository;
+import com.fatec.muttley.medalha.TipoMedalha;
 import com.fatec.muttley.organizador.Organizador;
 import com.fatec.muttley.organizador.OrganizadorRepository;
 import com.fatec.muttley.palestrante.Palestrante;
@@ -187,12 +188,12 @@ public class MockDataInitializer {
                 }
             }
 
-            medalhaRepository.save(new Medalha(null, "Destaque em Participação", "Reconhecimento por contribuição ativa no evento", participacoes.get(0)));
-            medalhaRepository.save(new Medalha(null, "Mentoria Tecnica", "Apoio tecnico e troca de conhecimento", participacoes.get(2)));
-            medalhaRepository.save(new Medalha(null, "Melhor Pitch", "Apresentação com maior clareza e impacto", participacoes.get(10)));
-            medalhaRepository.save(new Medalha(null, "Resolução de Problemas", "Destaque em atividades práticas", participacoes.get(18)));
-            medalhaRepository.save(new Medalha(null, "Colaboração", "Atuação colaborativa com outros participantes", participacoes.get(25)));
-            medalhaRepository.save(new Medalha(null, "Inovação", "Proposta criativa aplicada ao desafio", participacoes.get(34)));
+            medalhaRepository.save(new Medalha(null, "Destaque em Participação", "Reconhecimento por contribuição ativa no evento", TipoMedalha.OURO, participacoes.get(0)));
+            medalhaRepository.save(new Medalha(null, "Mentoria Tecnica", "Apoio tecnico e troca de conhecimento", TipoMedalha.PRATA, participacoes.get(2)));
+            medalhaRepository.save(new Medalha(null, "Melhor Pitch", "Apresentação com maior clareza e impacto", TipoMedalha.OURO, participacoes.get(10)));
+            medalhaRepository.save(new Medalha(null, "Resolução de Problemas", "Destaque em atividades práticas", TipoMedalha.PRATA, participacoes.get(18)));
+            medalhaRepository.save(new Medalha(null, "Colaboração", "Atuação colaborativa com outros participantes", TipoMedalha.BRONZE, participacoes.get(25)));
+            medalhaRepository.save(new Medalha(null, "Inovação", "Proposta criativa aplicada ao desafio", TipoMedalha.OURO, participacoes.get(34)));
 
             for (int i = 0; i < Math.min(12, participacoes.size()); i++) {
                 certificadoRepository.save(new Certificado(null, LocalDate.now().minusDays(i), "Coordenação FATEC", participacoes.get(i)));
