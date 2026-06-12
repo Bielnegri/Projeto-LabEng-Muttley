@@ -8,7 +8,7 @@ import com.fatec.muttley.email.dto.InscricaoEmail;
 import com.fatec.muttley.evento.Evento;
 import com.fatec.muttley.participacao.Participacao;
 import com.fatec.muttley.pessoa.Pessoa;
-import com.fatec.muttley.security.JwtService;
+import com.fatec.muttley.security.HashIdService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import java.util.List;
 public class EmailProducer {
 
     @Autowired
-    private JwtService jwtService;
+    private HashIdService hashIdService;
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
@@ -52,10 +52,12 @@ public class EmailProducer {
     public void publicarCompletarCadastro(Participacao participacao, String baseUrl){
         Pessoa pessoa = participacao.getPessoa();
 
+        String id = hashIdService.encode(pessoa.getId());
+
         var dto = new CadastroEmail(
                 pessoa.getEmail(),
                 pessoa.getNome(),
-                String.valueOf(participacao.getPessoa().getId()),
+                id,
                 baseUrl
         );
         kafkaTemplate.send(TOPIC_CREDENCIAIS, String.valueOf(participacao.getId()), dto);

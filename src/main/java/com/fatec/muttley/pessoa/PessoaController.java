@@ -6,6 +6,7 @@ import com.fatec.muttley.colaborador.ColaboradorService;
 import com.fatec.muttley.organizador.OrganizadorService;
 import com.fatec.muttley.palestrante.PalestranteService;
 import com.fatec.muttley.professor.ProfessorService;
+import com.fatec.muttley.security.HashIdService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,9 @@ public class PessoaController {
 
     @Autowired
     private ColaboradorService colaboradorService;
+
+    @Autowired
+    private HashIdService hashIdService;
 
     @GetMapping("/admin/alunos")
     public ResponseEntity<List<?>> listarAlunos() {
@@ -106,8 +110,9 @@ public class PessoaController {
     }
 
     @GetMapping("/pessoa/dados-cadastro/{id}")
-    public RegisterInfo getInfo(@PathVariable Long id) {
-        Pessoa pessoa = pessoaService.procurarPorId(id)
+    public RegisterInfo getInfo(@PathVariable String id) {
+        Long pessoaId = hashIdService.decode(id);
+        Pessoa pessoa = pessoaService.procurarPorId(pessoaId)
                 .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada."));
 
         return new RegisterInfo(
