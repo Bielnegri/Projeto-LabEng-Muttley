@@ -4,6 +4,7 @@ import com.fatec.muttley.certificado.Certificado;
 import com.fatec.muttley.certificado.CertificadoService;
 import com.fatec.muttley.email.EmailProducer;
 import com.fatec.muttley.evento.enums.StatusEventoEnum;
+import com.fatec.muttley.medalha.MedalhaService;
 import com.fatec.muttley.participacao.AtualizacaoParticipacao;
 import com.fatec.muttley.participacao.AtualizacaoParticipacaoNovoEvento;
 import com.fatec.muttley.participacao.InscricaoPublicaRequest;
@@ -58,6 +59,9 @@ public class EventoController {
 
     @Autowired
     private CertificadoService certificadoService;
+
+    @Autowired
+    private MedalhaService medalhaService;
 
     @Autowired
     private EmailProducer emailProducer;
@@ -296,6 +300,10 @@ public class EventoController {
                     .map(Participacao::getId)
                     .collect(Collectors.toSet());
 
+            medalhaService.gerarMedalhasBronzePorPresenca(
+                    participacaoService.procurarPorEvento(id)
+            );
+
             // 3. GERA OS CERTIFICADOS PASSANDO A IMAGEM (Antes do email!)
             List<Certificado> certificadosEmail = certificadoService
                     .gerarCertificadosParaParticipacoes(new ArrayList<>(todosPresentes), caminhoAssinatura);
@@ -315,10 +323,12 @@ public class EventoController {
     }
 
     @PostMapping("/api/eventos/{eventoId}/confirmar-presenca/{cpf}")
+    @Transactional
     public ResponseEntity<String> confirmarPresenca(
             @PathVariable Long eventoId, @PathVariable @ValidCpf String cpf) {
 
-        participacaoService.confirmarPresenca(eventoId, cpf);
+        Participacao participacao = participacaoService.confirmarPresenca(eventoId, cpf);
+        medalhaService.gerarMedalhaBronzePorPresenca(participacao);
         return ResponseEntity.ok("Presença confirmada com sucesso!");
     }
 

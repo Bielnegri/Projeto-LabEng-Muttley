@@ -12,11 +12,14 @@ public record AtualizacaoMedalha (
         @NotBlank(message = "Descrição é obrigatória")
         String descricao,
 
+        @NotNull(message = "Tipo da medalha e obrigatorio")
+        TipoMedalha tipo,
+
         @NotNull(message = "Participação é obrigatório")
         Long participacaoId
 ) {
         public AtualizacaoMedalha withId(Long id) {
-                return new AtualizacaoMedalha(id, this.nome(), this.descricao(), this.participacaoId());
+                return new AtualizacaoMedalha(id, this.nome(), this.descricao(), this.tipo(), this.participacaoId());
         }
 }
 

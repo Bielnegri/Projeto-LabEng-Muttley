@@ -1,12 +1,14 @@
 package com.fatec.muttley.pessoa;
 
 import com.fatec.muttley.medalha.Medalha;
+import com.fatec.muttley.medalha.TipoMedalha;
 import com.fatec.muttley.participacao.Participacao;
 
 public record MedalhaUsuarioResponse(
         Long id,
         String nome,
         String descricao,
+        TipoMedalha tipo,
         Long participacaoId,
         Integer inscricao,
         String tipoParticipacao,
@@ -18,6 +20,7 @@ public record MedalhaUsuarioResponse(
                 medalha.getId(),
                 medalha.getNome(),
                 medalha.getDescricao(),
+                medalha.getTipo(),
                 participacao != null ? participacao.getId() : null,
                 participacao != null ? participacao.getInscricao() : null,
                 participacao != null ? participacao.getTipo() : null,
