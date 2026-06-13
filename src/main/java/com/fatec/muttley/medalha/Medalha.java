@@ -9,12 +9,15 @@ import com.fatec.muttley.participacao.Participacao;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 @Entity
@@ -32,6 +35,10 @@ public class Medalha {
     private String nome;
     private String descricao;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "varchar(20) default 'BRONZE'")
+    private TipoMedalha tipo;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_participacao")
     private Participacao participacao;
@@ -39,6 +46,7 @@ public class Medalha {
     public Medalha(AtualizacaoMedalha dados, Participacao participacao) {
         this.nome = dados.nome();
         this.descricao = dados.descricao();
+        this.tipo = dados.tipo();
         this.participacao = participacao;
     }
 
@@ -47,7 +55,16 @@ public class Medalha {
             this.nome = dados.nome();
         if (dados.descricao() != null)
             this.descricao = dados.descricao();
+        if (dados.tipo() != null)
+            this.tipo = dados.tipo();
         if (participacao != null)
             this.participacao = participacao;
+    }
+
+    @PrePersist
+    public void preencherTipoPadrao() {
+        if (tipo == null) {
+            tipo = TipoMedalha.BRONZE;
+        }
     }
 }

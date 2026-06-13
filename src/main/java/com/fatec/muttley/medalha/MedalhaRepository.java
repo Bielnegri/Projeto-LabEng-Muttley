@@ -11,6 +11,8 @@ import java.util.List;
 @Repository
 @Transactional
 public interface MedalhaRepository extends JpaRepository<Medalha, Long> {
+    boolean existsByParticipacaoIdAndTipo(Long participacaoId, TipoMedalha tipo);
+
     @Query("""
             select medalha
             from Medalha medalha

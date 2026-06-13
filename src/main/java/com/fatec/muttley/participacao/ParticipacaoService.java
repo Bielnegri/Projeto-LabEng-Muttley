@@ -102,7 +102,7 @@ public class ParticipacaoService {
     }
 
     @Transactional
-    public void confirmarPresenca(Long eventoId, String cpf) {
+    public Participacao confirmarPresenca(Long eventoId, String cpf) {
         Pessoa pessoa = pessoaService.procurarPorCpf(cpf)
                 .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada com o cpf: " + cpf));
 
@@ -120,15 +120,15 @@ public class ParticipacaoService {
 
         participacao.setPresente(true);
 
-        participacaoRepository.save(participacao);
+        return participacaoRepository.save(participacao);
     }
 
     @Transactional
-    public void marcarPresente(Long participacaoId) {
-        participacaoRepository.findById(participacaoId).ifPresent(p -> {
-            p.setPresente(true);
-            participacaoRepository.save(p);
-        });
+    public Participacao marcarPresente(Long participacaoId) {
+        Participacao participacao = participacaoRepository.findById(participacaoId)
+                .orElseThrow(() -> new EntityNotFoundException("Participacao nao encontrada com o id: " + participacaoId));
+        participacao.setPresente(true);
+        return participacaoRepository.save(participacao);
     }
 
     private Pessoa resolverPessoa(InscricaoPublicaRequest dados) {
